@@ -17,6 +17,6 @@ public class test extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_test);
-
+        System.out.println("Hello");
     }
 }
