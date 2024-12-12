@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">asaf_avisar</string>
+    <string-array name="israel_cities">
+        <item>Jerusalem</item>
+        <item>Tel Aviv</item>
+        <item>Haifa</item>
+        <item>Rishon LeZion</item>
+        <item>Petah Tikva</item>
+        <item>Ashdod</item>
+        <item>Nataniya</item>
+        <item>Bni Barak</item>
+        <item>Holon</item>
+        <item>Ramat Gan</item>
+        <item>Ashkelon</item>
+        <item>Rehovot</item>
+        <item>Bat Yam</item>
+        <item>Kfar Saba</item>
+    </string-array>
+</resources>

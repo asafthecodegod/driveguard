@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "985354954391",
+    "project_id": "asaf-avisar",
+    "storage_bucket": "asaf-avisar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985354954391:android:421df23d14a4b39e17abd2",
+        "android_client_info": {
+          "package_name": "com.example.asaf_avisar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAifrOgiBlFfL3uOOd6iFa46z1X5Cd5UwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

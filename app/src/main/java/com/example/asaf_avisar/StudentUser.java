@@ -1,0 +1,115 @@
+package com.example.asaf_avisar;
+
+import java.util.Date;
+
+public class StudentUser {
+    protected String name;
+    protected String etEmail,etPassword;
+    protected Date dpBirthday;
+    protected boolean license;
+    protected boolean greenform;
+    protected int type;
+    protected boolean theory;
+    protected Date licenseDate;
+    protected String city;
+
+    public StudentUser(Date licenseDate, boolean theory, int type, boolean greenform, boolean license,String city) {
+        this.licenseDate = licenseDate;
+        this.theory = theory;
+        this.type = type;
+        this.greenform = greenform;
+        this.license = license;
+        this.city =city;
+    }
+
+    public StudentUser() {
+
+    }
+    public StudentUser(String name, String etEmail, String etPassword, Date dpBirthday) {
+        this.name = name;
+        this.etEmail = etEmail;
+        this.etPassword = etPassword;
+        this.dpBirthday = dpBirthday;
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEtEmail() {
+        return etEmail;
+    }
+
+    public void setEtEmail(String etEmail) {
+        this.etEmail = etEmail;
+    }
+
+    public String getEtPassword() {
+        return etPassword;
+    }
+
+    public void setEtPassword(String etPassword) {
+        this.etPassword = etPassword;
+    }
+
+    public Date getDpBirthday() {
+        return dpBirthday;
+    }
+
+    public void setDpBirthday(Date dpBirthday) {
+        this.dpBirthday = dpBirthday;
+    }
+
+    public boolean isLicense() {
+        return license;
+    }
+
+    public void setLicense(boolean license) {
+        this.license = license;
+    }
+
+    public boolean isGreenform() {
+        return greenform;
+    }
+
+    public void setGreenform(boolean greenform) {
+        this.greenform = greenform;
+    }
+
+    public int isType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isTheory() {
+        return theory;
+    }
+
+    public void setTheory(boolean theory) {
+        this.theory = theory;
+    }
+
+    public Date getLicenseDate() {
+        return licenseDate;
+    }
+
+    public void setLicenseDate(Date licenseDate) {
+        this.licenseDate = licenseDate;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+<TextView
+android:id="@+id/appTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Drive guard"
+android:textSize="40sp"
+android:textStyle="bold"
+android:textColor="@color/black"
+app:layout_constraintTop_toTopOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+android:layout_marginTop="100dp" />
+
+<TextView
+android:id="@+id/congratulationMessage"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:text="We're excited to help you start your journey toward becoming a skilled driver!"
+android:textSize="18sp"
+android:textColor="@color/black"
+app:layout_constraintTop_toBottomOf="@id/appTitle"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+android:layout_marginTop="20dp"
+android:padding="8dp" />
+
+<Button
+android:id="@+id/startButton"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:text="Get Started"
+android:textColor="@android:color/white"
+    android:background="@drawable/button_background"
+app:layout_constraintTop_toBottomOf="@id/congratulationMessage"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+android:layout_marginTop="30dp"
+android:padding="16dp"
+android:layout_marginBottom="8dp" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
