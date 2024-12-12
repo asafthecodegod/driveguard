@@ -1,4 +1,23 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#E0E0E0"/>  <!-- Light gray background -->
-    <corners android:radius="10dp"/>  <!-- Rounded corners -->
-</shape>
+<?xml version="1.0" encoding="utf-8"?>
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:toDegrees="360"
+    android:pivotX="50%"
+    android:pivotY="50%">
+
+    <shape
+        android:shape="ring"
+        android:innerRadiusRatio="2.5"
+
+        android:thickness="10dp"
+        android:useLevel="true">
+
+        <gradient
+            android:angle="0"
+            android:startColor="#F6F8F7"
+            android:endColor="#009688"
+            android:type="sweep"
+            android:useLevel="false"/>
+    </shape>
+</rotate>
+

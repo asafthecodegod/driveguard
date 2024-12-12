@@ -1,4 +1,32 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#4CAF50"/>  <!-- Green color for progress -->
-    <corners android:radius="10dp"/>  <!-- Rounded corners -->
-</shape>
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape
+            android:shape="ring">
+            <solid android:color="#e0e0e0"/> <!-- Background color (inactive) -->
+            <size
+                android:width="10dp"
+                android:height="10dp"/>
+        </shape>
+    </item>
+
+    <item android:id="@android:id/secondaryProgress">
+        <shape
+            android:shape="ring">
+            <solid android:color="#009688"/> <!-- The color of the progress (filled part) -->
+            <size
+                android:width="10dp"
+                android:height="10dp"/>
+        </shape>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <shape
+            android:shape="ring">
+            <solid android:color="#009688"/> <!-- The color of the progress (filled part) -->
+            <size
+                android:width="10dp"
+                android:height="10dp"/>
+        </shape>
+    </item>
+</layer-list>

@@ -48,7 +48,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         setContentView(R.layout.activity_past_learning);
 
         hello = findViewById(R.id.textView);
-        //nightprogressBar = findViewById(R.id.nightprogressBar);
+        nightprogressBar = findViewById(R.id.night_progress_bar);
         dayprogressText = findViewById(R.id.day_progress_text);
         nightprogressText = findViewById(R.id.night_progress_text);
 
@@ -58,6 +58,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         // Initialize Firebase manager and start data reading
         fireBaseManager = new FireBaseManager(this);
         fireBaseManager.readData(this);
+        nightprogressBar.setProgress(0);
 
         // If the userName is available, set it to the TextView
         if (userName != null) {
@@ -65,21 +66,41 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         }
 
         // Start progress bar update (animation)
-        startProgressBarUpdate();
     }
 
     private void startProgressBarUpdate() {
-        handler.postDelayed(new Runnable() {
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                int cProg = 0;
+//                // Increment progress until it reaches 100%
+//                if (cProg<progress) {
+//                    cProg++;
+//                    handler.postDelayed(this, 100); // Repeat after 100ms
+//                }
+//            }
+//        }, 100); // Start updating the progress after 100ms
+
+        int p = (progress * 100) / 180;
+        Handler handler = new Handler();
+
+        Runnable updateProgressRunnable = new Runnable() {
+            int i = 1;
+
             @Override
             public void run() {
-                nightprogressBar.setProgress(0);
-                // Increment progress until it reaches 100%
-                if (progress/180 <1) {
-                    progress++;
-                    handler.postDelayed(this, 100); // Repeat after 100ms
+                if (i <= p) {
+                    nightprogressBar.setProgress(i);
+                    i++;
+
+                    handler.postDelayed(this, 10);
                 }
             }
-        }, 100); // Start updating the progress after 100ms
+        };
+
+        // Start the delayed progress update
+        handler.post(updateProgressRunnable);
+
     }
 
     @Override
@@ -108,6 +129,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             long diffInMillis = currentDate.getTime() - licenseDate.getTime();
             long diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
             progress = (int) diffInDays;
+            startProgressBarUpdate();
             // Show a toast with the difference in days
             Toast.makeText(this, "You have held your license for " + diffInDays + " days", Toast.LENGTH_SHORT).show();
 
