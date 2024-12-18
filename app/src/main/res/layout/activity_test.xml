@@ -18,6 +18,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:progressDrawable="@drawable/circle_progress_bar"
-        android:background="@drawable/circle_shape" />
+        android:background="@drawable/night_circle_shape" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

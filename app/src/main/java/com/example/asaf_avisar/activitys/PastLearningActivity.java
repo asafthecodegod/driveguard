@@ -17,6 +17,7 @@ import com.example.asaf_avisar.StudentUser;
 import com.example.asaf_avisar.TeacherUser;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     private CheckBox nightcheckBox;
     private TextView hello;
     private ProgressBar nightprogressBar;
+    private ProgressBar dayprogressBar;
     private TextView dayprogressText;
     private TextView nightprogressText;
 
@@ -39,6 +41,10 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     private String userName;
     private int progress;
     private Handler handler = new Handler();
+    private TextView licenseIssueDateTextView;
+    private TextView dayEscortEndDateTextView;
+    private TextView nightEscortEndDateTextView;
+    private Date licenseDate;
 
 
     @Override
@@ -47,8 +53,18 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         EdgeToEdge.enable(this); // Enable edge-to-edge feature
         setContentView(R.layout.activity_past_learning);
 
+        licenseIssueDateTextView = findViewById(R.id.license_issue_date);
+        dayEscortEndDateTextView = findViewById(R.id.day_escort_end_date);
+        nightEscortEndDateTextView = findViewById(R.id.night_escort_end_date);
+
+
+
+
+
         hello = findViewById(R.id.textView);
         nightprogressBar = findViewById(R.id.night_progress_bar);
+        dayprogressBar = findViewById(R.id.day_progress_bar);
+
         dayprogressText = findViewById(R.id.day_progress_text);
         nightprogressText = findViewById(R.id.night_progress_text);
 
@@ -69,19 +85,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     }
 
     private void startProgressBarUpdate() {
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                int cProg = 0;
-//                // Increment progress until it reaches 100%
-//                if (cProg<progress) {
-//                    cProg++;
-//                    handler.postDelayed(this, 100); // Repeat after 100ms
-//                }
-//            }
-//        }, 100); // Start updating the progress after 100ms
-
-        int p = (progress * 100) / 180;
+        int pn = (progress * 100) / 180;
         Handler handler = new Handler();
 
         Runnable updateProgressRunnable = new Runnable() {
@@ -89,7 +93,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
             @Override
             public void run() {
-                if (i <= p) {
+                if (i <= pn) {
                     nightprogressBar.setProgress(i);
                     i++;
 
@@ -97,9 +101,28 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
                 }
             }
         };
+        int pd = (progress * 100) / 90;
+
+        Handler handlerday = new Handler();
+
+        Runnable updateProgressRunnableday = new Runnable() {
+            int j = 1;
+
+            @Override
+            public void run() {
+                if (j <= pd) {
+                    dayprogressBar.setProgress(j);
+                    j++;
+
+                    handlerday.postDelayed(this, 10);
+                }
+            }
+        };
 
         // Start the delayed progress update
         handler.post(updateProgressRunnable);
+        handlerday.post(updateProgressRunnableday);
+
 
     }
 
@@ -128,13 +151,53 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             Date currentDate = currentCalendar.getTime();
             long diffInMillis = currentDate.getTime() - licenseDate.getTime();
             long diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
+
+            // Update progress based on the number of days
             progress = (int) diffInDays;
-            startProgressBarUpdate();
+            startProgressBarUpdate();  // Start updating the progress bar
+
             // Show a toast with the difference in days
             Toast.makeText(this, "You have held your license for " + diffInDays + " days", Toast.LENGTH_SHORT).show();
 
             // Update the progress and checkboxes based on the number of days
             updateProgress(diffInDays);
+
+            // Now handle the license issue date from the TextView for day and night escort dates
+            String licenseIssueDateText = licenseIssueDateTextView.getText().toString();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+            // Extract and parse the date from the TextView string
+
+            try {
+                String licenseDateString = licenseIssueDateText.split(":")[1].trim();  // Extract the date part
+                Date licenseIssueDate = dateFormat.parse(licenseDateString);
+
+
+
+                // Calculate Day Escort End Date (3 months after license date)
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(licenseDate);
+                Date dayEscortEndDate = calendar.getTime();
+                String dayEscortEndDateText = dateFormat.format(dayEscortEndDate);
+                licenseIssueDateTextView.setText("תאריך הפקת רישיון:"+ dayEscortEndDateText);
+                calendar.add(Calendar.MONTH, 3);  // Add 3 months
+                dayEscortEndDate = calendar.getTime();
+                dayEscortEndDateText = dateFormat.format(dayEscortEndDate);
+                dayEscortEndDateTextView.setText("תאריך סיום מלווה יום: " + dayEscortEndDateText);
+
+
+
+                // Calculate Night Escort End Date (6 months after license date)
+                calendar.setTime(licenseDate);  // Reset the calendar
+                calendar.add(Calendar.MONTH, 6);  // Add 6 months
+                Date nightEscortEndDate = calendar.getTime();
+                String nightEscortEndDateText = dateFormat.format(nightEscortEndDate);
+                nightEscortEndDateTextView.setText("תאריך סיום מלווה לילה: " + nightEscortEndDateText);
+
+            } catch (Exception e) {
+                e.printStackTrace();  // Handle parsing errors
+                Toast.makeText(this, "Error parsing license issue date", Toast.LENGTH_SHORT).show();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

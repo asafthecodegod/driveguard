@@ -6,7 +6,7 @@
             <solid android:color="#e0e0e0"/> <!-- Background color (inactive) -->
             <size
                 android:width="10dp"
-                android:height="10dp"/>
+                android:height="2dp"/>
         </shape>
     </item>
 
@@ -16,17 +16,17 @@
             <solid android:color="#009688"/> <!-- The color of the progress (filled part) -->
             <size
                 android:width="10dp"
-                android:height="10dp"/>
+                android:height="2dp"/>
         </shape>
     </item>
 
     <item android:id="@android:id/progress">
         <shape
             android:shape="ring">
-            <solid android:color="#009688"/> <!-- The color of the progress (filled part) -->
+            <solid android:color="#FF9800"/> <!-- The color of the progress (filled part) -->
             <size
                 android:width="10dp"
-                android:height="10dp"/>
+                android:height="2dp"/>
         </shape>
     </item>
 </layer-list>
