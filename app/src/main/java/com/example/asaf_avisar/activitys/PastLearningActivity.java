@@ -1,8 +1,12 @@
 package com.example.asaf_avisar.activitys;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,11 +22,12 @@ import com.example.asaf_avisar.TeacherUser;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class PastLearningActivity extends AppCompatActivity implements FirebaseCallback {
+public class PastLearningActivity extends AppCompatActivity implements FirebaseCallback, View.OnClickListener {
 
     // Firebase authentication
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -36,6 +41,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     private ProgressBar dayprogressBar;
     private TextView dayprogressText;
     private TextView nightprogressText;
+    private ImageButton logout;
 
     // Variables for progress calculation
     private String userName;
@@ -57,8 +63,8 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         dayEscortEndDateTextView = findViewById(R.id.day_escort_end_date);
         nightEscortEndDateTextView = findViewById(R.id.night_escort_end_date);
 
-
-
+        logout = findViewById(R.id.logOut);
+        logout.setOnClickListener(this);
 
 
         hello = findViewById(R.id.textView);
@@ -73,7 +79,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
         // Initialize Firebase manager and start data reading
         fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.readData(this);
+        fireBaseManager.readData(this,"Student");
         nightprogressBar.setProgress(0);
 
         // If the userName is available, set it to the TextView
@@ -137,6 +143,11 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
         // Call method to update progress based on the user's license date
         updateProgressBasedOnLicense(user.getLicenseDate());
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+
     }
 
     private void updateProgressBasedOnLicense(Date licenseDate) {
@@ -227,11 +238,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         }
     }
 
-    @Override
-    public void oncallbackTeacher(TeacherUser user) {
-        // Handle callback for teacher data (if necessary)
-        Toast.makeText(this, "Hello Teacher " + user.getName(), Toast.LENGTH_SHORT).show();
-    }
+
 
     @Override
     protected void onPause() {
@@ -245,5 +252,13 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         super.onDestroy();
         // Ensure all handlers are removed when the activity is destroyed
         handler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == logout)
+        {
+            fireBaseManager.logout();
+        }
     }
 }

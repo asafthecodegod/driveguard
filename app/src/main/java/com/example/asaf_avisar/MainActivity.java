@@ -20,9 +20,11 @@ import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, FirebaseCallback {
     private ImageButton logout;
     private FireBaseManager fireBaseManager;
+    private ArrayList<TeacherUser>  teacher = new ArrayList<TeacherUser>();
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,23 +34,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         logout = findViewById(R.id.logoutButton);
         logout.setOnClickListener(this);
         fireBaseManager = new FireBaseManager(this);
+        fireBaseManager.teacherData(this);
 
 
 
 
-        ArrayList<TeacherUser>  teacher = new ArrayList<TeacherUser>();
         for(int i=0;i<50;i++)
         {
+
             teacher.add(new TeacherUser("gili", "gili@gmail.com", "123456",new  Date(2000,8,1), 234));
 
         }
 
-        RecyclerView recyclerView  =findViewById(R.id.viewteacher);
+        recyclerView  =findViewById(R.id.viewteacher);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        TeacherUserAdapter teacherUserAdapter =new TeacherUserAdapter(teacher);
-        recyclerView.setAdapter(teacherUserAdapter);
+
 
 
 
@@ -65,5 +67,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             fireBaseManager.logout();
         }
+    }
+
+    @Override
+    public void oncallbackStudent(StudentUser user) {
+
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        TeacherUserAdapter teacherUserAdapter =new TeacherUserAdapter(teachers);
+        recyclerView.setAdapter(teacherUserAdapter);
+        System.out.println(teachers.get(0).getEtEmail());
     }
 }

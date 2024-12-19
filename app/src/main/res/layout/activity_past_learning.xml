@@ -6,12 +6,7 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Card View for Night Counter -->
-
-    <!-- Card View for Day Counter -->
-
     <!-- Permissions Section -->
-
     <TextView
         android:id="@+id/permissions_header"
         android:layout_width="wrap_content"
@@ -29,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="תאריך סיום מלווה יום: 14/06/2024"
+        android:text="תאריך סיום מלווה יום: ..."
         app:layout_constraintEnd_toEndOf="@+id/night_escort_end_date"
         app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="@+id/night_escort_end_date"
@@ -40,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="תאריך סיום מלווה לילה: 14/09/2024"
+        android:text="תאריך סיום מלווה לילה: ...."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.447"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,12 +76,6 @@
         app:layout_constraintHorizontal_bias="0.477"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/day_permit" />
-
-    <!-- Date and License Issue Info -->
-
-    <!-- Button for changing license date -->
-
-    <!-- TextView for User Greeting -->
 
     <CheckBox
         android:id="@+id/day_permit"
@@ -188,10 +177,15 @@
             android:progressDrawable="@drawable/day_circle_shape"
             android:rotation="270"
             android:textAlignment="center"
-            android:toDegrees="90"
-
-            />
-
+            android:toDegrees="90" />
     </androidx.cardview.widget.CardView>
 
+    <ImageButton
+        android:id="@+id/logOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_rotate"
+        tools:layout_editor_absoluteY="4dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

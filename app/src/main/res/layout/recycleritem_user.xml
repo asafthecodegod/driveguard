@@ -2,30 +2,41 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/profile_image_icon"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!-- Teacher Icon -->
     <ImageView
         android:id="@+id/teacher_icon"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
+        android:layout_width="88dp"
+        android:layout_height="87dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
+    <!-- Teacher Name -->
+
+    <!-- Rating Bar -->
+
+    <!-- Type Text -->
+
+    <!-- Divider -->
+
     <TextView
         android:id="@+id/teacher_name"
-        android:layout_width="170dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="104dp"
+        android:layout_width="127dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="name"
+        android:textSize="25dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/teacher_icon"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="8dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -33,36 +44,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
         android:max="5"
         android:rating="3.5"
         android:scaleX=".5"
         android:scaleY=".5"
-        android:transformPivotX="0dp"
-        android:transformPivotY="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/type"
-        app:layout_constraintHorizontal_bias="0.121"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/teacher_icon"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="45dp" />
+        app:layout_constraintTop_toBottomOf="@+id/teacher_name"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="type"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="45dp" />
+        app:layout_constraintHorizontal_bias="0.044"
+        app:layout_constraintStart_toEndOf="@+id/teacher_icon"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar"
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/divider"
-        android:layout_width="250dp"
+        android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="@+id/teacher_name"
-        app:layout_constraintHorizontal_bias="0.28"
         app:layout_constraintStart_toEndOf="@+id/teacher_icon"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/type" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

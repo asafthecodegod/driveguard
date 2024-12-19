@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,12 +21,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class RegisterPageActivity extends AppCompatActivity implements View.OnClickListener, DatePicker.OnDateChangedListener {
-    EditText etEmail,etPassword,etUsername;
-    DatePicker dpBirthday;
-    Button registerButton;
-    Check check;
-    FireBaseManager fireBaseManager;
-    Date YearOld;
+    private EditText etEmail,etPassword,etUsername;
+    private DatePicker dpBirthday;
+    private Button registerButton;
+    private Check check;
+    private FireBaseManager fireBaseManager;
+    private Date YearOld;
+    private CheckBox isTeacher;
+    private String userRole = "Student";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,15 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         registerButton.setOnClickListener(this);
         check = new Check();
         fireBaseManager = new FireBaseManager(this);
+        isTeacher = findViewById(R.id.userType);
+
+        isTeacher.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                userRole = "Teacher";  // Set userRole to Teacher when checked
+            } else {
+                userRole = "Student";  // Default role if unchecked
+            }
+        });
     }
 
     public  int calculateAge(int birthYear, int birthMonth, int birthDay) {
@@ -88,7 +100,7 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
                 else
                 {
                     Toast.makeText(this, "Age verified. Proceeding...", Toast.LENGTH_SHORT).show();
-                    fireBaseManager.createUser(new StudentUser(etUsername.getText().toString(),etEmail.getText().toString(),etPassword.getText().toString() ,YearOld));
+                    fireBaseManager.createUser(new StudentUser(etUsername.getText().toString(),etEmail.getText().toString(),etPassword.getText().toString(),YearOld),userRole);
                 }
             }
 

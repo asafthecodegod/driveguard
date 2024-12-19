@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class FireBaseManager {
     private static FirebaseAuth mAuth;
     private static FirebaseDatabase database;
@@ -42,10 +44,10 @@ public class FireBaseManager {
             database = FirebaseDatabase.getInstance();
         return database;
 
-    }public static DatabaseReference getMyRef(){
-        if(myRef == null)
-            myRef = getDatabase().getReference("Student");
+    }public static DatabaseReference getMyRef(String key){
+            myRef = getDatabase().getReference(key);
         return myRef;
+
     }
 
     public boolean isConnecet(){
@@ -64,7 +66,7 @@ public class FireBaseManager {
     }
 
 
-    public void createUser(StudentUser user){
+    public void createUser(StudentUser user,String type){
         getmAuth().createUserWithEmailAndPassword(user.getEtEmail(), user.getEtPassword())
                 .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
                     @Override
@@ -73,7 +75,7 @@ public class FireBaseManager {
                             context.startActivity(new Intent(context, AssessmentActivity.class));
                             //todo
                             Log.d(TAG, "createUserWithEmail:success"+ task.getResult().getUser().getUid());
-                            getMyRef().child(task.getResult().getUser().getUid()).setValue(user);
+                            getMyRef(type).child(task.getResult().getUser().getUid()).setValue(user);
 
 
                         } else {
@@ -102,9 +104,9 @@ public class FireBaseManager {
             }
         });
     }
-    public void readData(FirebaseCallback firebaseCallback)
+    public void readData(FirebaseCallback firebaseCallback,String key)
     {
-        getMyRef().child(getmAuth().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        getMyRef(key).child(getmAuth().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 StudentUser user=snapshot.getValue(StudentUser.class);
@@ -118,9 +120,32 @@ public class FireBaseManager {
             }
         });
     }
+    public void teacherData(FirebaseCallback firebaseCallback)
+    {
+        ArrayList<TeacherUser> teachers= new ArrayList<>();
+        getMyRef("Teacher").addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data: snapshot.getChildren())
+                {
+                    TeacherUser user =data.getValue(TeacherUser.class);
+                    teachers.add(user);
+
+                }
+                firebaseCallback.onCallbackTeacher(teachers);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
 
     public void UpdateUser(StudentUser studentUser) {
-        getMyRef().child(getmAuth().getCurrentUser().getUid()).setValue(studentUser);
+        getMyRef("Student").child(getmAuth().getCurrentUser().getUid()).setValue(studentUser);
     }
 }
 

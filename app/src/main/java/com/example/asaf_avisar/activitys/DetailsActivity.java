@@ -18,10 +18,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.FirebaseCallback;
+import com.example.asaf_avisar.MainActivity;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.StudentUser;
 import com.example.asaf_avisar.TeacherUser;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -50,7 +52,7 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
             hello.setText("Hi, " + userName);
         }
         fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.readData(this);
+        fireBaseManager.readData(this,"Student");
 
         licenseDateLabel = findViewById(R.id.licenseDateLabel);
         citySpinner = findViewById(R.id.citySpinner);
@@ -142,9 +144,14 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
 
 
                 // Pass the licenseDate to the next activity as an extra (if needed)
-                Intent intent = new Intent(DetailsActivity.this, PastLearningActivity.class);
-                intent.putExtra("LICENSE_DATE", licenseDate); // Passing the Date object directly
-                startActivity(intent);
+                if (getLicenseStatus() == false) {
+                    Intent intent = new Intent(DetailsActivity.this, MainActivity.class);
+                    startActivity(intent);  // Make sure to start the activity
+                } else {
+                    Intent intent = new Intent(DetailsActivity.this, PastLearningActivity.class);
+                    intent.putExtra("LICENSE_DATE", licenseDate); // Passing the Date object directly
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -174,9 +181,15 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
 
     // Method to get the license status (Yes or No)
     private boolean getLicenseStatus() {
-        int selectedId = radioGroupLicense.getCheckedRadioButtonId();
-        return selectedId == radioYesLicense.getId(); // Returns true if 'Yes', false if 'No'
+        int selectedId = radioGroupLicense.getCheckedRadioButtonId();  // Get the selected radio button ID
+        if (selectedId == R.id.radioYesLicense) {
+            return true; // If "Yes" is selected, return true
+        } else if (selectedId == R.id.radioNoLicense) {
+            return false; // If "No" is selected, return false
+        }
+        return false; // If no radio button is selected, return false (or handle as needed)
     }
+
 
     // Method to get the license date (only if the user has a license)
     private Date getLicenseDate() {
@@ -204,7 +217,8 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
     }
 
     @Override
-    public void oncallbackTeacher(TeacherUser user) {
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
 
     }
+
 }
