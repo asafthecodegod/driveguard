@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Main RecyclerView to display teacher data -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/viewteacher"
         android:layout_width="316dp"
@@ -18,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.326" />
 
+    <!-- Logout Button -->
     <ImageButton
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
@@ -26,4 +28,13 @@
         tools:layout_editor_absoluteX="5dp"
         tools:layout_editor_absoluteY="4dp" />
 
+    <!-- Button to open the RecyclerView Dialog -->
+    <Button
+        android:id="@+id/showDialogButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Recycler View"
+        app:layout_constraintTop_toBottomOf="@+id/viewteacher"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
