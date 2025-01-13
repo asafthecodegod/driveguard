@@ -16,4 +16,10 @@
         <item>Bat Yam</item>
         <item>Kfar Saba</item>
     </string-array>
+
+    <string name="open_nav">open Navigation Drawer</string>
+    <string name="close_nav">close Navigation Drawer</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

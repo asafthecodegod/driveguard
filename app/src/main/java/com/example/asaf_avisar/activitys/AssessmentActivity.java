@@ -37,7 +37,7 @@ public class AssessmentActivity extends AppCompatActivity implements View.OnClic
             RadioButton selectedRadioButton = findViewById(selectedId);
             Intent intent = null;
             if(selectedId== R.id.beforeLearning)
-                startActivity(new Intent(this, DetailsActivity.class));
+                startActivity(new Intent(this, test.class));
 
             if(selectedId== R.id.midLearning)
                 startActivity(new Intent(this,DetailsActivity.class));

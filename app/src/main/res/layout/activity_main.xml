@@ -26,15 +26,31 @@
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_menu_rotate"
         tools:layout_editor_absoluteX="5dp"
-        tools:layout_editor_absoluteY="4dp" />
+        tools:layout_editor_absoluteY="4dp"
+        tools:ignore="MissingConstraints" />
 
     <!-- Button to open the RecyclerView Dialog -->
+
     <Button
         android:id="@+id/showDialogButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
         android:text="Show Recycler View"
-        app:layout_constraintTop_toBottomOf="@+id/viewteacher"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/viewteacher" />
+
+    <Button
+        android:id="@+id/dismissDialogButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:text="dissmiss Recycler View"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.067"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewteacher" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

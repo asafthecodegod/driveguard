@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         View dialogView = inflater.inflate(R.layout.teacher_list, null);
 
         // Find the RecyclerView inside the dialog layout (correct ID)
-        RecyclerView dialogRecyclerView = dialogView.findViewById(R.id.recyclerViewDialog);
+        RecyclerView dialogRecyclerView = dialogView.findViewById(R.id.viewteacher);
 
         // Set up the layout manager for the RecyclerView inside the dialog
         dialogRecyclerView.setLayoutManager(new LinearLayoutManager(this));

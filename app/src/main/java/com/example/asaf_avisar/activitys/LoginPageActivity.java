@@ -34,7 +34,7 @@ public class LoginPageActivity extends AppCompatActivity implements View.OnClick
         loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener(this);
         check = new Check();
-        registerLink =findViewById(R.id.registerLink);
+        registerLink =findViewById(R.id.signuplink);
         registerLink.setOnClickListener(this);
     }
 

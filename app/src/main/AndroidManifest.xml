@@ -26,6 +26,7 @@
             android:exported="false" />
         <activity
             android:name=".activitys.PastLearningActivity"
+            android:theme="@style/Theme.MainActivity"
             android:exported="false" />
         <activity
             android:name=".activitys.AssessmentActivity"
@@ -50,6 +51,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.lib_name" android:value=""/>
         </activity>
     </application>
 

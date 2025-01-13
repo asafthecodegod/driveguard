@@ -41,7 +41,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     private ProgressBar dayprogressBar;
     private TextView dayprogressText;
     private TextView nightprogressText;
-    private ImageButton logout;
+    private Button logout;
 
     // Variables for progress calculation
     private String userName;

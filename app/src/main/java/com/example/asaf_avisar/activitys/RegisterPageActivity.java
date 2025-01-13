@@ -1,5 +1,6 @@
 package com.example.asaf_avisar.activitys;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -29,20 +31,24 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
     private Date YearOld;
     private CheckBox isTeacher;
     private String userRole = "Student";
-
+    private TextView registerLink;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resgister_page);
-        etEmail = findViewById(R.id.email);
-        etUsername = findViewById(R.id.loginemail);
-        dpBirthday = findViewById(R.id.birthday);
+
+        registerLink =findViewById(R.id.ToLoginText);
+        registerLink.setOnClickListener(this);
+
+        etEmail = findViewById(R.id.userEmail);
+        etUsername = findViewById(R.id.register_username);
+        dpBirthday = findViewById(R.id.birthday_picker);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             dpBirthday.setOnDateChangedListener(this);
         }
-        etPassword = findViewById(R.id.loginpassword);
-        registerButton = findViewById(R.id.registerButton);
+        etPassword = findViewById(R.id.register_password);
+        registerButton = findViewById(R.id.RegisterButton);
         registerButton.setOnClickListener(this);
         check = new Check();
         fireBaseManager = new FireBaseManager(this);
@@ -80,6 +86,12 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view)
     {
+        if( view == registerLink)
+        {
+            startActivity(new Intent(this, LoginPageActivity.class));
+
+        }
+
         if(view == registerButton){
             if ((!check.checkEmail(etEmail.getText().toString())))
                 etEmail.setError("Invild email.");
