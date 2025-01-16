@@ -104,9 +104,9 @@ public class FireBaseManager {
             }
         });
     }
-    public void readData(FirebaseCallback firebaseCallback,String key)
+    public void readData(FirebaseCallback firebaseCallback,String key, String id)
     {
-        getMyRef(key).child(getmAuth().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        getMyRef(key).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 StudentUser user=snapshot.getValue(StudentUser.class);

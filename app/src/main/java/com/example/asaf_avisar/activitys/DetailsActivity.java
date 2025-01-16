@@ -52,7 +52,7 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
             hello.setText("Hi, " + userName);
         }
         fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.readData(this,"Student");
+        fireBaseManager.readData(this,"Student",FragmentManager.getCurrentUser().getUid());
 
         licenseDateLabel = findViewById(R.id.licenseDateLabel);
         citySpinner = findViewById(R.id.citySpinner);
