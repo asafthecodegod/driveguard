@@ -26,7 +26,7 @@ public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.
     @NonNull
     @Override
     public ViewTeacherUser onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View teacherview = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleritem_user, parent,false );
+        View teacherview = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_teacher, parent,false );
         return new ViewTeacherUser(teacherview);
     }
 

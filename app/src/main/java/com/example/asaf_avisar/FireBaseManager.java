@@ -120,6 +120,27 @@ public class FireBaseManager {
             }
         });
     }
+    public void studentData(FirebaseCallback firebaseCallback) {
+        ArrayList<StudentUser> students = new ArrayList<>();
+        getMyRef("Student").addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    StudentUser user = data.getValue(StudentUser.class);
+                    user.setId(data.getKey());
+                    students.add(user);
+                }
+                firebaseCallback.oncallbackArryStudent(students);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
     public void teacherData(FirebaseCallback firebaseCallback)
     {
         ArrayList<TeacherUser> teachers= new ArrayList<>();

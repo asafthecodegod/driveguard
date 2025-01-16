@@ -14,7 +14,7 @@ import com.example.asaf_avisar.HomeFragment;
 import com.example.asaf_avisar.ProflieFragment;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.SettingsFragment;
-import com.example.asaf_avisar.ShareFragment;
+import com.example.asaf_avisar.FriendFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class test extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -62,7 +62,7 @@ public class test extends AppCompatActivity implements NavigationView.OnNavigati
                     .commit();
         } else if (id == R.id.nav_share) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new ShareFragment())
+                    .replace(R.id.fragment_container, new FriendFragment())
                     .commit();
         } else if (id == R.id.nav_about) {
             getSupportFragmentManager().beginTransaction()

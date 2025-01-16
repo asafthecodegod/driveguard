@@ -16,13 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <!-- Teacher Name -->
-
-    <!-- Rating Bar -->
-
-    <!-- Type Text -->
-
-    <!-- Divider -->
 
     <TextView
         android:id="@+id/teacher_name"

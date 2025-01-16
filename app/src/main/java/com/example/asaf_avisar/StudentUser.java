@@ -12,6 +12,8 @@ public class StudentUser {
     protected boolean theory;
     protected Date licenseDate;
     protected String city;
+    protected String id;
+    protected int lessonCounter;
 
     public StudentUser(Date licenseDate, boolean theory, int type, boolean greenform, boolean license,String city) {
         this.licenseDate = licenseDate;
@@ -31,6 +33,22 @@ public class StudentUser {
         this.etPassword = etPassword;
         this.dpBirthday = dpBirthday;
 
+    }
+
+    public int getLessonCounter() {
+        return lessonCounter;
+    }
+
+    public void setLessonCounter(int lessonCounter) {
+        this.lessonCounter = lessonCounter;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

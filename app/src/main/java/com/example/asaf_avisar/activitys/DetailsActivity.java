@@ -207,6 +207,11 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
     }
 
     @Override
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+
+    }
+
+    @Override
     public void oncallbackStudent(StudentUser user) {
         userName = user.getName();
         hello.setText("Hi, " + userName); // Update the TextView with the user's name
