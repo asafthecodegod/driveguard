@@ -56,9 +56,9 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
 
         isTeacher.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                userRole = "Teacher";  // Set userRole to Teacher when checked
+                userRole = "Teacher";
             } else {
-                userRole = "Student";  // Default role if unchecked
+                userRole = "Student";
             }
         });
     }
@@ -74,9 +74,9 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         int age = currentYear - birthYear;
         YearOld = new Date(currentYear,currentMonth,currentDay);
 
-        // Adjust the age if the birthday hasn't occurred yet this year
+
         if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
-            age--; // Subtract 1 if the birthday hasn't occurred yet
+            age--;
         }
 
         return age;
@@ -89,7 +89,6 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         if( view == registerLink)
         {
             startActivity(new Intent(this, LoginPageActivity.class));
-
         }
 
         if(view == registerButton){
@@ -103,8 +102,6 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             {
                 int age = calculateAge(dpBirthday.getYear(),dpBirthday.getMonth(),dpBirthday.getDayOfMonth());
-                //Toast.makeText(this, "Your calculated age: " + dpBirthday, Toast.LENGTH_SHORT).show();
-
                 if ((age)< 16)
                 {
                     Toast.makeText(this, "You must be at least 16 years old", Toast.LENGTH_SHORT).show();

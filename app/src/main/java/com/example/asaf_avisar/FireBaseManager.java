@@ -64,6 +64,9 @@ public class FireBaseManager {
         context.startActivity(new Intent(context, LoginOrRegistretionActivity.class));
 
     }
+    public String getUserid(){
+        return getmAuth().getCurrentUser().getUid();
+    }
 
 
     public void createUser(StudentUser user,String type){

@@ -79,7 +79,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
         // Initialize Firebase manager and start data reading
         fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.readData(this,"Student");
+        fireBaseManager.readData(this,"Student",fireBaseManager.getUserid());
         nightprogressBar.setProgress(0);
 
         // If the userName is available, set it to the TextView

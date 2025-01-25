@@ -1,5 +1,6 @@
 package com.example.asaf_avisar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,9 +27,10 @@ public class StudentProflie extends AppCompatActivity implements FirebaseCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_proflie);
-
         fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.readData(this,"Student",);
+        Intent intent = getIntent();
+        if(intent.getStringExtra("STUDENT_ID") != null)
+            fireBaseManager.readData(this,"Student",intent.getStringExtra("STUDENT_ID"));
         // Initialize views
         profilePicture = findViewById(R.id.profile_picture);
         studentName = findViewById(R.id.student_name);
