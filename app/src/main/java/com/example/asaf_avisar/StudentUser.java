@@ -1,5 +1,10 @@
 package com.example.asaf_avisar;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 public class StudentUser {
@@ -14,6 +19,7 @@ public class StudentUser {
     protected String city;
     protected String id;
     protected int lessonCounter;
+    protected String profilePhotoBase64;
 
     public StudentUser(Date licenseDate, boolean theory, int type, boolean greenform, boolean license,String city) {
         this.licenseDate = licenseDate;
@@ -33,6 +39,29 @@ public class StudentUser {
         this.etPassword = etPassword;
         this.dpBirthday = dpBirthday;
 
+    }
+
+
+    public String getProfilePhotoBase64() {
+        return profilePhotoBase64;
+    }
+
+    public void setProfilePhotoBase64(String profilePhotoBase64) {
+        this.profilePhotoBase64 = profilePhotoBase64;
+    }
+
+    // Encode a Bitmap to Base64
+    public  String convertTo64Base(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] data = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(data, Base64.DEFAULT);
+    }
+
+    // Decode a Base64 String to Bitmap
+    public static   Bitmap convert64BaseToBitmap(String base64Code) {
+        byte[] decodedString = Base64.decode(base64Code, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
     }
 
     public int getLessonCounter() {

@@ -75,7 +75,7 @@ public class FireBaseManager {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            context.startActivity(new Intent(context, AssessmentActivity.class));
+                            context.startActivity(new Intent(context, Addpfp.class));
                             //todo
                             Log.d(TAG, "createUserWithEmail:success"+ task.getResult().getUser().getUid());
                             getMyRef(type).child(task.getResult().getUser().getUid()).setValue(user);
@@ -170,6 +170,10 @@ public class FireBaseManager {
 
     public void UpdateUser(StudentUser studentUser) {
         getMyRef("Student").child(getmAuth().getCurrentUser().getUid()).setValue(studentUser);
+    }
+
+    public void saveImage(String profilePhotoBase64) {
+        getMyRef("Student").child(getmAuth().getCurrentUser().getUid()).child("profilePhotoBase64").setValue(profilePhotoBase64);
     }
 }
 

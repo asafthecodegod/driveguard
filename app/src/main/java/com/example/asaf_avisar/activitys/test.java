@@ -1,4 +1,5 @@
 package com.example.asaf_avisar.activitys;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import com.example.asaf_avisar.ProflieFragment;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.SettingsFragment;
 import com.example.asaf_avisar.FriendFragment;
+import com.example.asaf_avisar.StudentProfile;
 import com.google.android.material.navigation.NavigationView;
 
 public class test extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -73,9 +75,8 @@ public class test extends AppCompatActivity implements NavigationView.OnNavigati
                 fireBaseManager.logout();
 
         }else if (id == R.id.nav_proflie) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new ProflieFragment())
-                    .commit();
+            Intent intent = new Intent(this, StudentProfile.class);
+            startActivity(intent);
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

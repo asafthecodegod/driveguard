@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 public class PastLearningActivity extends AppCompatActivity implements FirebaseCallback, View.OnClickListener {
 
     // Firebase authentication
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FireBaseManager fireBaseManager;
 
     // UI elements

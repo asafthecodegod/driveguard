@@ -12,10 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-
-import kotlin.jvm.internal.TypeReference;
 
 public class StudentUserAdapter extends RecyclerView.Adapter<StudentUserAdapter.ViewStudentUser> {
     private ArrayList<StudentUser> studentUsers;
@@ -48,7 +45,7 @@ public class StudentUserAdapter extends RecyclerView.Adapter<StudentUserAdapter.
 
         // Handle item clicks to open the selected student's profile
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, StudentProflie.class);
+            Intent intent = new Intent(context, StudentProfile.class);
             intent.putExtra("STUDENT_ID", currentStudentUser.getId()); // Pass student ID
             context.startActivity(intent);
         });
