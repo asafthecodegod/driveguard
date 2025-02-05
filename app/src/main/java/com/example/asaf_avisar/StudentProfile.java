@@ -36,7 +36,7 @@ public class StudentProfile extends AppCompatActivity implements FirebaseCallbac
         else
             fireBaseManager.readData(this,"Student", fireBaseManager.getUserid());
         // Initialize views
-        profilePicture = findViewById(R.id.profile_picture);
+        profilePicture = findViewById(R.id.profile_image);
         studentName = findViewById(R.id.student_name);
         driverType = findViewById(R.id.driver_type);
         studentCity = findViewById(R.id.student_city);
@@ -74,8 +74,12 @@ public class StudentProfile extends AppCompatActivity implements FirebaseCallbac
         }
         // Setting other data
         studentName.setText(student.getName());
-        driverType.setText("Driver Type: " + student.isType());
-        studentCity.setText("City: " + student.getCity());
+        if(student.isType() == 0)
+            driverType.setText("Driver Type:manual");
+        else
+            driverType.setText("Driver Type: automatic");
+
+        studentCity.setText("City: " + student.getCity() );
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         licenseDate.setText("License: " + (student.getLicenseDate() != null ?

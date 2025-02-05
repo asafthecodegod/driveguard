@@ -3,7 +3,6 @@ package com.example.asaf_avisar.activitys;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.telecom.Call;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -11,7 +10,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.asaf_avisar.MainActivity;
+import com.example.asaf_avisar.AddLesson;
 import com.example.asaf_avisar.R;
 
 public class AssessmentActivity extends AppCompatActivity implements View.OnClickListener {
@@ -37,10 +36,10 @@ public class AssessmentActivity extends AppCompatActivity implements View.OnClic
             RadioButton selectedRadioButton = findViewById(selectedId);
             Intent intent = null;
             if(selectedId== R.id.beforeLearning)
-                startActivity(new Intent(this, test.class));
+                startActivity(new Intent(this, menu.class));
 
             if(selectedId== R.id.midLearning)
-                startActivity(new Intent(this,DetailsActivity.class));
+                startActivity(new Intent(this, AddLesson.class));
 
             if(selectedId == R.id.pastLearning)
                 startActivity(new Intent(this, PastLearningActivity.class));

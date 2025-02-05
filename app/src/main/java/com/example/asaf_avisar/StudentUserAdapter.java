@@ -66,11 +66,13 @@ public class StudentUserAdapter extends RecyclerView.Adapter<StudentUserAdapter.
         public ViewStudentUser(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.teacher_name);
-          //  emailTextView = itemView.findViewById(R.id.userEmail);
+            //  emailTextView = itemView.findViewById(R.id.userEmail);
             profileImageView = itemView.findViewById(R.id.teacher_icon);
+
+
             ratingBar = itemView.findViewById(R.id.ratingBar);
             ratingBar.setVisibility(View.GONE);
-             type= itemView.findViewById(R.id.type);
+            type = itemView.findViewById(R.id.type);
             type.setVisibility(View.GONE);
 
 

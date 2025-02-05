@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.SearchView; // Correct import
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +16,7 @@ import java.util.Date;
 public class FriendFragment extends Fragment implements FirebaseCallback {
 
     private RecyclerView recyclerView;
-    private SearchView searchBar;
+    private SearchView searchBar; // Keep the correct SearchView import
     private StudentUserAdapter studentUserAdapter; // Adapter for StudentUser
     private ArrayList<StudentUser> students = new ArrayList<>(); // Full student list
     private ArrayList<StudentUser> filteredStudents = new ArrayList<>(); // Filtered student list
@@ -29,7 +29,7 @@ public class FriendFragment extends Fragment implements FirebaseCallback {
         View rootView = inflater.inflate(R.layout.fragment_friend, container, false);
 
         // Initialize views
-        searchBar = rootView.findViewById(R.id.searchBar);
+        searchBar = rootView.findViewById(R.id.searchBar); // Use the correct SearchView reference
         recyclerView = rootView.findViewById(R.id.viewteacher); // Assuming the same RecyclerView ID is used
 
         // Set up RecyclerView

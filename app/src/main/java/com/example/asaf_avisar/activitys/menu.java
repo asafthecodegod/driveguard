@@ -12,14 +12,17 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.asaf_avisar.AboutFragment;
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.HomeFragment;
-import com.example.asaf_avisar.ProflieFragment;
+import com.example.asaf_avisar.HomePage;
+import com.example.asaf_avisar.InfoActivity;
+import com.example.asaf_avisar.MainActivity;
+import com.example.asaf_avisar.MyLessons;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.SettingsFragment;
 import com.example.asaf_avisar.FriendFragment;
 import com.example.asaf_avisar.StudentProfile;
 import com.google.android.material.navigation.NavigationView;
 
-public class test extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class menu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
 
     private FireBaseManager fireBaseManager;
@@ -58,11 +61,12 @@ public class test extends AppCompatActivity implements NavigationView.OnNavigati
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new HomeFragment())
                     .commit();
-        } else if (id == R.id.nav_settings) {
+        }
+        else if (id == R.id.nav_settings) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new SettingsFragment())
                     .commit();
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_friends) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new FriendFragment())
                     .commit();
@@ -70,6 +74,18 @@ public class test extends AppCompatActivity implements NavigationView.OnNavigati
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new AboutFragment())
                     .commit();
+        } else if (id == R.id.nav_count) {
+            Intent intent = new Intent(this, PastLearningActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_myLessons) {
+            Intent intent = new Intent(this, MyLessons.class);
+            startActivity(intent);
+        }else if (id == R.id.nav_info) {
+            Intent intent = new Intent(this, InfoActivity.class);
+            startActivity(intent);
+        }else if (id == R.id.nav_find_teacher) {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
         } else if (id == R.id.nav_logout) {
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
                 fireBaseManager.logout();

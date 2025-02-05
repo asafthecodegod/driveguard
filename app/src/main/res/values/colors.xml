@@ -4,6 +4,21 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray" >#D3D3D3</color>
     <color name="lavender" >#8692f7</color>
+    <color name="blue">#4A90E2</color>  <!-- Add Friend button -->
+    <color name="orange">#FFA500</color>  <!-- Nudge button -->
 
+    <!-- Background Colors -->
+    <color name="light_gray">#F5F5F5</color>  <!-- Page background -->
+    <color name="card_background">#FFFFFF</color>  <!-- Profile card background -->
+
+    <!-- Text Colors -->
+    <color name="dark_gray">#333333</color>
+    <color name="medium_gray">#666666</color>
+    <color name="light_text">#AAAAAA</color>
+
+    <!-- Progress Bar Colors -->
+    <color name="progress_green">#4CAF50</color>  <!-- Completed progress -->
+    <color name="progress_yellow">#FFC107</color>  <!-- In progress -->
+    <color name="progress_red">#FF5722</color>  <!-- Not started -->
 
 </resources>

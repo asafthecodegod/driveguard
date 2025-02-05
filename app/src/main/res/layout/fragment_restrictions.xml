@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:scrollbars="vertical">
+
+        <!-- Title Section -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="תקנות מיוחדות, הגבלות ועבירות"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Introduction Section -->
+        <TextView
+            android:id="@+id/intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="נהג מוגדר כנהג חדש בשנתיים הראשונות לאחר קבלת רישיון הנהיגה. נהג חדש צעיר הוא נהג חדש, שטרם מלאו לו 24 שנים.\nבעלי רישיון לאופנוע, לטרקטור או למכונה ניידת המוציאים רישיון נהיגה לרכב פרטי או רכב משא ייחשבו גם הם לנהגים חדשים לאחר קבלת הרישיון החדש. במהלך התקופה בה מוגדר הנהג כנהג חדש צעיר חלות עליו תקנות מיוחדות, בהן חובת נוכחות של נהג מלווה, והגבלת מספר הנוסעים שבאפשרותו להסיע."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Exemption Section -->
+        <TextView
+            android:id="@+id/exemptionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="נהג חדש שגילו 24 שנים או יותר פטור מליווי"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/exemptionInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="בהתאם לתקנה 213 בתקנות התעבורה, בתום תקופת ההגדרה כנהג חדש יחודש רישיון הנהיגה לחמש שנים בלבד, במהלכן יהיה חייב הנהג לעבור קורס ריענון."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Driver's Sign Section -->
+        <TextView
+            android:id="@+id/signTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="שלט נהג חדש"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/signInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="בהתאם לתקנות התעבורה, כל נהג המוגדר כנהג חדש חייב לתלות על השמשה האחורית של כלי הרכב בו הוא נוהג שלט המיידע את הנהגים האחרים כי לפניהם נהג חסר ניסיון, זאת על מנת שיגלו כלפיו זהירות וסבלנות. ברכב פרטי וברכב מסחרי עד 4 טונות, יש להציג שלט בגודל של 12X20 סנטימטרים. גובה האותיות יהיה 40 מילימטרים בצבע שחור על גבי רקע צהוב המחזיר אור."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Traffic Violations Section -->
+        <TextView
+            android:id="@+id/violationsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="עבירות תנועה"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/violationsInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="מהנהג החדש נדרשת הקפדה יתרה על חוקי התנועה, והימנעות מביצוע עבירות תנועה המצוינות בתוספת השלישית לפקודת התעבורה. נהג חדש, שהורשע באחת מהעבירות הללו, יחויב במעבר בחינה עיונית. אם הטיל עליו בית המשפט עונש של פסילה מלהחזיק רישיון נהיגה לתקופה של שלושה חודשים או יותר, יחויב הנהג בבחינה עיונית ובבחינה מעשית."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/violationsAdditionalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="אם הורשע בעבירת שכרות סמים או בעבירה שגרמה לתאונת דרכים בה נהרג אדם או נחבל חבלה של ממש, יחויב גם בביצוע בדיקות רפואיות במכון הרפואי לבטיחות בדרכים."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/violationsFinalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="לאחר ביצוע אמצעי התיקון שצוינו (בחינה עיונית, בחינה מעשית, בדיקות רפואיות וכו') הנהג ישוב להיות נהג חדש למשך שנתיים נוספות."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+</ScrollView>

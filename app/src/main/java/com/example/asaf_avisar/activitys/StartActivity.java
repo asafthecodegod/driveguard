@@ -14,8 +14,8 @@ import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.R;
 
 public class StartActivity extends AppCompatActivity {
-private Button button;
-private FireBaseManager fireBaseManager;
+    private Button button;
+    private FireBaseManager fireBaseManager;
 
 
 
@@ -30,7 +30,7 @@ private FireBaseManager fireBaseManager;
         fireBaseManager = new FireBaseManager(this );
         if(fireBaseManager.isConnecet())
         {
-            startActivity(new Intent(this, AssessmentActivity.class));
+            startActivity(new Intent(this, menu.class));
         }
 
 
@@ -43,7 +43,7 @@ private FireBaseManager fireBaseManager;
 
                 Intent intent = new Intent(StartActivity.this, LoginOrRegistretionActivity.class);
                 startActivity(intent);
-                
+
             }
         });
 

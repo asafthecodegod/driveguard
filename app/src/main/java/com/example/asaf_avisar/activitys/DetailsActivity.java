@@ -145,10 +145,10 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
 
                 // Pass the licenseDate to the next activity as an extra (if needed)
                 if (getLicenseStatus() == false) {
-                    Intent intent = new Intent(DetailsActivity.this, MainActivity.class);
+                    Intent intent = new Intent(DetailsActivity.this, menu.class);
                     startActivity(intent);  // Make sure to start the activity
                 } else {
-                    Intent intent = new Intent(DetailsActivity.this, PastLearningActivity.class);
+                    Intent intent = new Intent(DetailsActivity.this, menu.class);
                     intent.putExtra("LICENSE_DATE", licenseDate); // Passing the Date object directly
                     startActivity(intent);
                 }

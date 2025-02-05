@@ -1,8 +1,8 @@
 package com.example.asaf_avisar.activitys;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -50,6 +50,9 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     private TextView dayEscortEndDateTextView;
     private TextView nightEscortEndDateTextView;
     private Date licenseDate;
+    int dayCounter, nightCounter;
+    long diffInDays;
+    int num;
 
 
     @Override
@@ -64,7 +67,6 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
         logout = findViewById(R.id.logOut);
         logout.setOnClickListener(this);
-
 
         hello = findViewById(R.id.textView);
         nightprogressBar = findViewById(R.id.night_progress_bar);
@@ -127,31 +129,6 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         // Start the delayed progress update
         handler.post(updateProgressRunnable);
         handlerday.post(updateProgressRunnableday);
-
-
-    }
-
-    @Override
-    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
-
-    }
-
-    @Override
-    public void oncallbackStudent(StudentUser user) {
-        // Retrieve user name from Firebase and update the TextView
-        userName = user.getName();
-        hello.setText("Hi, " + userName); // Update the TextView with the user's name
-
-        // Show a toast with the user's name
-        Toast.makeText(this, "Hi " + userName, Toast.LENGTH_SHORT).show();
-
-        // Call method to update progress based on the user's license date
-        updateProgressBasedOnLicense(user.getLicenseDate());
-    }
-
-    @Override
-    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
-
     }
 
     private void updateProgressBasedOnLicense(Date licenseDate) {
@@ -165,10 +142,12 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             Calendar currentCalendar = Calendar.getInstance();
             Date currentDate = currentCalendar.getTime();
             long diffInMillis = currentDate.getTime() - licenseDate.getTime();
-            long diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
+            diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
+
 
             // Update progress based on the number of days
             progress = (int) diffInDays;
+            num = progress;
             startProgressBarUpdate();  // Start updating the progress bar
 
             // Show a toast with the difference in days
@@ -177,37 +156,21 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             // Update the progress and checkboxes based on the number of days
             updateProgress(diffInDays);
 
-            // Now handle the license issue date from the TextView for day and night escort dates
+
+            // Handle license issue date
             String licenseIssueDateText = licenseIssueDateTextView.getText().toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-            // Extract and parse the date from the TextView string
-
+            // Parse and handle the license issue date
             try {
                 String licenseDateString = licenseIssueDateText.split(":")[1].trim();  // Extract the date part
-                Date licenseIssueDate = dateFormat.parse(licenseDateString);
+                Date parsedLicenseDate = dateFormat.parse(licenseDateString);
 
-
-
-                // Calculate Day Escort End Date (3 months after license date)
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(licenseDate);
-                Date dayEscortEndDate = calendar.getTime();
-                String dayEscortEndDateText = dateFormat.format(dayEscortEndDate);
-                licenseIssueDateTextView.setText("תאריך הפקת רישיון:"+ dayEscortEndDateText);
-                calendar.add(Calendar.MONTH, 3);  // Add 3 months
-                dayEscortEndDate = calendar.getTime();
-                dayEscortEndDateText = dateFormat.format(dayEscortEndDate);
-                dayEscortEndDateTextView.setText("תאריך סיום מלווה יום: " + dayEscortEndDateText);
-
-
-
-                // Calculate Night Escort End Date (6 months after license date)
-                calendar.setTime(licenseDate);  // Reset the calendar
-                calendar.add(Calendar.MONTH, 6);  // Add 6 months
-                Date nightEscortEndDate = calendar.getTime();
-                String nightEscortEndDateText = dateFormat.format(nightEscortEndDate);
-                nightEscortEndDateTextView.setText("תאריך סיום מלווה לילה: " + nightEscortEndDateText);
+                if (parsedLicenseDate != null) {
+                    Log.d("PastLearningActivity", "Parsed License Date: " + parsedLicenseDate.toString());
+                    // Now, calculate the day and night escort end dates based on the parsed license date
+                    calculateEscortEndDates(parsedLicenseDate, dateFormat);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();  // Handle parsing errors
@@ -220,10 +183,27 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         }
     }
 
+    private void calculateEscortEndDates(Date licenseDate, SimpleDateFormat dateFormat) {
+        // Calculate Day Escort End Date (3 months after license date)
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(licenseDate);
+        calendar.add(Calendar.MONTH, 3);  // Add 3 months
+        Date dayEscortEndDate = calendar.getTime();
+        String dayEscortEndDateText = dateFormat.format(dayEscortEndDate);
+        dayEscortEndDateTextView.setText("תאריך סיום מלווה יום: " + dayEscortEndDateText);
+
+        // Calculate Night Escort End Date (6 months after license date)
+        calendar.add(Calendar.MONTH, 3);  // Add another 3 months for the night escort
+        Date nightEscortEndDate = calendar.getTime();
+        String nightEscortEndDateText = dateFormat.format(nightEscortEndDate);
+        nightEscortEndDateTextView.setText("תאריך סיום מלווה לילה: " + nightEscortEndDateText);
+    }
+
     private void updateProgress(long diffInDays) {
         // Calculate remaining days for day and night counters
-        int dayCounter = (int) (90 - diffInDays);
-        int nightCounter = (int) (180 - diffInDays);
+
+        dayCounter = (int) (90 - diffInDays);
+        nightCounter = (int) (180 - diffInDays);
 
         // Ensure that counters do not go negative
         if (dayCounter < 0) dayCounter = 0;
@@ -242,7 +222,32 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         }
     }
 
+    @Override
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
 
+    }
+
+    @Override
+    public void oncallbackStudent(StudentUser user) {
+        // Retrieve user name from Firebase and update the TextView
+        userName = user.getName();
+        hello.setText("Hi, " + userName); // Update the TextView with the user's name
+
+        System.out.println(num);
+
+        user.setTimeHaveLicense((num));
+
+        Toast.makeText(this, "Hi " + userName, Toast.LENGTH_SHORT).show();
+
+        updateProgressBasedOnLicense(user.getLicenseDate());
+
+        fireBaseManager.UpdateUser(user);
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+
+    }
 
     @Override
     protected void onPause() {
@@ -260,8 +265,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
     @Override
     public void onClick(View v) {
-        if(v == logout)
-        {
+        if (v == logout) {
             fireBaseManager.logout();
         }
     }

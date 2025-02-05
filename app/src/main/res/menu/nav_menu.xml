@@ -6,16 +6,37 @@
 
     <group
         android:checkableBehavior="single">
-
-        <item
-            android:id="@+id/nav_proflie"
-            android:icon="@drawable/nav_proflie"
-            android:title="Proflie"/>
-
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/nav_home"
             android:title="Home"/>
+        <item
+            android:id="@+id/nav_proflie"
+            android:icon="@drawable/nav_proflie"
+            android:title="Proflie"/>
+        <item
+            android:id="@+id/nav_friends"
+            android:icon="@drawable/nav_friend_search"
+            android:title="Look for friends"/>
+
+        <item
+            android:id="@+id/nav_count"
+            android:icon="@drawable/nav_hourglass"
+            android:title="guardian meter"/>
+
+        <item
+            android:id="@+id/nav_myLessons"
+            android:icon="@drawable/nav_car"
+            android:title="my Lessons"/>
+
+        <item
+            android:id="@+id/nav_find_teacher"
+            android:icon="@drawable/nav_search"
+            android:title="Find teacher"/>
+        <item
+            android:id="@+id/nav_info"
+            android:icon="@drawable/nav_q_a"
+            android:title="New driver info"/>
 
         <item
             android:id="@+id/nav_settings"

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:scrollbars="vertical">
+
+        <!-- Title Section -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="עבירות תנועה שבוצעו על ידי נהג חדש"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Introduction Section -->
+        <TextView
+            android:id="@+id/intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="בתקופה בה מוגדר נהג כנהג חדש נדרשת ממנו הקפדה יתרה על חוקי התנועה. עבירות תנועה מסוימות הוגדרו כעבירות חמורות. אם עבר עליהן, אין מחדשים רישיון נהיגה לנהג חדש זה, וניתן לחייבו בבדיקות ובבחינות כתנאי לחידוש הרישיון."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Offenses List Section -->
+        <TextView
+            android:id="@+id/offensesTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="רשימת עבירות התנועה החמורות"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/offensesInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/offenses_info"
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+
+        <!-- Additional Information Section -->
+        <TextView
+            android:id="@+id/additionalInfoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="מידע נוסף"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/additionalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="נהג חדש, שיורשע בעבירת תנועה חמורה, עלול להידרש לעמוד מחדש במבחן נהיגה עיוני, מבחן נהיגה מעשי או לעבור בדיקה רפואית כתנאי לחידוש רישיון - לפי החלטת משרד הרישוי."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+</ScrollView>

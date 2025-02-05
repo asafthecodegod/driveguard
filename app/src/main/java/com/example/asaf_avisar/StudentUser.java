@@ -20,6 +20,9 @@ public class StudentUser {
     protected String id;
     protected int lessonCounter;
     protected String profilePhotoBase64;
+    protected int day , night;
+    protected boolean privacy;
+    protected int timeHaveLicense;
 
     public StudentUser(Date licenseDate, boolean theory, int type, boolean greenform, boolean license,String city) {
         this.licenseDate = licenseDate;
@@ -41,6 +44,37 @@ public class StudentUser {
 
     }
 
+    public int getTimeHaveLicense() {
+        return timeHaveLicense;
+    }
+
+    public void setTimeHaveLicense(int timeHaveLicense) {
+        this.timeHaveLicense = timeHaveLicense;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = (int) (90 - getTimeHaveLicense());
+    }
+
+    public int getNight() {
+        return night;
+    }
+
+    public void setNight(int night) {
+        this.night = (int) (180 - getTimeHaveLicense());;
+    }
+
+    public boolean isPrivacy() {
+        return privacy;
+    }
+
+    public void setPrivacy(boolean privacy) {
+        this.privacy = privacy;
+    }
 
     public String getProfilePhotoBase64() {
         return profilePhotoBase64;

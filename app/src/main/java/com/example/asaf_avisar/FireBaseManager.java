@@ -9,8 +9,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.asaf_avisar.activitys.AssessmentActivity;
 import com.example.asaf_avisar.activitys.LoginOrRegistretionActivity;
+import com.example.asaf_avisar.activitys.menu;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -97,7 +97,7 @@ public class FireBaseManager {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    context.startActivity((new Intent(context, AssessmentActivity.class)));
+                    context.startActivity((new Intent(context, menu.class)));
 
                     Log.w("TAG", "createUserWithEmail:success" + task.getResult().getUser().getUid());
                 } else {

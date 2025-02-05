@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:scrollbars="vertical">
+
+        <!-- Title Section -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="חובת ליווי של נהג חדש צעיר"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Introduction Section -->
+        <TextView
+            android:id="@+id/intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="רשאי להיות מלווה כל אדם שמלאו לו 24 שנים, ומחזיק במשך חמש שנים לפחות ברישיון נהיגה לסוג רכב זהה לזה המצוין ברישיון הנהיגה של הנהג החדש הצעיר, או שמלאו לו 30 שנים ומחזיק במשך שלוש שנים לפחות ברישיון נהיגה לסוג רכב זהה לזה המצוין ברישיון הנהיגה של הנהג החדש הצעיר, או מי שבידו רישיון להוראת נהיגה."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Lifting of Restrictions Section -->
+        <TextView
+            android:id="@+id/liftingTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="חובת הליווי תחול לתקופה של שישה חודשים"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/liftingInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="מהם שלושה חודשי ליווי מלא במהלך נהיגה ביום ובלילה, ושלושה חודשי ליווי בשעות הלילה בלבד. שעות הלילה הן השעות שבין 21:00 ל-06:00."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Duration Breakdown Section -->
+        <TextView
+            android:id="@+id/durationTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="משך תקופת הליווי - חלוקה לשעות"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/durationInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="50 שעות לפחות, מהן 20 שעות נהיגה בדרך עירונית, 15 שעות נהיגה בדרך בין עירונית, ו-15 שעות נהיגה בשעות הלילה."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/durationAdditionalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="תקופת הליווי לא תפחת משישה חודשים. לאחר השלמת תכנית הליווי, יש להצהיר על כך באופן מקוון בלבד באמצעות טופס מקוון."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Driver Exemption Section -->
+        <TextView
+            android:id="@+id/exemptionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="נהג שמלאו לו 24 שנים לא חייב בחובת מלווה"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/exemptionInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="אך עדיין חלים עליו תנאי נהג חדש."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Declaration Section -->
+        <TextView
+            android:id="@+id/declarationTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="הצהרה על השלמת תכנית הליווי"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/declarationInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="נהגים חדשים אשר השלימו את תכנית הליווי יש להצהיר על כך באופן מקוון בלבד באמצעות טופס מקוון, גם הנהג וגם המלווה כתנאי לקבלת רישיון נהיגה לנהג חדש, שישה חודשים מיום מתן ההיתר."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/declarationAdditionalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="אין הגבלה על מספר המלווים לשם ביצוע תכנית הליווי."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/declarationFinalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="בסיום תהליך ההצהרה וקבלת אישור כי התהליך הושלם בהצלחה, רשאי הנהג לנהוג ברכב כשברשותו תעודה מזהה ללא צורך בהמתנה לקבלת הרישיון בדואר."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Additional Driver's License Section -->
+        <TextView
+            android:id="@+id/additionalLicenseTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="היתר נהיגה נוסף"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/additionalLicenseInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="אם בתום שישה חודשים לא הסתיימה תוכנית הליווי, יינתן לנהג היתר נהיגה לשישה חודשים נוספים עד להשלמתה."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Passenger Limitation Section -->
+        <TextView
+            android:id="@+id/passengerLimitTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="הגבלת מספר הנוסעים ברכב"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/passengerLimitInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="נהג חדש צעיר, שטרם מלאו לו 21 שנים, לא יורשה להסיע יותר משני נוסעים, אלא אם יושב מלווה במושב שלצידו."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/passengerLimitAdditionalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="נהג חדש, כל עוד רשום ברישיון הנהיגה שלו שהוא נהג חדש, אינו רשאי להסיע יותר משני נוסעים ברכב, אלא לאחר שימלאו לו 21 שנים."
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+</ScrollView>
