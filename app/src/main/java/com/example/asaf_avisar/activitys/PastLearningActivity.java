@@ -137,6 +137,8 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             return;  // Return if the license date is invalid
         }
 
+
+        Log.d("LICENSE", "FIRST LICENSE: " + licenseDate);
         try {
             // Get the current date and calculate the difference in days
             Calendar currentCalendar = Calendar.getInstance();
@@ -158,18 +160,17 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
 
             // Handle license issue date
-            String licenseIssueDateText = licenseIssueDateTextView.getText().toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+            Log.d("LICENSE", "DATE: " + licenseDate);
 
             // Parse and handle the license issue date
             try {
-                String licenseDateString = licenseIssueDateText.split(":")[1].trim();  // Extract the date part
-                Date parsedLicenseDate = dateFormat.parse(licenseDateString);
 
-                if (parsedLicenseDate != null) {
-                    Log.d("PastLearningActivity", "Parsed License Date: " + parsedLicenseDate.toString());
+                if (licenseDate != null) {
+                    Log.d("PastLearningActivity", "Parsed License Date: " + licenseDate);
                     // Now, calculate the day and night escort end dates based on the parsed license date
-                    calculateEscortEndDates(parsedLicenseDate, dateFormat);
+                    calculateEscortEndDates(licenseDate, dateFormat);
                 }
 
             } catch (Exception e) {
@@ -185,11 +186,14 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
     private void calculateEscortEndDates(Date licenseDate, SimpleDateFormat dateFormat) {
         // Calculate Day Escort End Date (3 months after license date)
+        Log.d("LICENSE", " License date: " + licenseDate.toString());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(licenseDate);
         calendar.add(Calendar.MONTH, 3);  // Add 3 months
         Date dayEscortEndDate = calendar.getTime();
         String dayEscortEndDateText = dateFormat.format(dayEscortEndDate);
+        licenseIssueDateTextView.setText("תאריך הפקת רישיון: " + dateFormat.format(licenseDate));
+
         dayEscortEndDateTextView.setText("תאריך סיום מלווה יום: " + dayEscortEndDateText);
 
         // Calculate Night Escort End Date (6 months after license date)
