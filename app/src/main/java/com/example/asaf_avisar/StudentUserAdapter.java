@@ -38,10 +38,21 @@ public class StudentUserAdapter extends RecyclerView.Adapter<StudentUserAdapter.
         // Set data from the current StudentUser object
         holder.nameTextView.setText(currentStudentUser.getName());
 
+
         //holder.emailTextView.setText(currentStudentUser.getEtEmail());
         // Optional: Set profile picture if available
         // Uncomment if you handle profile image logic
-        // holder.profileImageView.setImageResource(currentStudentUser.getProfileImage());
+        if(currentStudentUser.getProfilePhotoBase64() != null)
+        {
+            holder.profileImageView.setImageBitmap(StudentUser.convert64BaseToBitmap(currentStudentUser.getProfilePhotoBase64()));
+        }
+        else
+        {
+            holder.profileImageView.setImageResource(R.drawable.ic_default_profile);
+
+        }
+
+
 
         // Handle item clicks to open the selected student's profile
         holder.itemView.setOnClickListener(v -> {

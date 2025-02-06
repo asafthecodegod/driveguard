@@ -67,6 +67,18 @@
             android:textColor="@color/gray" />
 
         <!-- Add Friend Button -->
+        <Button
+            android:id="@+id/btn_add_friend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/blue"
+            android:text="Add Friend"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_info" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -74,15 +86,18 @@
             android:gravity="center"
             android:layout_marginTop="16dp">
 
+            <!-- Nudge Button -->
             <Button
-                android:id="@+id/btn_add_friend"
+                android:id="@+id/btn_nudge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Friend"
-                android:backgroundTint="@color/lavender"
-                android:textColor="@color/white"
-                android:padding="12dp"
-                android:textStyle="bold" />
+                android:layout_marginTop="0dp"
+                android:backgroundTint="@color/orange"
+                android:text="Nudge"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_add_friend" />
         </LinearLayout>
 
         <!-- Progress Section -->

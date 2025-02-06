@@ -64,6 +64,7 @@ public class StudentProfile extends AppCompatActivity implements FirebaseCallbac
         String base64Photo = student.getProfilePhotoBase64();
         Log.d("ProfilePhoto", "Base64: " + base64Photo);
         if (base64Photo != null) {
+
             Bitmap bitmapPhoto = StudentUser.convert64BaseToBitmap(base64Photo);
             if (bitmapPhoto != null) {
                 profilePicture.setImageBitmap(bitmapPhoto);  // Correct ImageView
