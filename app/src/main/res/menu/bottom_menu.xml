@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/nav_home"/>
+
+    <item
+        android:id="@+id/profile"
+        android:title="Profile"
+        android:icon="@drawable/nav_proflie"/>
+
+    <item
+        android:id="@+id/fab"
+        android:title=""
+        android:enabled="false"/>
+
+    <item
+        android:id="@+id/meter"
+        android:title="Meter"
+        android:icon="@drawable/nav_hourglass"/>
+
+    <item
+        android:id="@+id/friend"
+        android:title="Friend"
+        android:icon="@drawable/nav_friend_search"/>
+
+</menu>
