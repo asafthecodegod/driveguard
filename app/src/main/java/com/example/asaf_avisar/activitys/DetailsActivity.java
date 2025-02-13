@@ -1,7 +1,14 @@
 package com.example.asaf_avisar.activitys;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,10 +22,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.FirebaseCallback;
 import com.example.asaf_avisar.MainActivity;
+import com.example.asaf_avisar.MyReceiver;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.StudentUser;
 import com.example.asaf_avisar.TeacherUser;
@@ -41,7 +52,6 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
     TextView hello;
     private String userName;
     private StudentUser studentUser;
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +162,9 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
                     intent.putExtra("LICENSE_DATE", licenseDate); // Passing the Date object directly
                     startActivity(intent);
                 }
+
+
+
             }
         });
     }
@@ -200,8 +213,25 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
 
             // Use Calendar to create a proper Date object
             Calendar calendar = Calendar.getInstance();
-            calendar.set(year, month, day);
-            return calendar.getTime(); // Get the Date object from Calendar
+            calendar.set(year, month, day); // Set the user's license date
+
+// Create a new Calendar instance for the notification date
+            Calendar license = Calendar.getInstance();
+            license.setTime(calendar.getTime()); // Copy the license date
+            license.add(Calendar.MONTH, 3); // Add 3 months
+
+// Schedule the notification
+            Intent intent = new Intent(DetailsActivity.this, MyReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    DetailsActivity.this.getApplicationContext(), 1, intent, PendingIntent.FLAG_IMMUTABLE);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if (alarmManager != null) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, license.getTimeInMillis(), pendingIntent);
+            }
+
+            return calendar.getTime(); // Return the original Date object
+
         }
         return null; // If no date is selected, return null
     }
@@ -225,5 +255,6 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
 
     }
+
 
 }
