@@ -45,7 +45,6 @@ public class HomeFragment extends Fragment {
                 if (connectivityManager != null) {
                     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        Toast.makeText(context, "Wi-Fi Connected", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(context, "Wi-Fi Disconnected", Toast.LENGTH_SHORT).show();
                     }

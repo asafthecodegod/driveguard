@@ -29,6 +29,7 @@ import com.example.asaf_avisar.AboutFragment;
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.HomeFragment;
 import com.example.asaf_avisar.InfoActivity;
+import com.example.asaf_avisar.LessonListActivity;
 import com.example.asaf_avisar.MainActivity;
 import com.example.asaf_avisar.MyLessons;
 import com.example.asaf_avisar.ProflieFragment;
@@ -112,7 +113,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
         } else if (id == R.id.nav_about) {
             replaceFragment(new AboutFragment());
         } else if (id == R.id.nav_myLessons) {
-            startActivity(new Intent(this, MyLessons.class));
+            startActivity(new Intent(this, LessonListActivity.class));
         } else if (id == R.id.nav_info) {
             startActivity(new Intent(this, InfoActivity.class));
         } else if (id == R.id.nav_find_teacher) {

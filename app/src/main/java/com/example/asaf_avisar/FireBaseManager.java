@@ -175,5 +175,31 @@ public class FireBaseManager {
     public void saveImage(String profilePhotoBase64) {
         getMyRef("Student").child(getmAuth().getCurrentUser().getUid()).child("profilePhotoBase64").setValue(profilePhotoBase64);
     }
+
+    public void saveEvent(Lesson lesson) {
+        getMyRef("Events").child(getmAuth().getCurrentUser().getUid()).push().setValue(lesson);
+
+    }
+
+    public void getEvent(FirebaseCallbackLessons firebaseCallback) {
+        ArrayList<Lesson> lessons = new ArrayList<>();
+        getMyRef("Events").child(getmAuth().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Lesson lesson = data.getValue(Lesson.class);
+                    lessons.add(lesson);
+                }
+                firebaseCallback.oncallbackArryLessons(lessons);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
 }
 
