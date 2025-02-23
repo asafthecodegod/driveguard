@@ -1,64 +1,101 @@
 package com.example.asaf_avisar;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProflieFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ProflieFragment extends Fragment {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import com.google.firebase.auth.FirebaseAuth;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Locale;
 
-    public ProflieFragment() {
-        // Required empty public constructor
-    }
+public class ProflieFragment extends Fragment implements FirebaseCallback {
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProflieFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProflieFragment newInstance(String param1, String param2) {
-        ProflieFragment fragment = new ProflieFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private ImageView profilePicture;
+    private TextView studentName, driverType, studentCity, licenseDate, theoryStatus, greenFormStatus, lessonCounter;
+    private Button btnAddFriend;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FireBaseManager fireBaseManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        fireBaseManager = new FireBaseManager(requireContext());
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_proflie, container, false);
+
+        // Initialize views
+        profilePicture = view.findViewById(R.id.profile_image);
+        studentName = view.findViewById(R.id.student_name);
+        driverType = view.findViewById(R.id.driver_type);
+        studentCity = view.findViewById(R.id.student_city);
+        licenseDate = view.findViewById(R.id.license_date);
+        theoryStatus = view.findViewById(R.id.theory_status);
+        greenFormStatus = view.findViewById(R.id.green_form_status);
+        lessonCounter = view.findViewById(R.id.lesson_counter);
+        btnAddFriend = view.findViewById(R.id.btn_add_friend);
+
+        // Load data
+        String studentId = getArguments() != null ? getArguments().getString("STUDENT_ID") : fireBaseManager.getUserid();
+        fireBaseManager.readData(this, "Student", studentId);
+
+        // Set up "Add Friend" button
+        btnAddFriend.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Friend Request Sent!", Toast.LENGTH_SHORT).show();
+        });
+
+        return view;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_proflie, container, false);
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Not used for now
+    }
+
+    @Override
+    public void oncallbackStudent(StudentUser student) {
+        String base64Photo = student.getProfilePhotoBase64();
+        Log.d("ProfilePhoto", "Base64: " + base64Photo);
+        if (base64Photo != null) {
+            Bitmap bitmapPhoto = StudentUser.convert64BaseToBitmap(base64Photo);
+            if (bitmapPhoto != null) {
+                profilePicture.setImageBitmap(bitmapPhoto);
+            } else {
+                profilePicture.setImageResource(R.drawable.headerbkg);
+            }
+        }
+
+        studentName.setText(student.getName());
+        driverType.setText(student.isType() == 0 ? "Driver Type: manual" : "Driver Type: automatic");
+        studentCity.setText("City: " + student.getCity());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        licenseDate.setText("License: " + (student.getLicenseDate() != null ? dateFormat.format(student.getLicenseDate()) : "On the Way There!"));
+
+        theoryStatus.setText(student.isTheory() ? "Completed" : "Not Completed");
+        greenFormStatus.setText(student.isGreenform() ? "Submitted" : "Not Submitted");
+        lessonCounter.setText("Lessons: " + student.getLessonCounter());
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        // Not used for now
     }
 }

@@ -3,10 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-<!--    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -18,69 +17,49 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Asaf_avisar"
         tools:targetApi="31">
+
+        <!-- Fixed BroadcastReceiver for Network Changes -->
+        <receiver
+            android:name=".NetworkChangeReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Other receivers -->
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
-        <activity
-            android:name=".InfoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".HomePage"
-            android:exported="false" />
-        <activity
-            android:name=".AddLesson"
-            android:exported="false" />
-        <activity
-            android:name=".MyLessons"
-            android:exported="false" />
-        <activity
-            android:name=".Addpfp"
-            android:exported="false" />
-        <activity
-            android:name=".StudentProfile"
-            android:exported="false" />
-        <activity
-            android:name=".testing_stuff"
-            android:exported="false" />
-        <activity
-            android:name=".activitys.menu"
-            android:exported="false" />
-        <activity
-            android:name=".activitys.DetailsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activitys.BeforeLearningActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activitys.MidLearningActivity"
-            android:exported="false" />
+        <!-- Activities -->
+        <activity android:name=".InfoActivity" android:exported="false" />
+        <activity android:name=".HomePage" android:exported="false" />
+        <activity android:name=".AddLesson" android:exported="false" />
+        <activity android:name=".MyLessons" android:exported="false" />
+        <activity android:name=".Addpfp" android:exported="false" />
+        <activity android:name=".StudentProfile" android:exported="false" />
+        <activity android:name=".testing_stuff" android:exported="false" />
+        <activity android:name=".activitys.menu" android:exported="false" />
+        <activity android:name=".activitys.DetailsActivity" android:exported="false" />
+        <activity android:name=".activitys.BeforeLearningActivity" android:exported="false" />
+        <activity android:name=".activitys.MidLearningActivity" android:exported="false" />
         <activity
             android:name=".activitys.PastLearningActivity"
             android:exported="false"
             android:theme="@style/Theme.MainActivity" />
-        <activity
-            android:name=".activitys.AssessmentActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activitys.LoginPageActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activitys.RegisterPageActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activitys.LoginOrRegistretionActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+        <activity android:name=".activitys.AssessmentActivity" android:exported="false" />
+        <activity android:name=".activitys.LoginPageActivity" android:exported="false" />
+        <activity android:name=".activitys.RegisterPageActivity" android:exported="false" />
+        <activity android:name=".activitys.LoginOrRegistretionActivity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
         <activity
             android:name=".activitys.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 

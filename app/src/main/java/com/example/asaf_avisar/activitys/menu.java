@@ -31,6 +31,7 @@ import com.example.asaf_avisar.HomeFragment;
 import com.example.asaf_avisar.InfoActivity;
 import com.example.asaf_avisar.MainActivity;
 import com.example.asaf_avisar.MyLessons;
+import com.example.asaf_avisar.ProflieFragment;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.SettingsFragment;
 import com.example.asaf_avisar.FriendFragment;
@@ -77,7 +78,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             if (selectedId == R.id.home) {
                 replaceFragment(new HomeFragment());
             } else if (selectedId == R.id.profile) {
-                startActivity(new Intent(this, StudentProfile.class));
+                replaceFragment(new ProflieFragment());
             } else if (selectedId == R.id.meter) {
                 startActivity(new Intent(this, PastLearningActivity.class));
             } else if (selectedId == R.id.friend) {
@@ -106,8 +107,8 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             replaceFragment(new HomeFragment());
         } else if (id == R.id.nav_settings) {
             replaceFragment(new SettingsFragment());
-        } else if (id == R.id.nav_friends) {
-            replaceFragment(new FriendFragment());
+//        } else if (id == R.id.nav_friends) {
+//            replaceFragment(new FriendFragment());
         } else if (id == R.id.nav_about) {
             replaceFragment(new AboutFragment());
         } else if (id == R.id.nav_myLessons) {
@@ -120,7 +121,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
             fireBaseManager.logout();
         } else if (id == R.id.profile) {
-            startActivity(new Intent(this, StudentProfile.class));
+            replaceFragment(new ProflieFragment());
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
