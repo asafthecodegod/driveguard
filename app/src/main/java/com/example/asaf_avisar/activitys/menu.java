@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,12 +30,12 @@ import com.example.asaf_avisar.HomeFragment;
 import com.example.asaf_avisar.InfoActivity;
 import com.example.asaf_avisar.LessonListActivity;
 import com.example.asaf_avisar.MainActivity;
-import com.example.asaf_avisar.MyLessons;
 import com.example.asaf_avisar.ProflieFragment;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.SettingsFragment;
 import com.example.asaf_avisar.FriendFragment;
-import com.example.asaf_avisar.StudentProfile;
+import com.example.asaf_avisar.UploadNote;
+import com.example.asaf_avisar.UploadPhoto;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -153,33 +152,39 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheetlayout);  // Ensure you have this layout
 
-        LinearLayout videoLayout = dialog.findViewById(R.id.layoutVideo);
-        LinearLayout shortsLayout = dialog.findViewById(R.id.layoutShorts);
+        LinearLayout uploadPhotoLayout = dialog.findViewById(R.id.layoutVideo);
+        LinearLayout uploadNoteLayout = dialog.findViewById(R.id.layoutShorts);
         LinearLayout liveLayout = dialog.findViewById(R.id.layoutLive);
         ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
 
         // Click listener for video option
-        videoLayout.setOnClickListener(v -> {
-            // Open VideoActivity
-            Intent intent = new Intent(this, MyLessons.class);
-            startActivity(intent);
-            dialog.dismiss();  // Close the dialog after starting the activity
+        uploadPhotoLayout.setOnClickListener(v -> {
+            // Open UploadPhoto Fragment
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new UploadPhoto());  // Ensure fragment_container is defined in your layout
+            transaction.addToBackStack(null);  // Allows going back to the previous fragment
+            transaction.commit();
+            dialog.dismiss();  // Close the dialog after starting the fragment
         });
 
         // Click listener for shorts option
-        shortsLayout.setOnClickListener(v -> {
-            // Open ShortsActivity
-            Intent intent = new Intent(this, InfoActivity.class);
-            startActivity(intent);
-            dialog.dismiss();  // Close the dialog after starting the activity
+        uploadNoteLayout.setOnClickListener(v -> {
+            // Open UploadNote Fragment
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new UploadNote());  // Replace with UploadNote Fragment
+            transaction.addToBackStack(null);  // Allows going back to the previous fragment
+            transaction.commit();
+            dialog.dismiss();  // Close the dialog after starting the fragment
         });
 
         // Click listener for live option
         liveLayout.setOnClickListener(v -> {
-            // Open LiveActivity
-            Intent intent = new Intent(this, AssessmentActivity.class);
-            startActivity(intent);
-            dialog.dismiss();  // Close the dialog after starting the activity
+            // Open another Fragment if needed, otherwise you can use a different Fragment like UploadLive
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new AboutFragment());  // Replace with appropriate fragment, like UploadLive
+            transaction.addToBackStack(null);  // Allows going back to the previous fragment
+            transaction.commit();
+            dialog.dismiss();  // Close the dialog after starting the fragment
         });
 
         // Cancel button click listener
@@ -202,6 +207,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
         // Ensure the background dimming flag is set
         dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
     }
+
 
 
 

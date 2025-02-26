@@ -71,9 +71,6 @@
             android:exported="false"
             android:theme="@style/Theme.MainActivity" />
         <activity
-            android:name=".activitys.AssessmentActivity"
-            android:exported="false" />
-        <activity
             android:name=".activitys.LoginPageActivity"
             android:exported="false" />
         <activity
