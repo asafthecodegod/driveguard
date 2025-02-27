@@ -182,6 +182,7 @@ public class FireBaseManager {
     }
 
 
+
     public void getEvent(FirebaseCallbackLessons firebaseCallback) {
         ArrayList<Lesson> lessons = new ArrayList<>();
         getMyRef("Events").child(getmAuth().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {

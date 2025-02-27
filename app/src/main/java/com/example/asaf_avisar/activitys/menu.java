@@ -171,7 +171,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
         uploadNoteLayout.setOnClickListener(v -> {
             // Open UploadNote Fragment
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, new UploadNote());  // Replace with UploadNote Fragment
+            transaction.replace(R.id.fragment_container, new AboutFragment());  // Replace with UploadNote Fragment
             transaction.addToBackStack(null);  // Allows going back to the previous fragment
             transaction.commit();
             dialog.dismiss();  // Close the dialog after starting the fragment
@@ -181,7 +181,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
         liveLayout.setOnClickListener(v -> {
             // Open another Fragment if needed, otherwise you can use a different Fragment like UploadLive
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, new AboutFragment());  // Replace with appropriate fragment, like UploadLive
+            transaction.replace(R.id.fragment_container, new UploadNote());  // Replace with appropriate fragment, like UploadLive
             transaction.addToBackStack(null);  // Allows going back to the previous fragment
             transaction.commit();
             dialog.dismiss();  // Close the dialog after starting the fragment
