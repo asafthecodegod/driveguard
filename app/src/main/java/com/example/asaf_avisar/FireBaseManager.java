@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.asaf_avisar.activitys.LoginOrRegistretionActivity;
+import com.example.asaf_avisar.activitys.Post;
 import com.example.asaf_avisar.activitys.menu;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -202,6 +203,38 @@ public class FireBaseManager {
             }
         });
     }
+    public void savePost(Post post) {
+        String userId = getmAuth().getCurrentUser().getUid();
+        // Save the post under the 'Posts' node
+        getMyRef("Posts").child(userId).push().setValue(post)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Post saved successfully.");
+                        } else {
+                            Log.e(TAG, "Failed to save post.", task.getException());
+                        }
+                    }
+                });
+    }
+    public void readPosts(FirebaseCallbackPosts firebaseCallbackPosts) {
+        ArrayList<Post> posts = new ArrayList<>();
+        getMyRef("Posts").child(getmAuth().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Post post = dataSnapshot.getValue(Post.class);
+                    posts.add(post);
+                }
+                firebaseCallbackPosts.onCallbackPosts(posts);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "Failed to read posts.", error.toException());
+            }
+        });
+    }
 }
 
