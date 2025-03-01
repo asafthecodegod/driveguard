@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -236,5 +237,20 @@ public class FireBaseManager {
             }
         });
     }
-}
+    //public void uploadImage(Uri imageUri, OnImageUploadCallback callback) {
+    //    if (imageUri == null) {
+    //        callback.onUploadFailed("Image URI is null");
+    //        return;
+     //   }
+
+        //String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        //StorageReference storageRef = FirebaseStorage.getInstance().getReference("PostImages")
+       //         .child(userId + "/" + System.currentTimeMillis() + ".jpg");
+
+        //storageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot ->
+        //        storageRef.getDownloadUrl().addOnSuccessListener(uri -> callback.onUploadSuccess(uri.toString()))
+        //).addOnFailureListener(e -> callback.onUploadFailed(e.getMessage()));
+
+    }
+
 
