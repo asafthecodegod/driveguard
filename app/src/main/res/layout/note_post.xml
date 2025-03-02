@@ -6,29 +6,26 @@
     android:padding="8dp"
     android:background="@color/white">
 
-    <!-- Text Post Layout -->
     <LinearLayout
-        android:id="@+id/text_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:paddingBottom="8dp">
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/user_pfp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_default_profile"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circle_shape" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/user_pfp"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_default_profile"
-                android:scaleType="centerCrop"
-                android:background="@drawable/circle_shape" />
+            android:orientation="vertical"
+            android:paddingStart="8dp">
 
             <TextView
                 android:id="@+id/user_name"
@@ -36,50 +33,69 @@
                 android:layout_height="wrap_content"
                 android:text="User Name"
                 android:textSize="16sp"
-                android:textColor="@color/black"
-                android:paddingStart="8dp" />
-        </LinearLayout>
+                android:textColor="@color/black"/>
 
-        <TextView
-            android:id="@+id/note_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Text post description here"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:padding="8dp"
-            android:lineSpacingExtra="4dp" />
-
-        <!-- Likes & Comments Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:gravity="center_vertical">
-
-            <ImageButton
-                android:id="@+id/like_button"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/baseline_like_24"
-
-                android:tint="@color/black"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:focusable="true"
-                android:clickable="true" />
-
-            <ImageButton
-                android:id="@+id/comment_button"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/baseline_comment_24"
-
-                android:tint="@color/black"
-                android:layout_marginStart="16dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:focusable="true"
-                android:clickable="true" />
+            <TextView
+                android:id="@+id/post_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="March 2, 2025"
+                android:textSize="12sp"
+                android:textColor="@color/gray"
+                android:paddingTop="2dp"/>
         </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/post_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Post Title"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp" />
+
+    <TextView
+        android:id="@+id/note_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Text post description here"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:padding="8dp"
+        android:lineSpacingExtra="4dp" />
+
+    <!-- Likes & Comments Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/like_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_like_24"
+            android:tint="@color/black"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:focusable="true"
+            android:clickable="true" />
+
+        <ImageButton
+            android:id="@+id/comment_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_comment_24"
+            android:tint="@color/black"
+            android:layout_marginStart="16dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:focusable="true"
+            android:clickable="true" />
+    </LinearLayout>
+
 </LinearLayout>

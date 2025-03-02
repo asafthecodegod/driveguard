@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +18,6 @@ import com.example.asaf_avisar.FirebaseCallback;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.StudentUser;
 import com.example.asaf_avisar.TeacherUser;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,7 +50,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     private Date licenseDate;
     int dayCounter, nightCounter;
     long diffInDays;
-    int num;
+    int userDay,userNight;
 
 
     @Override
@@ -102,14 +100,15 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             public void run() {
                 if (i <= pn) {
                     nightprogressBar.setProgress(i);
+                    userNight = i;
                     i++;
 
                     handler.postDelayed(this, 10);
                 }
             }
         };
-        int pd = (progress * 100) / 90;
 
+        int pd = (progress * 100) / 90;
         Handler handlerday = new Handler();
 
         Runnable updateProgressRunnableday = new Runnable() {
@@ -119,6 +118,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             public void run() {
                 if (j <= pd) {
                     dayprogressBar.setProgress(j);
+                    userDay = j;
                     j++;
 
                     handlerday.postDelayed(this, 10);
@@ -149,7 +149,6 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
             // Update progress based on the number of days
             progress = (int) diffInDays;
-            num = progress;
             startProgressBarUpdate();  // Start updating the progress bar
 
             // Show a toast with the difference in days
@@ -237,9 +236,10 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         userName = user.getName();
         hello.setText("Hi, " + userName); // Update the TextView with the user's name
 
-        System.out.println(num);
-
-        user.setTimeHaveLicense((num));
+        System.out.println(userDay);
+        user.setDay(userDay);
+        user.setNight(userNight);
+        user.setTimeHaveLicense((userDay));
 
         Toast.makeText(this, "Hi " + userName, Toast.LENGTH_SHORT).show();
 

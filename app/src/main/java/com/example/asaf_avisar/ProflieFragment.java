@@ -27,7 +27,6 @@ public class ProflieFragment extends Fragment implements FirebaseCallback {
     private ImageView profilePicture;
     private TextView studentName, driverType, studentCity, licenseDate, theoryStatus, greenFormStatus, lessonCounter;
     private Button btnAddFriend;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FireBaseManager fireBaseManager;
 
     @Override

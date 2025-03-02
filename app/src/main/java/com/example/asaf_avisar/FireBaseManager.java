@@ -206,8 +206,9 @@ public class FireBaseManager {
     }
     public void savePost(Post post) {
         String userId = getmAuth().getCurrentUser().getUid();
+        post.setUserId(userId);
         // Save the post under the 'Posts' node
-        getMyRef("Posts").child(userId).push().setValue(post)
+        getMyRef("Posts").push().setValue(post)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -221,7 +222,7 @@ public class FireBaseManager {
     }
     public void readPosts(FirebaseCallbackPosts firebaseCallbackPosts) {
         ArrayList<Post> posts = new ArrayList<>();
-        getMyRef("Posts").child(getmAuth().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        getMyRef("Posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {

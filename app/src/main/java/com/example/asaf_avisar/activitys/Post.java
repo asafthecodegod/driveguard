@@ -1,26 +1,62 @@
 package com.example.asaf_avisar.activitys;
 
 import com.example.asaf_avisar.Comment;
+
+import java.util.Date;
 import java.util.List;
 
 public class Post {
     private String userId; // User ID of the person who uploaded the post
     private String userName; // User name of the person who uploaded the post
     private String description;
-    private int type; // 1 - Photo, 2 - Note, 3 - Status
+    private String content;
     private int likesCount; // Like count
     private List<String> likedByUsers; // List of user IDs who liked the post
     private List<Comment> comments; // List of comments
+    private int type;
+    private Date date; // Added date field
+
+    public Post() {
+
+    }
+
+    public Post(String userName, String description, int likesCount, String content,int type,Date date) {
+        this.userName = userName;
+        this.description = description;
+        this.content = content;
+        this.likesCount = 0;
+        this.type = 0;
+        this.date = date;
+    }
 
     // Constructor
-    public Post(String userId, String userName, String description, int type, int likesCount, List<String> likedByUsers, List<Comment> comments) {
+    public Post(String userId, String userName, String description, int likesCount,String content, List<String> likedByUsers, List<Comment> comments,Date date) {
         this.userId = userId;
         this.userName = userName;
         this.description = description;
-        this.type = type;
         this.likesCount = likesCount;
         this.likedByUsers = likedByUsers;
         this.comments = comments;
+        this.content = content;
+        this.type = 0;
+        this.date = date;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     // Getters and Setters
@@ -55,7 +91,6 @@ public class Post {
     public void setType(int type) {
         this.type = type;
     }
-
     public int getLikesCount() {
         return likesCount;
     }

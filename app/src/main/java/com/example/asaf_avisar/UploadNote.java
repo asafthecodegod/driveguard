@@ -6,18 +6,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
+
+import com.example.asaf_avisar.activitys.Post;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import androidx.fragment.app.FragmentTransaction;
 
-public class UploadNote extends Fragment {
+import java.util.ArrayList;
+import java.util.Date;
+
+public class UploadNote extends Fragment implements FirebaseCallback {
 
     private TextInputEditText noteInput;
     private TextInputEditText noteBodyInput;
     private MaterialButton saveNoteButton;
     private TabLayout tabLayout;
+    private FireBaseManager fireBaseManager;
+    private String userName;
 
     public UploadNote() {
         // Required empty public constructor
@@ -29,6 +36,11 @@ public class UploadNote extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload_note, container, false);
 
+
+
+        fireBaseManager = new FireBaseManager(requireContext());
+        String studentId = getArguments() != null ? getArguments().getString("STUDENT_ID") : fireBaseManager.getUserid();
+        fireBaseManager.readData(this, "Student", studentId);
         // Initialize views
         noteInput = view.findViewById(R.id.noteTitleInput);
         noteBodyInput = view.findViewById(R.id.noteBodyInput);
@@ -41,6 +53,9 @@ public class UploadNote extends Fragment {
             if (!note.isEmpty()) {
                 // Process the note (for example, save it to the database)
                 // You can add logic here to pass the note back to the previous fragment or activity
+                Post post = new Post(userName,noteInput.getText().toString(),0,note,0,new Date());
+                fireBaseManager.savePost(post);
+
                 Toast.makeText(getContext(), "Note saved: " + note, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Note cannot be empty", Toast.LENGTH_SHORT).show();
@@ -83,5 +98,21 @@ public class UploadNote extends Fragment {
         transaction.replace(R.id.fragment_container, new UploadPhoto()); // Make sure the container is defined in your activity
         transaction.addToBackStack(null);  // Adds the transaction to the back stack
         transaction.commit();
+    }
+
+    @Override
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+
+    }
+
+    @Override
+    public void oncallbackStudent(StudentUser student) {
+        userName =student.getName();
+
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+
     }
 }
