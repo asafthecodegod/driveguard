@@ -52,11 +52,10 @@ public class UploadNote extends Fragment implements FirebaseCallback {
             String note = noteBodyInput.getText().toString();
             if (!note.isEmpty()) {
                 // Process the note (for example, save it to the database)
-                // You can add logic here to pass the note back to the previous fragment or activity
-                Post post = new Post(userName,noteInput.getText().toString(),0,note,0,new Date());
+                Post post = new Post(userName, noteInput.getText().toString(), 0, note, 0, new Date());
                 fireBaseManager.savePost(post);
-
-                Toast.makeText(getContext(), "Note saved: " + note, Toast.LENGTH_SHORT).show();
+                navigateToHomeFragment();
+                Toast.makeText(getContext(), "Note uploaded successfully", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Note cannot be empty", Toast.LENGTH_SHORT).show();
             }
@@ -69,7 +68,6 @@ public class UploadNote extends Fragment implements FirebaseCallback {
                 switch (tab.getPosition()) {
                     case 0:
                         // "Text Only" tab selected
-                        // Stay in the current fragment or update UI as needed
                         break;
                     case 1:
                         // "Image Only" tab selected, navigate to the Add Photo Fragment
@@ -79,14 +77,10 @@ public class UploadNote extends Fragment implements FirebaseCallback {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                // Handle tab unselection if needed
-            }
+            public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                // Handle reselection if needed
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
 
         return view;
@@ -95,7 +89,27 @@ public class UploadNote extends Fragment implements FirebaseCallback {
     // Method to navigate to the Add Photo Fragment
     private void navigateToAddPhotoFragment() {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, new UploadPhoto()); // Make sure the container is defined in your activity
+
+        // Pass the flag to select the "Image Only" tab
+        Bundle bundle = new Bundle();
+        bundle.putInt("selectedTab", 1); // 1 for "Image Only"
+        UploadPhoto uploadPhotoFragment = new UploadPhoto();
+        uploadPhotoFragment.setArguments(bundle);
+
+        transaction.replace(R.id.fragment_container, uploadPhotoFragment);
+        transaction.addToBackStack(null);  // Adds the transaction to the back stack
+        transaction.commit();
+    }
+    private void navigateToHomeFragment() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Pass the flag to select the "Image Only" tab
+        Bundle bundle = new Bundle();
+        bundle.putInt("selectedTab", 1); // 1 for "Image Only"
+        HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setArguments(bundle);
+
+        transaction.replace(R.id.fragment_container, homeFragment);
         transaction.addToBackStack(null);  // Adds the transaction to the back stack
         transaction.commit();
     }

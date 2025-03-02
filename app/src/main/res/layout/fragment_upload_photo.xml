@@ -13,12 +13,32 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Options: Text-only or Image-only Post (Tabs at the Top) -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/white"
+            app:tabMode="fixed"
+            app:tabGravity="fill">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabTextOnly"
+                android:text="Note" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabImageOnly"
+                android:text="Photo" />
+        </com.google.android.material.tabs.TabLayout>
+
         <!-- Profile Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
 
             <ImageView
                 android:id="@+id/profileImage"
@@ -38,66 +58,40 @@
                 android:layout_marginStart="8dp" />
         </LinearLayout>
 
-        <!-- Options: Text-only or Image-only Post -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@android:color/white"
-            app:tabMode="fixed"
-            app:tabGravity="fill">
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabTextOnly"
-                android:text="Text Only" />
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabImageOnly"
-                android:text="Image Only" />
-        </com.google.android.material.tabs.TabLayout>
-
         <!-- Upload Image Box -->
-        <FrameLayout
-            android:id="@+id/uploadBox"
+        <LinearLayout
+            android:id="@+id/selectPhotoContainer"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="16dp"
-            android:background="@android:color/white"
-            android:elevation="2dp"
-            android:gravity="center">
+            android:layout_marginTop="12dp"
+            android:background="@drawable/uploadbox"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <LinearLayout
+            <!-- Upload Icon -->
+            <ImageView
+                android:id="@+id/uploadIcon"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:layout_height="60dp"
+                android:src="@drawable/baseline_add_photo_alternate_24"
+                android:tint="@color/lavender"/>
 
-                <ImageView
-                    android:id="@+id/uploadIcon"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/baseline_add_photo_alternate_24"
-                    android:contentDescription="Upload Image" />
+            <!-- Text: Choose Photo -->
+            <TextView
+                android:id="@+id/selectPhotoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Choose a photo"
+                android:textSize="16sp"
+                android:textColor="@color/gray"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add a photo / video"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black"
-                    android:gravity="center" />
-            </LinearLayout>
-        </FrameLayout>
 
-        <!-- Image Preview -->
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="16dp"
-            android:scaleType="centerCrop"
-            android:visibility="gone" />
+
+            <!-- Button: Take a Photo -->
+
+        </LinearLayout>
 
         <!-- Description Input -->
         <com.google.android.material.textfield.TextInputLayout

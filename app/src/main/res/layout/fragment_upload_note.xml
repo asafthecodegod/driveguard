@@ -25,11 +25,11 @@
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tabTextOnly"
-                android:text="Text Only" />
+                android:text="Note" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tabImageOnly"
-                android:text="Image Only" />
+                android:text="Photo" />
         </com.google.android.material.tabs.TabLayout>
 
         <!-- Profile Section -->
@@ -37,7 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
 
             <ImageView
                 android:id="@+id/profileImage"

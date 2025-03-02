@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">asaf_avisar</string>
+    <string name="Drive_Guard">asaf_avisar</string>
     <string-array name="israel_cities">
         <item>Jerusalem</item>
         <item>Tel Aviv</item>
