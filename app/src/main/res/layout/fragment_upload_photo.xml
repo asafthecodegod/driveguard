@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -46,6 +47,7 @@
                 android:layout_height="48dp"
                 android:src="@drawable/ic_default_profile"
                 android:background="@drawable/circle_shape"
+                android:clipToOutline="true"
                 android:scaleType="centerCrop" />
 
             <TextView
@@ -69,13 +71,22 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- ImageView for displaying the selected image -->
+            <ImageView
+                android:id="@+id/selectedImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
             <!-- Upload Icon -->
             <ImageView
                 android:id="@+id/uploadIcon"
-                android:layout_width="match_parent"
+                android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/baseline_add_photo_alternate_24"
-                android:tint="@color/lavender"/>
+                android:tint="@color/lavender"
+                android:layout_gravity="center" />
 
             <!-- Text: Choose Photo -->
             <TextView
@@ -85,12 +96,8 @@
                 android:layout_marginTop="8dp"
                 android:text="Choose a photo"
                 android:textSize="16sp"
-                android:textColor="@color/gray"/>
-
-
-
-            <!-- Button: Take a Photo -->
-
+                android:textColor="@color/gray"
+                android:layout_gravity="center" />
         </LinearLayout>
 
         <!-- Description Input -->

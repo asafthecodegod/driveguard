@@ -3,21 +3,20 @@ package com.example.asaf_avisar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.asaf_avisar.activitys.Post;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
@@ -28,48 +27,46 @@ import java.util.Date;
 public class UploadPhoto extends Fragment implements FirebaseCallback {
 
     private static final int PICK_IMAGE_REQUEST = 1;
-    private ImageView uploadIcon, imageView;
-    private TextView userName;
+    private Bitmap selectedImageBitmap;
+    private ImageView uploadIcon, selectedImageView, profileImage;
+    private TextView userName, selectPhotoText;
     private TabLayout tabLayout;
     private MaterialButton postButton;
-    private Uri selectedImageUri;
     private FireBaseManager fireBaseManager;
-    private String userNameString;
+    private String userNameString, profileImageUrl;
 
     public UploadPhoto() {}
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout that includes selectedImageView, uploadIcon, and selectPhotoText
         View view = inflater.inflate(R.layout.fragment_upload_photo, container, false);
 
         userName = view.findViewById(R.id.userName);
+        profileImage = view.findViewById(R.id.profileImage);
         tabLayout = view.findViewById(R.id.tabLayout);
         postButton = view.findViewById(R.id.postButton);
         uploadIcon = view.findViewById(R.id.uploadIcon);
-        imageView = view.findViewById(R.id.imageView); // Initialize imageView here
+        selectedImageView = view.findViewById(R.id.selectedImageView);
+        selectPhotoText = view.findViewById(R.id.selectPhotoText);
 
         fireBaseManager = new FireBaseManager(requireContext());
-        String studentId = getArguments() != null ? getArguments().getString("STUDENT_ID") : fireBaseManager.getUserid();
-        fireBaseManager.readData(this, "Student", studentId);
-
-        userName.setText("Username");
+        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
 
         uploadIcon.setOnClickListener(v -> openImageChooser());
 
-        // Restore image when switching tabs
-        if (getArguments() != null && getArguments().getParcelable("imageUri") != null) {
-            selectedImageUri = getArguments().getParcelable("imageUri");
-            imageView.setImageURI(selectedImageUri);
-            imageView.setVisibility(View.VISIBLE);
+        // If an image Bitmap is passed via arguments, use it.
+        if (getArguments() != null && getArguments().getParcelable("imageBitmap") != null) {
+            selectedImageBitmap = getArguments().getParcelable("imageBitmap");
+            selectedImageView.setImageBitmap(selectedImageBitmap);
+            selectedImageView.setVisibility(View.VISIBLE);
             uploadIcon.setVisibility(View.GONE);
+            selectPhotoText.setVisibility(View.GONE);
         }
 
-        // Disable tab switching when fragment is first loaded, and select the "Image Only" tab
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        tabLayout.selectTab(tabLayout.getTabAt(1));  // Manually select "Image Only" tab (index 1)
-
-        // Add the tab selection listener to handle "Text Only" tab selection
+        tabLayout.selectTab(tabLayout.getTabAt(1));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -77,30 +74,13 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
                     navigateToUploadNote();
                 }
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {}
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        postButton.setOnClickListener(v -> {
-            if (selectedImageUri != null) {
-                // Convert image URI to base64 string
-                String base64Image = convertImageToBase64(selectedImageUri);
-                if (!base64Image.isEmpty()) {
-                    // Create Post object with base64 image string
-                    Post post = new Post(userNameString, "Image Post", 0, base64Image, 0, new Date());
-                    fireBaseManager.savePost(post);
-                    navigateToHomeFragment();
-                    Toast.makeText(getContext(), "Post uploaded successfully", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "You need to upload a photo", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
+        postButton.setOnClickListener(v -> uploadPost());
         return view;
     }
 
@@ -112,20 +92,40 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == Activity.RESULT_OK && data != null && requestCode == PICK_IMAGE_REQUEST) {
-            selectedImageUri = data.getData();
-            imageView.setImageURI(selectedImageUri);
-            imageView.setVisibility(View.VISIBLE);
-            uploadIcon.setVisibility(View.GONE);
+            try {
+                // Convert the returned image data directly to a Bitmap.
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), data.getData());
+                selectedImageBitmap = bitmap;
+                selectedImageView.setImageBitmap(bitmap);
+                selectedImageView.setVisibility(View.VISIBLE);
+                // Hide uploadIcon and selectPhotoText once an image is selected.
+                uploadIcon.setVisibility(View.GONE);
+                selectPhotoText.setVisibility(View.GONE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private String convertImageToBase64(Uri imageUri) {
+    private void uploadPost() {
+        if (selectedImageBitmap != null) {
+            String base64Image = convertImageToBase64(selectedImageBitmap);
+            if (!base64Image.isEmpty()) {
+                Post post = new Post(userNameString, "Image Post", 0, base64Image, 0,profileImageUrl, new Date());
+                fireBaseManager.savePost(post);
+                navigateToHomeFragment();
+                Toast.makeText(getContext(), "Post uploaded successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "You need to upload a photo", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // Updated to accept a Bitmap.
+    private String convertImageToBase64(Bitmap bitmap) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            // Convert URI to Bitmap (not shown here)
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             return Base64.encodeToString(byteArray, Base64.DEFAULT);
@@ -134,17 +134,15 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
             return "";
         }
     }
+
     private void navigateToHomeFragment() {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        // Pass the flag to select the "Image Only" tab
         Bundle bundle = new Bundle();
-        bundle.putInt("selectedTab", 1); // 1 for "Image Only"
+        bundle.putInt("selectedTab", 1);
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setArguments(bundle);
-
         transaction.replace(R.id.fragment_container, homeFragment);
-        transaction.addToBackStack(null);  // Adds the transaction to the back stack
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -161,7 +159,18 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
 
     @Override
     public void oncallbackStudent(StudentUser student) {
-        userNameString = student.getName();
+        if (student != null) {
+            userNameString = student.getName();
+            profileImageUrl = student.getProfilePhotoBase64();
+            userName.setText(userNameString);
+            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                byte[] decodedString = Base64.decode(profileImageUrl, Base64.DEFAULT);
+                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                profileImage.setImageBitmap(decodedBitmap);
+            } else {
+                profileImage.setImageResource(R.drawable.ic_default_profile);
+            }
+        }
     }
 
     @Override

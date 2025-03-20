@@ -19,7 +19,8 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_default_profile"
             android:scaleType="centerCrop"
-            android:background="@drawable/circle_shape" />
+            android:background="@drawable/circle_shape"
+            android:clipToOutline="true"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -47,7 +48,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/post_title"
+        android:id="@+id/note_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Post Title"
@@ -59,7 +60,7 @@
         android:paddingBottom="4dp" />
 
     <TextView
-        android:id="@+id/note_text"
+        android:id="@+id/note_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Text post description here"
@@ -97,5 +98,4 @@
             android:focusable="true"
             android:clickable="true" />
     </LinearLayout>
-
 </LinearLayout>

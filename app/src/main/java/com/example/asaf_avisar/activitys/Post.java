@@ -15,22 +15,23 @@ public class Post {
     private List<Comment> comments; // List of comments
     private int type;
     private Date date; // Added date field
-
+    private String userPfp;
     public Post() {
 
     }
 
-    public Post(String userName, String description, int likesCount, String content,int type,Date date) {
+    public Post(String userName, String description, int likesCount, String content,int type,String userPfp,Date date) {
         this.userName = userName;
         this.description = description;
         this.content = content;
         this.likesCount = 0;
         this.type = 0;
         this.date = date;
+        this.userPfp = userPfp;
     }
 
     // Constructor
-    public Post(String userId, String userName, String description, int likesCount,String content, List<String> likedByUsers, List<Comment> comments,Date date) {
+    public Post(String userId, String userName, String description, int likesCount,String content, List<String> likedByUsers, List<Comment> comments,String userPfp,Date date) {
         this.userId = userId;
         this.userName = userName;
         this.description = description;
@@ -40,6 +41,15 @@ public class Post {
         this.content = content;
         this.type = 0;
         this.date = date;
+        this.userPfp = userPfp;
+    }
+
+    public String getUserPfp() {
+        return userPfp;
+    }
+
+    public void setUserPfp(String userPfp) {
+        this.userPfp = userPfp;
     }
 
     public String getContent() {

@@ -46,7 +46,9 @@
                 android:layout_height="48dp"
                 android:src="@drawable/ic_default_profile"
                 android:background="@drawable/circle_shape"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:clipToOutline="true"
+                />
 
             <TextView
                 android:id="@+id/userName"
