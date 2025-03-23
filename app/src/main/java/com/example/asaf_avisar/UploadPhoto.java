@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,9 +111,9 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
 
     private void uploadPost() {
         if (selectedImageBitmap != null) {
-            String base64Image = convertImageToBase64(selectedImageBitmap);
+            String base64Image = convertTo64Base(selectedImageBitmap);
             if (!base64Image.isEmpty()) {
-                Post post = new Post(userNameString, "Image Post", 0, base64Image, 0,profileImageUrl, new Date());
+                Post post = new Post(userNameString, "Image Post", base64Image, profileImageUrl, new Date());
                 fireBaseManager.savePost(post);
                 navigateToHomeFragment();
                 Toast.makeText(getContext(), "Post uploaded successfully", Toast.LENGTH_SHORT).show();
@@ -122,18 +123,20 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
         }
     }
 
-    // Updated to accept a Bitmap.
-    private String convertImageToBase64(Bitmap bitmap) {
-        try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
+    public static String convertTo64Base(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
+
+    public static Bitmap resizeBitmap(Bitmap bitmap, int maxSize) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float scale = Math.min(((float) maxSize / width), ((float) maxSize / height));
+        return Bitmap.createScaledBitmap(bitmap, (int) (width * scale), (int) (height * scale), true);
+    }
+
 
     private void navigateToHomeFragment() {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

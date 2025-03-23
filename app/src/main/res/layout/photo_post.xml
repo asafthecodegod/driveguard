@@ -57,7 +57,6 @@
             android:textColor="@color/black"
             android:padding="8dp" />
 
-        <!-- Likes & Comments Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,6 +71,16 @@
                 android:src="@drawable/baseline_like_24"
                 android:tint="@color/black" />
 
+            <!-- Like counter -->
+            <TextView
+                android:id="@+id/like_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginStart="4dp" />
+
             <ImageView
                 android:id="@+id/comment_button"
                 android:layout_width="24dp"
@@ -79,6 +88,16 @@
                 android:src="@drawable/baseline_comment_24"
                 android:tint="@color/black"
                 android:layout_marginStart="16dp" />
+
+            <TextView
+                android:id="@+id/post_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="200dp"
+                android:paddingTop="2dp"
+                android:text="March 2, 2025"
+                android:textColor="@color/gray"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

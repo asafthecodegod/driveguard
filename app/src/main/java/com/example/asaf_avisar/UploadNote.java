@@ -60,7 +60,7 @@ public class UploadNote extends Fragment implements FirebaseCallback {
             String note = noteBodyInput.getText().toString();
             if (!note.isEmpty()) {
                 // Create a post with the provided note and the user's name
-                Post post = new Post(userNameString, noteInput.getText().toString(), 0, note, 0,profileImageUrl, new Date());
+                Post post = new Post(userNameString, noteInput.getText().toString(), note, profileImageUrl, new Date());
                 fireBaseManager.savePost(post);
                 navigateToHomeFragment();
                 Toast.makeText(getContext(), "Note uploaded successfully", Toast.LENGTH_SHORT).show();

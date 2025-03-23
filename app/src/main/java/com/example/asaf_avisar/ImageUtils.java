@@ -2,45 +2,34 @@ package com.example.asaf_avisar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 
 public class ImageUtils {
 
-    // Converts an image URI to a Base64-encoded string
-    public static String convertImageToBase64(Context context, Uri imageUri) {
+    public String convertTo64Base(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] data = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(data, Base64.DEFAULT);}
+
+
+    // Convert Base64 to Bitmap
+    public static Bitmap convert64base(String base64String) {
         try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
-            return Base64.encodeToString(byteArray, Base64.DEFAULT);
-        } catch (Exception e) {
+            byte[] decodedString = android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            return "";
+            return null; // Return null if the Base64 decoding fails
         }
     }
 
-    // Converts a Base64 string back to a Bitmap
-    public static Bitmap convertBase64ToBitmap(String base64String) {
-        try {
-            byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
-            return android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
-    // Loads an image into an ImageView from a URI
-    public static void loadImageFromUri(Context context, String imageUrl, ImageView imageView) {
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            Uri imageUri = Uri.parse(imageUrl);
-            imageView.setImageURI(imageUri);
-        }
-    }
 }

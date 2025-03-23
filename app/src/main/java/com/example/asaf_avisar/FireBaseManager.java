@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FireBaseManager {
     private static FirebaseAuth mAuth;
@@ -222,19 +223,27 @@ public class FireBaseManager {
     }
     public void readPosts(FirebaseCallbackPosts firebaseCallbackPosts) {
         ArrayList<Post> posts = new ArrayList<>();
-        getMyRef("Posts").addValueEventListener(new ValueEventListener() {
+
+        getMyRef("Posts").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Post post = dataSnapshot.getValue(Post.class);
-                    posts.add(post);
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) { // ✅ Loop through each post
+                    try {
+                        Post post = postSnapshot.getValue(Post.class);
+                        if (post != null) {
+                            post.setKey(postSnapshot.getKey()); // ✅ Store Firebase key
+                            posts.add(post);
+                        }
+                    } catch (Exception e) {
+                        Log.e("Firebase", "Error parsing post: " + e.getMessage());
+                    }
                 }
-                firebaseCallbackPosts.onCallbackPosts(posts);
+                firebaseCallbackPosts.onCallbackPosts(posts); // ✅ Send the list
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.w(TAG, "Failed to read posts.", error.toException());
+                Log.w("Firebase", "Failed to read posts.", error.toException());
             }
         });
     }
@@ -252,6 +261,55 @@ public class FireBaseManager {
         //        storageRef.getDownloadUrl().addOnSuccessListener(uri -> callback.onUploadSuccess(uri.toString()))
         //).addOnFailureListener(e -> callback.onUploadFailed(e.getMessage()));
 
+    public void updatePostLikes(Post post, String postKey) {
+        DatabaseReference postRef = getMyRef("Posts").child(postKey);
+
+        postRef.child("likesCount").setValue(post.getLikesCount());
+        postRef.child("likedByUsers").setValue(post.getLikedByUsers()); // ✅ Store liked users
     }
+//    public void updatePostLikes(Post post, String postKey) {
+//        DatabaseReference postRef = getMyRef("Posts").child(postKey);
+//
+//        // ✅ Ensure `likedByUsers` is not null before updating Firebase
+//        if (post.getLikedByUsers() == null) {
+//            post.setLikedByUsers(new ArrayList<>());
+//        }
+//
+//        Map<String, Object> updates = new HashMap<>();
+//        updates.put("likesCount", post.getLikesCount());
+//        updates.put("likedByUsers", post.getLikedByUsers()); // ✅ Store liked users
+//
+//        postRef.updateChildren(updates);
+//    }
+
+
+    public void updatePostComments(Post post, List<Comment> comments) {
+        // Update the comments list for the post in Firebase
+        // Again, replace "postKey" with your actual key
+        getMyRef("Posts").child(post.getKey()).child("comments").setValue(comments);
+    }
+
+
+    public void updateCommentReplies(Comment parentComment) {
+        String postKey = "POST_KEY_HERE"; // Replace with actual post ID
+        DatabaseReference postRef = getMyRef("Posts").child(postKey).child("comments");
+        postRef.child(parentComment.getUserId()).setValue(parentComment);
+    }
+
+    public void updateCommentLikes(Comment comment, String key) {
+        // Check if postId or key is null before proceeding
+        if (comment.getPostId() == null || comment.getKey() == null) {
+            Log.e("updateCommentLikes", "Post ID or Comment Key is null.");
+            return;
+        }
+
+        DatabaseReference commentRef = getMyRef("Posts").child(comment.getPostId()).child("comments").child(comment.getKey());
+
+        // Update likes count and liked by users
+        commentRef.child("likesCount").setValue(comment.getLikesCount());
+        commentRef.child("likedByUsers").setValue(comment.getLikedByUsers());
+    }
+
+}
 
 
