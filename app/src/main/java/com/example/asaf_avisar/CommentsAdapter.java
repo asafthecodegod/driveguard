@@ -78,16 +78,16 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         });
 
         // Reply Button Click
-        holder.replyButton.setOnClickListener(v -> {
-            if (holder.repliesRecyclerView.getVisibility() == View.GONE) {
-                holder.repliesRecyclerView.setVisibility(View.VISIBLE); // Show replies
-                holder.repliesRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-                CommentsAdapter repliesAdapter = new CommentsAdapter(comment.getReplies(), context);
-                holder.repliesRecyclerView.setAdapter(repliesAdapter);
-            } else {
-                holder.repliesRecyclerView.setVisibility(View.GONE); // Hide replies
-            }
-        });
+//        holder.replyButton.setOnClickListener(v -> {
+//            if (holder.repliesRecyclerView.getVisibility() == View.GONE) {
+//                holder.repliesRecyclerView.setVisibility(View.VISIBLE); // Show replies
+//                holder.repliesRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+//                //CommentsAdapter repliesAdapter = new CommentsAdapter(comment.getReplies(), context);
+//                //holder.repliesRecyclerView.setAdapter(repliesAdapter);
+//            } else {
+//                holder.repliesRecyclerView.setVisibility(View.GONE); // Hide replies
+//            }
+//        });
     }
 
     @Override
@@ -106,7 +106,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
             date = itemView.findViewById(R.id.comment_date);
             content = itemView.findViewById(R.id.comment_content);
             likeCount = itemView.findViewById(R.id.comment_like_count);
-            replyButton = itemView.findViewById(R.id.comment_reply_button);
+            //replyButton = itemView.findViewById(R.id.comment_reply_button);
             likeButton = itemView.findViewById(R.id.comment_like_button);
             profilePicture = itemView.findViewById(R.id.user_pfp); // ImageView for profile picture
             repliesRecyclerView = itemView.findViewById(R.id.replies_recyclerview);

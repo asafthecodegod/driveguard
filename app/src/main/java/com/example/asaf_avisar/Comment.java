@@ -13,13 +13,13 @@ public class Comment implements Serializable {
     private String content;
     private Date date;
     private int likesCount;
-    private List<Comment> replies; // ✅ Support nested replies
+    //private List<Comment> replies; // ✅ Support nested replies
     private List<String> likedByUsers; // List of user IDs who liked the post
     private String profilePictureUrl; // Profile picture URL
 
-    public Comment() {
-        this.replies = new ArrayList<>(); // ✅ Prevent null pointer crashes
-    }
+//    public Comment() {
+//        this.replies = new ArrayList<>(); // ✅ Prevent null pointer crashes
+//    }
 
     public Comment(String postId, String userId, String userName, String content, Date date, String profilePictureUrl) {
         this.postId = postId;
@@ -28,7 +28,7 @@ public class Comment implements Serializable {
         this.content = content;
         this.date = date;
         this.likesCount = 0;
-        this.replies = new ArrayList<>();
+        //this.replies = new ArrayList<>();
         this.profilePictureUrl = profilePictureUrl;
     }
 
@@ -107,12 +107,12 @@ public class Comment implements Serializable {
         this.likesCount = likesCount;
     }
 
-    public List<Comment> getReplies() {
-        if (replies == null) replies = new ArrayList<>();
-        return replies;
-    }
-
-    public void setReplies(List<Comment> replies) {
-        this.replies = replies;
-    }
+//    public List<Comment> getReplies() {
+//        if (replies == null) replies = new ArrayList<>();
+//        return replies;
+//    }
+//
+//    public void setReplies(List<Comment> replies) {
+//        this.replies = replies;
+//    }
 }

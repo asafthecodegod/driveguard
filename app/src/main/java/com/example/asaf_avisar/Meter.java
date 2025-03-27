@@ -1,10 +1,12 @@
-package com.example.asaf_avisar.activitys;
+package com.example.asaf_avisar;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.text.format.DateFormat;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -12,8 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.FirebaseCallback;
@@ -27,7 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class PastLearningActivity extends AppCompatActivity implements FirebaseCallback, View.OnClickListener {
+public class Meter extends Fragment implements FirebaseCallback, View.OnClickListener {
 
     private FireBaseManager fireBaseManager;
     private CheckBox daycheckBox, nightcheckBox;
@@ -43,31 +44,51 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     private int dayCounter, nightCounter;
     private StudentUser currentUser;
 
+    public Meter() {
+        // Required empty public constructor
+    }
+
+    public static Meter newInstance(String param1, String param2) {
+        Meter fragment = new Meter();
+        Bundle args = new Bundle();
+        args.putString("param1", param1);
+        args.putString("param2", param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_past_learning);
+        // Optionally, retrieve parameters from getArguments() if needed
+        fireBaseManager = new FireBaseManager(getContext());
+        // Ensure a valid userId is provided
+        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+    }
 
-        licenseIssueDateTextView = findViewById(R.id.license_issue_date);
-        dayEscortEndDateTextView = findViewById(R.id.day_escort_end_date);
-        nightEscortEndDateTextView = findViewById(R.id.night_escort_end_date);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the fragment layout (fragment_meter.xml)
+        View rootView = inflater.inflate(R.layout.fragment_meter, container, false);
 
-        changeLicenseDateButton = findViewById(R.id.logOut); // Renamed from "logout"
+        licenseIssueDateTextView = rootView.findViewById(R.id.license_issue_date);
+        dayEscortEndDateTextView = rootView.findViewById(R.id.day_escort_end_date);
+        nightEscortEndDateTextView = rootView.findViewById(R.id.night_escort_end_date);
+
+        changeLicenseDateButton = rootView.findViewById(R.id.logOut);
         changeLicenseDateButton.setOnClickListener(this);
 
-        hello = findViewById(R.id.textView);
-        nightprogressBar = findViewById(R.id.night_progress_bar);
-        dayprogressBar = findViewById(R.id.day_progress_bar);
-        dayprogressText = findViewById(R.id.day_progress_text);
-        nightprogressText = findViewById(R.id.night_progress_text);
-        daycheckBox = findViewById(R.id.day_permit);
-        nightcheckBox = findViewById(R.id.night_permit);
-
-        fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+        hello = rootView.findViewById(R.id.textView);
+        nightprogressBar = rootView.findViewById(R.id.night_progress_bar);
+        dayprogressBar = rootView.findViewById(R.id.day_progress_bar);
+        dayprogressText = rootView.findViewById(R.id.day_progress_text);
+        nightprogressText = rootView.findViewById(R.id.night_progress_text);
+        daycheckBox = rootView.findViewById(R.id.day_permit);
+        nightcheckBox = rootView.findViewById(R.id.night_permit);
 
         nightprogressBar.setProgress(0);
+
+        return rootView;
     }
 
     private void showDatePickerDialog() {
@@ -76,21 +97,23 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (DatePicker view, int selectedYear, int selectedMonth, int selectedDay) -> {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (DatePicker view, int selectedYear, int selectedMonth, int selectedDay) -> {
             Calendar selectedDateCalendar = Calendar.getInstance();
             selectedDateCalendar.set(selectedYear, selectedMonth, selectedDay);
             Date selectedDate = selectedDateCalendar.getTime();
 
             // Prevent future date selection
             if (selectedDate.after(new Date())) {
-                Toast.makeText(this, "You can't select a future date!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "You can't select a future date!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Update license date in Firebase
+            // Update license date in Firebase if currentUser is available
             licenseDate = selectedDate;
-            currentUser.setLicenseDate(licenseDate);
-            fireBaseManager.UpdateUser(currentUser);
+            if (currentUser != null) {
+                currentUser.setLicenseDate(licenseDate);
+                fireBaseManager.UpdateUser(currentUser);
+            }
 
             // Update UI
             updateProgressBasedOnLicense(licenseDate);
@@ -104,11 +127,8 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
 
     private void startProgressBarUpdate() {
         int pn = (progress * 100) / 180;
-        Handler handler = new Handler();
-
         Runnable updateProgressRunnable = new Runnable() {
             int i = 1;
-
             @Override
             public void run() {
                 if (i <= pn) {
@@ -121,32 +141,28 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
         };
 
         int pd = (progress * 100) / 90;
-        Handler handlerday = new Handler();
-
         Runnable updateProgressRunnableday = new Runnable() {
             int j = 1;
-
             @Override
             public void run() {
                 if (j <= pd) {
                     dayprogressBar.setProgress(j);
                     userDay = j;
                     j++;
-                    handlerday.postDelayed(this, 10);
+                    handler.postDelayed(this, 10);
                 }
             }
         };
 
         handler.post(updateProgressRunnable);
-        handlerday.post(updateProgressRunnableday);
+        handler.post(updateProgressRunnableday);
     }
 
     private void updateProgressBasedOnLicense(Date licenseDate) {
         if (licenseDate == null) {
-            Toast.makeText(this, "Invalid license date", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Invalid license date", Toast.LENGTH_SHORT).show();
             return;
         }
-
         try {
             Calendar currentCalendar = Calendar.getInstance();
             Date currentDate = currentCalendar.getTime();
@@ -156,18 +172,14 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             progress = (int) diffInDays;
             startProgressBarUpdate();
 
-            Toast.makeText(this, "You have held your license for " + diffInDays + " days", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "You have held your license for " + diffInDays + " days", Toast.LENGTH_SHORT).show();
             updateProgress(diffInDays);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-            if (licenseDate != null) {
-                calculateEscortEndDates(licenseDate, dateFormat);
-            }
-
+            calculateEscortEndDates(licenseDate, dateFormat);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error calculating days passed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error calculating days passed", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -202,7 +214,9 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     }
 
     @Override
-    public void oncallbackArryStudent(ArrayList<StudentUser> students) {}
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Optionally, update UI with the list of students
+    }
 
     @Override
     public void oncallbackStudent(StudentUser user) {
@@ -212,7 +226,9 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
     }
 
     @Override
-    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {}
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        // Handle teacher data if needed
+    }
 
     @Override
     public void onClick(View v) {

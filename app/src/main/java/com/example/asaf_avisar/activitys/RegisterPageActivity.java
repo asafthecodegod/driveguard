@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class RegisterPageActivity extends AppCompatActivity implements View.OnClickListener, DatePicker.OnDateChangedListener {
-    private EditText etEmail,etPassword,etUsername;
+    private EditText etEmail, etPassword, etUsername;
     private DatePicker dpBirthday;
     private Button registerButton;
     private Check check;
@@ -32,19 +32,19 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
     private CheckBox isTeacher;
     private String userRole = "Student";
     private TextView registerLink;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resgister_page);
 
-        registerLink =findViewById(R.id.ToLoginText);
+        registerLink = findViewById(R.id.ToLoginText);
         registerLink.setOnClickListener(this);
 
         etEmail = findViewById(R.id.userEmail);
         etUsername = findViewById(R.id.register_username);
         dpBirthday = findViewById(R.id.birthday_picker);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             dpBirthday.setOnDateChangedListener(this);
         }
         etPassword = findViewById(R.id.register_password);
@@ -61,9 +61,13 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
                 userRole = "Student";
             }
         });
+
+        // Restrict the DatePicker to not select future dates
+        Calendar today = Calendar.getInstance();
+        dpBirthday.setMaxDate(today.getTimeInMillis());  // Set today's date as the maximum allowed date
     }
 
-    public  int calculateAge(int birthYear, int birthMonth, int birthDay) {
+    public int calculateAge(int birthYear, int birthMonth, int birthDay) {
         // Get the current date using Calendar
         Calendar currentDate = Calendar.getInstance();
         int currentYear = currentDate.get(Calendar.YEAR);
@@ -72,8 +76,7 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
 
         // Calculate the age
         int age = currentYear - birthYear;
-        YearOld = new Date(currentYear,currentMonth,currentDay);
-
+        YearOld = new Date(currentYear, currentMonth, currentDay);
 
         if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
             age--;
@@ -84,43 +87,33 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onClick(View view)
-    {
-        if( view == registerLink)
-        {
+    public void onClick(View view) {
+        if (view == registerLink) {
             startActivity(new Intent(this, LoginPageActivity.class));
         }
 
-        if(view == registerButton){
+        if (view == registerButton) {
             if ((!check.checkEmail(etEmail.getText().toString())))
-                etEmail.setError("Invild email.");
+                etEmail.setError("Invalid email.");
             if ((!check.checkName(etUsername.getText().toString())))
-                etUsername.setError("Invild name.");
+                etUsername.setError("Invalid name.");
             if ((!check.checkPass(etPassword.getText().toString())))
-                etPassword.setError("Invild password.");
+                etPassword.setError("Invalid password.");
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            {
-                int age = calculateAge(dpBirthday.getYear(),dpBirthday.getMonth(),dpBirthday.getDayOfMonth());
-                if ((age)< 16)
-                {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                int age = calculateAge(dpBirthday.getYear(), dpBirthday.getMonth(), dpBirthday.getDayOfMonth());
+                if (age < 16) {
                     Toast.makeText(this, "You must be at least 16 years old", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+                } else {
                     Toast.makeText(this, "Age verified. Proceeding...", Toast.LENGTH_SHORT).show();
-                    fireBaseManager.createUser(new StudentUser(etUsername.getText().toString(),etEmail.getText().toString(),etPassword.getText().toString(),YearOld),userRole);
+                    fireBaseManager.createUser(new StudentUser(etUsername.getText().toString(), etEmail.getText().toString(), etPassword.getText().toString(), YearOld), userRole);
                 }
             }
-
-            }
-
-
         }
+    }
 
     @Override
     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
+        // Not needed for functionality but here for implementation
     }
 }
-

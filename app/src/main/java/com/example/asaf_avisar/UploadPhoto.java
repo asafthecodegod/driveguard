@@ -2,8 +2,10 @@ package com.example.asaf_avisar;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -18,7 +20,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.example.asaf_avisar.activitys.LoginOrRegistretionActivity;
 import com.example.asaf_avisar.activitys.Post;
+import com.example.asaf_avisar.activitys.RegisterPageActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import java.io.ByteArrayOutputStream;
@@ -97,19 +102,27 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && data != null && requestCode == PICK_IMAGE_REQUEST) {
             try {
-                // Convert the returned image data directly to a Bitmap.
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), data.getData());
-                selectedImageBitmap = bitmap;
-                selectedImageView.setImageBitmap(bitmap);
-                selectedImageView.setVisibility(View.VISIBLE);
-                // Hide uploadIcon and selectPhotoText once an image is selected.
-                uploadIcon.setVisibility(View.GONE);
-                selectPhotoText.setVisibility(View.GONE);
+                Uri imageUri = data.getData();
+                String imagePath = getRealPathFromURI(imageUri);
+
+                if (imagePath != null) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                    selectedImageBitmap = ImageUtils.rotateImageIfRequired(bitmap, imagePath); // 🔥 Fix image rotation
+                    selectedImageView.setImageBitmap(selectedImageBitmap);
+                    selectedImageView.setVisibility(View.VISIBLE);
+                    uploadIcon.setVisibility(View.GONE);
+                    selectPhotoText.setVisibility(View.GONE);
+                } else {
+                    Toast.makeText(getContext(), "Failed to get image path", Toast.LENGTH_SHORT).show();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
+                Toast.makeText(getContext(), "Error loading image", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
     private void uploadPost() {
         if (selectedImageBitmap != null) {
@@ -140,6 +153,19 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
         transaction.replace(R.id.fragment_container, homeFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+    private String getRealPathFromURI(Uri uri) {
+        String filePath = null;
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = requireContext().getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            if (cursor.moveToFirst()) {
+                filePath = cursor.getString(columnIndex);
+            }
+            cursor.close();
+        }
+        return filePath;
     }
 
     private void navigateToUploadNote() {

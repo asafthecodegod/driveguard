@@ -3,6 +3,8 @@ package com.example.asaf_avisar;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -16,16 +18,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.example.asaf_avisar.activitys.DetailsActivity;
-import com.example.asaf_avisar.activitys.menu;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Addpfp extends AppCompatActivity implements FirebaseCallback {
 
     private ImageView profileImageView;
-    private Button addPhotoButton, skipButton,nextButton;
+    private Button addPhotoButton, skipButton, nextButton;
     private String profilePhotoBase64;
     private FireBaseManager fireBaseManager;
     private boolean flag;
@@ -39,6 +41,7 @@ public class Addpfp extends AppCompatActivity implements FirebaseCallback {
 
         fireBaseManager = new FireBaseManager(this);
         fireBaseManager.studentData(this);
+
         profileImageView = findViewById(R.id.profileImageView);
         addPhotoButton = findViewById(R.id.addPhotoButton);
         skipButton = findViewById(R.id.skipButton);
@@ -50,20 +53,15 @@ public class Addpfp extends AppCompatActivity implements FirebaseCallback {
                 this::handleActivityResult
         );
 
-        nextButton.setOnClickListener(view -> {
-            startActivity(new Intent(this, DetailsActivity.class));
-        });
+        nextButton.setOnClickListener(view -> startActivity(new Intent(this, DetailsActivity.class)));
 
-        // Add photo button click listener
         addPhotoButton.setOnClickListener(view -> {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             getGalleryActivityResultLauncher.launch(intent);
         });
 
-        // Skip button click listener
         skipButton.setOnClickListener(view -> {
-            // Handle skipping the photo selection (e.g., save without photo)
             flag = false;
             Toast.makeText(this, "Profile picture skipped.", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, DetailsActivity.class));
@@ -75,30 +73,62 @@ public class Addpfp extends AppCompatActivity implements FirebaseCallback {
             Intent data = result.getData();
             if (data != null && data.getData() != null) {
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    Uri imageUri = data.getData();
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+
+                    // 🔹 Fix image rotation using EXIF data
+                    Bitmap rotatedBitmap = rotateImageIfRequired(bitmap, imageUri);
+
                     // Convert to Base64 and save
-                    profilePhotoBase64 = convertTo64Base(bitmap);
+                    profilePhotoBase64 = convertTo64Base(rotatedBitmap);
                     fireBaseManager.saveImage(profilePhotoBase64);
 
-
                     // Display the selected photo
-                    profileImageView.setImageBitmap(bitmap);
+                    profileImageView.setImageBitmap(rotatedBitmap);
 
                     Toast.makeText(this, "Profile picture added.", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to load the image.", Toast.LENGTH_SHORT).show();
                 }
-            }
-            else
-            {
+            } else {
+                // Use default profile image if no image is selected
                 Bitmap defaultBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_default_profile);
                 String defaultBase64 = convertTo64Base(defaultBitmap);
                 fireBaseManager.saveImage(defaultBase64);
-
-
             }
         }
+    }
+
+    // 🔹 Fix image rotation based on EXIF metadata
+    private Bitmap rotateImageIfRequired(Bitmap img, Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            ExifInterface exif = new ExifInterface(inputStream);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            int rotationAngle = 0;
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotationAngle = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotationAngle = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotationAngle = 270;
+                    break;
+            }
+
+            if (rotationAngle != 0) {
+                android.graphics.Matrix matrix = new android.graphics.Matrix();
+                matrix.postRotate(rotationAngle);
+                return Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return img;
     }
 
     // Convert Bitmap to Base64 String
@@ -110,23 +140,16 @@ public class Addpfp extends AppCompatActivity implements FirebaseCallback {
     }
 
     @Override
-    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
-
-    }
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {}
 
     @Override
     public void oncallbackStudent(StudentUser student) {
-
-            StudentUser studentUser = student;
-
-            Bitmap pic = studentUser.convert64BaseToBitmap(student.getProfilePhotoBase64());
+        if (student != null) {
+            Bitmap pic = student.convert64BaseToBitmap(student.getProfilePhotoBase64());
             profileImageView.setImageBitmap(pic);
-
-
+        }
     }
 
     @Override
-    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
-
-    }
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {}
 }
