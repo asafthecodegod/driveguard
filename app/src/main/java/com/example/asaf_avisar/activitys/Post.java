@@ -33,6 +33,15 @@ public class Post implements Serializable {
         this.likesCount = 0;
         this.type = 0;
     }
+    public Post(String userName, String description, String content, String userPfp, Date date,int type) {
+        this.userName = userName;
+        this.description = description;
+        this.content = content;
+        this.userPfp = userPfp;
+        this.date = date;
+        this.likesCount = 0;
+        this.type = 1;
+    }
 
     // Full constructor
     public Post(String userId, String userName, String description, int likesCount,
@@ -126,8 +135,5 @@ public class Post implements Serializable {
 
     public String getUserPfp() {
         return userPfp;
-    }
-    public void setUserPfp(String userPfp) {
-        this.userPfp = userPfp;
     }
 }

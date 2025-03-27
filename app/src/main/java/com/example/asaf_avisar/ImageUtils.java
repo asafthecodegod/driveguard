@@ -13,11 +13,13 @@ import java.io.ByteArrayOutputStream;
 
 public class ImageUtils {
 
-    public String convertTo64Base(Bitmap bitmap) {
+
+    public static String convertTo64Base(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] data = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(data, Base64.DEFAULT);}
+        return Base64.encodeToString(data, Base64.DEFAULT);
+    }
 
 
     // Convert Base64 to Bitmap

@@ -1,7 +1,6 @@
 package com.example.asaf_avisar;
 
 import android.graphics.Bitmap;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,21 +72,16 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 photoHolder.userPfp.setImageBitmap(userPfpBitmap);
             }
             photoHolder.userName.setText(post.getUserName());
-            photoHolder.photoDescription.setText(post.getDescription());
-
+            photoHolder.postContent.setImageResource(R.drawable.loading_post);
 
             // Decode the post content (Base64 string) into Bitmap and display it
             String base64Content = post.getContent();  // Ensure this is the Base64 string for the image
-            if (base64Content != null && !base64Content.isEmpty()) {
-                Bitmap postImageBitmap = ImageUtils.convert64base(base64Content); // Decode to Bitmap
-                if (postImageBitmap != null) {
-                    photoHolder.postContent.setImageBitmap(postImageBitmap); // Set the decoded Bitmap to the ImageView
-                } else {
-                    Log.e("Image Error", "Failed to decode the image from Base64.");
-                }
-            } else {
-                Log.e("Image Error", "Base64 content is null or empty.");
-            }
+            Log.d("Image Debug", "Base64 String: " + post.getContent());
+
+            Bitmap postImageBitmap = ImageUtils.convert64base(base64Content);
+
+            photoHolder.postContent.setImageBitmap(postImageBitmap); // Set the decoded Bitmap to the ImageView
+            //photoHolder.postContent.setImageResource();
 
 
             photoHolder.likeCount.setText(String.valueOf(post.getLikesCount()));
@@ -158,7 +152,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(itemView);
             userPfp = itemView.findViewById(R.id.user_pfp);
             userName = itemView.findViewById(R.id.user_name);
-            postContent = itemView.findViewById(R.id.photo_content);
+            postContent = itemView.findViewById(R.id.image_content);
             photoDescription = itemView.findViewById(R.id.photo_description);
             postDate = itemView.findViewById(R.id.post_date);
             likeButton = itemView.findViewById(R.id.like_button);

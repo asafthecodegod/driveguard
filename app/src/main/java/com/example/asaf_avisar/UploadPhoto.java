@@ -30,7 +30,7 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
     private static final int PICK_IMAGE_REQUEST = 1;
     private Bitmap selectedImageBitmap;
     private ImageView uploadIcon, selectedImageView, profileImage;
-    private TextView userName, selectPhotoText;
+    private TextView userName, selectPhotoText,descriptionEditText;
     private TabLayout tabLayout;
     private MaterialButton postButton;
     private FireBaseManager fireBaseManager;
@@ -49,6 +49,7 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
         tabLayout = view.findViewById(R.id.tabLayout);
         postButton = view.findViewById(R.id.postButton);
         uploadIcon = view.findViewById(R.id.uploadIcon);
+        descriptionEditText =view.findViewById(R.id.descriptionEditText);
         selectedImageView = view.findViewById(R.id.selectedImageView);
         selectPhotoText = view.findViewById(R.id.selectPhotoText);
 
@@ -61,6 +62,7 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
         if (getArguments() != null && getArguments().getParcelable("imageBitmap") != null) {
             selectedImageBitmap = getArguments().getParcelable("imageBitmap");
             selectedImageView.setImageBitmap(selectedImageBitmap);
+
             selectedImageView.setVisibility(View.VISIBLE);
             uploadIcon.setVisibility(View.GONE);
             selectPhotoText.setVisibility(View.GONE);
@@ -111,9 +113,15 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
 
     private void uploadPost() {
         if (selectedImageBitmap != null) {
-            String base64Image = convertTo64Base(selectedImageBitmap);
+            String base64Image = ImageUtils.convertTo64Base(selectedImageBitmap);
+//            if (!descriptionEditText.getText().toString().isEmpty()) {
+//                Toast.makeText(getContext(), "Please add a description", Toast.LENGTH_SHORT).show();
+//                return; // Prevent posting without a description
+//            }
+
             if (!base64Image.isEmpty()) {
-                Post post = new Post(userNameString, "Image Post", base64Image, profileImageUrl, new Date());
+
+                Post post = new Post(userNameString, descriptionEditText.getText().toString(), base64Image, profileImageUrl, new Date(), 1);
                 fireBaseManager.savePost(post);
                 navigateToHomeFragment();
                 Toast.makeText(getContext(), "Post uploaded successfully", Toast.LENGTH_SHORT).show();
@@ -122,21 +130,6 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
             }
         }
     }
-
-    public static String convertTo64Base(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.NO_WRAP);
-    }
-
-    public static Bitmap resizeBitmap(Bitmap bitmap, int maxSize) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        float scale = Math.min(((float) maxSize / width), ((float) maxSize / height));
-        return Bitmap.createScaledBitmap(bitmap, (int) (width * scale), (int) (height * scale), true);
-    }
-
 
     private void navigateToHomeFragment() {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

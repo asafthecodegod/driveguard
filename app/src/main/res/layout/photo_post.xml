@@ -42,11 +42,13 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/photo_content"
+            android:id="@+id/image_content"
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:scaleType="centerCrop"
-            android:background="@color/lavender" />
+            android:background="@color/lavender"
+
+            />
 
         <TextView
             android:id="@+id/photo_description"
