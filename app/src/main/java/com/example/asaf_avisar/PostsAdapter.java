@@ -73,7 +73,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
             photoHolder.userName.setText(post.getUserName());
             photoHolder.postContent.setImageResource(R.drawable.loading_post);
-
+            photoHolder.photoDescription.setText(post.getDescription());
             // Decode the post content (Base64 string) into Bitmap and display it
             String base64Content = post.getContent();  // Ensure this is the Base64 string for the image
             Log.d("Image Debug", "Base64 String: " + post.getContent());
