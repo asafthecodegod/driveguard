@@ -66,7 +66,8 @@
                         android:layout_height="wrap_content"
                         android:text="Followers"
                         android:textSize="14sp"
-                        android:textColor="@color/dark_gray"/>
+                        android:textColor="@color/dark_gray"
+                        android:layout_marginTop="4dp"/>
                 </LinearLayout>
 
                 <!-- Following -->
@@ -91,7 +92,8 @@
                         android:layout_height="wrap_content"
                         android:text="Following"
                         android:textSize="14sp"
-                        android:textColor="@color/dark_gray"/>
+                        android:textColor="@color/dark_gray"
+                        android:layout_marginTop="4dp"/>
                 </LinearLayout>
 
                 <!-- Lessons -->
@@ -116,7 +118,8 @@
                         android:layout_height="wrap_content"
                         android:text="Lessons"
                         android:textSize="14sp"
-                        android:textColor="@color/dark_gray"/>
+                        android:textColor="@color/dark_gray"
+                        android:layout_marginTop="4dp"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -162,7 +165,7 @@
                     android:id="@+id/btn_unfollow"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Unfollow"
+                    android:text="follow"
                     android:backgroundTint="@color/blue"
                     android:textColor="@android:color/white"
                     android:layout_weight="1"
@@ -194,7 +197,8 @@
                     android:layout_height="wrap_content"
                     android:text="Green Form: X"
                     android:textSize="14sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:layout_marginTop="8dp"/>
                 <TextView
                     android:id="@+id/detail_theory"
                     android:layout_width="wrap_content"
@@ -207,11 +211,10 @@
                     android:id="@+id/detail_license_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="License Realese Date: 2025-05-10"
+                    android:text="License Release Date: 2025-05-10"
                     android:textSize="14sp"
                     android:textColor="@color/black"
                     android:layout_marginTop="4dp"/>
-
             </LinearLayout>
 
             <!-- Circular Stats for Day and Night -->
@@ -225,41 +228,93 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="16dp">
+
                 <!-- Night Circle -->
-                <FrameLayout
-                    android:id="@+id/circle_night"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/circle_background">
-                    <TextView
-                        android:id="@+id/circle_stat_night"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/night_counter"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:elevation="4dp"
+                    app:cardCornerRadius="75dp"
+                    android:layout_margin="8dp">
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="180"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:textColor="@color/black"/>
-                </FrameLayout>
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/night_progress_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="180"
+                            android:textColor="@android:color/black"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <ProgressBar
+                            android:id="@+id/night_progress_bar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/circle_progress_bar"
+                            android:fromDegrees="0"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:pivotX="75%"
+                            android:pivotY="75%"
+                            android:progress="50"
+                            android:progressDrawable="@drawable/night_circle_shape"
+                            android:rotation="270"
+                            android:textAlignment="center"
+                            android:toDegrees="90" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
                 <!-- Day Circle -->
-                <FrameLayout
-                    android:id="@+id/circle_day"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/circle_background">
-                    <TextView
-                        android:id="@+id/circle_stat_day"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/day_counter"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:elevation="4dp"
+                    app:cardCornerRadius="75dp"
+                    android:layout_margin="8dp">
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="90"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:textColor="@color/black"/>
-                </FrameLayout>
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/day_progress_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="90"
+                            android:textColor="@android:color/black"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <ProgressBar
+                            android:id="@+id/day_progress_bar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/circle_progress_bar"
+                            android:fromDegrees="0"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:pivotX="75%"
+                            android:pivotY="75%"
+                            android:progress="50"
+                            android:progressDrawable="@drawable/day_circle_shape"
+                            android:rotation="270"
+                            android:textAlignment="center"
+                            android:toDegrees="90" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
             </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
