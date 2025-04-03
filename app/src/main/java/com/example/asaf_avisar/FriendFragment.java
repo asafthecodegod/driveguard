@@ -42,7 +42,7 @@ public class FriendFragment extends Fragment implements FirebaseCallback {
         fireBaseManager.studentData(this); // Fetch student data using FirebaseManager
 
         // Add sample data for testing (Replace this with Firebase data)
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 20; i++) {
             students.add(new StudentUser("student" + i, "student" + i + "@gmail.com", "123456", new Date(2000, 8, 1)));
         }
         filteredStudents.addAll(students); // Initially display all students

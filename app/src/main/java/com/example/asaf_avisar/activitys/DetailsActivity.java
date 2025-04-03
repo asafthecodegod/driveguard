@@ -192,6 +192,8 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
     private void scheduleNotification(Calendar licenseDate) {
         Calendar notificationDate = (Calendar) licenseDate.clone();
         notificationDate.add(Calendar.MONTH, 3);
+        //notificationDate.add(Calendar.SECOND, 3);
+
 
         Intent intent = new Intent(this, MyReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, FLAG_IMMUTABLE);
@@ -199,6 +201,7 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         if (alarmManager != null) {
             alarmManager.set(AlarmManager.RTC_WAKEUP, notificationDate.getTimeInMillis(), pendingIntent);
+            // תאריך נוכחי פלוס כמה שניות
         }
     }
 
