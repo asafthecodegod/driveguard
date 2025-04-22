@@ -41,7 +41,7 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
     private DatePicker licenseDatePicker;
     private Button submitButton;
 
-    private String selectedCity = "Not selected"; // Default value
+    private String selectedCity = "Not selected"; // Default value 1
     private FireBaseManager fireBaseManager;
     private String userName;
     private StudentUser studentUser;
