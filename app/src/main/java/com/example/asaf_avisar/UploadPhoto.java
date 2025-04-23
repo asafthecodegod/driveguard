@@ -40,6 +40,7 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
     private MaterialButton postButton;
     private FireBaseManager fireBaseManager;
     private String userNameString, profileImageUrl;
+    private String userId;
 
     public UploadPhoto() {}
 
@@ -134,7 +135,7 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
 
             if (!base64Image.isEmpty()) {
 
-                Post post = new Post(userNameString, descriptionEditText.getText().toString(), base64Image, profileImageUrl, new Date(), 1);
+                Post post = new Post(userId, userNameString, profileImageUrl, base64Image, descriptionEditText.getText().toString(), "", new Date(), 1);
                 fireBaseManager.savePost(post);
                 navigateToHomeFragment();
                 Toast.makeText(getContext(), "Post uploaded successfully", Toast.LENGTH_SHORT).show();
@@ -182,6 +183,7 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
     @Override
     public void oncallbackStudent(StudentUser student) {
         if (student != null) {
+            userId = student.getId();
             userNameString = student.getName();
             profileImageUrl = student.getProfilePhotoBase64();
             userName.setText(userNameString);

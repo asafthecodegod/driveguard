@@ -38,7 +38,7 @@ public class Post {
         this.likesCount = 0;
         this.likedByUsers = new ArrayList<>();
         this.comments = new ArrayList<>();
-        this.type = 0;
+        this.type = 1;
     }
 
 
@@ -47,8 +47,8 @@ public class Post {
             String description,
             String content,
             String imageUrl,
-            Date date,
-            int type
+            Date date
+
     ) {
 
         this.userName      = userName;
@@ -57,7 +57,7 @@ public class Post {
         this.imageUrl      = imageUrl;
         this.date          = date;
         this.timestamp     = date.getTime();
-        this.type          = 1;
+        this.type          = 0;
         this.likesCount    = 0;
         this.likedByUsers  = new ArrayList<>();
         this.comments      = new ArrayList<>();
