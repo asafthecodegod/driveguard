@@ -25,15 +25,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.asaf_avisar.AboutFragment;
+import com.example.asaf_avisar.EditProfileFragment;
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.HomeFragment;
 import com.example.asaf_avisar.InfoActivity;
 import com.example.asaf_avisar.LessonListActivity;
 import com.example.asaf_avisar.MainActivity;
 import com.example.asaf_avisar.Meter;
-import com.example.asaf_avisar.ProflieFragment;
+import com.example.asaf_avisar.ProfileFragment;
 import com.example.asaf_avisar.R;
-import com.example.asaf_avisar.SettingsFragment;
+
 import com.example.asaf_avisar.FriendFragment;
 import com.example.asaf_avisar.UploadNote;
 import com.example.asaf_avisar.UploadPhoto;
@@ -79,7 +80,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             if (selectedId == R.id.home) {
                 replaceFragment(new HomeFragment());
             } else if (selectedId == R.id.profile) {
-                replaceFragment(new ProflieFragment());
+                replaceFragment(new ProfileFragment());
             } else if (selectedId == R.id.meter) {
                 replaceFragment(new Meter());
                 //startActivity(new Intent(this, PastLearningActivity.class));
@@ -108,7 +109,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
         if (id == R.id.nav_home) {
             replaceFragment(new HomeFragment());
         } else if (id == R.id.nav_settings) {
-            replaceFragment(new SettingsFragment());
+            replaceFragment(new EditProfileFragment());
 //        } else if (id == R.id.nav_friends) {
 //            replaceFragment(new FriendFragment());
         } else if (id == R.id.nav_about) {
@@ -123,7 +124,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
             fireBaseManager.logout();
         } else if (id == R.id.profile) {
-            replaceFragment(new ProflieFragment());
+            replaceFragment(new ProfileFragment());
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

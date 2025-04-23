@@ -44,7 +44,7 @@ public class StudentUserAdapter extends RecyclerView.Adapter<StudentUserAdapter.
         // Uncomment if you handle profile image logic
         if(currentStudentUser.getProfilePhotoBase64() != null)
         {
-            holder.profileImageView.setImageBitmap(StudentUser.convert64BaseToBitmap(currentStudentUser.getProfilePhotoBase64()));
+            holder.profileImageView.setImageBitmap(ImageUtils.convert64base(currentStudentUser.getProfilePhotoBase64()));
         }
         else
         {
@@ -56,7 +56,7 @@ public class StudentUserAdapter extends RecyclerView.Adapter<StudentUserAdapter.
 
         // Handle item clicks to open the selected student's profile
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, StudentProfile.class);
+            Intent intent = new Intent(context, ProfileFragment.class);
             intent.putExtra("STUDENT_ID", currentStudentUser.getId()); // Pass student ID
             context.startActivity(intent);
         });

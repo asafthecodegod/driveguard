@@ -2,15 +2,18 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray">
 
     <!-- AppBarLayout for the Profile Header -->
+
+    <!-- RecyclerView for Posts (grid) at the bottom -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="526dp"
         android:padding="16dp"
         app:elevation="4dp">
 
@@ -25,24 +28,24 @@
                 android:id="@+id/profile_image"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@drawable/ic_default_profile"
-                android:scaleType="centerCrop"
                 android:background="@drawable/circle_shape"
                 android:clipToOutline="true"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Counters: Followers, Following, Lessons (aligned to right of pfp) -->
             <LinearLayout
                 android:id="@+id/counters_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintStart_toEndOf="@id/profile_image"
-                app:layout_constraintTop_toTopOf="@id/profile_image"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginStart="16dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/profile_image"
+                app:layout_constraintTop_toTopOf="@id/profile_image">
 
                 <!-- Followers -->
                 <LinearLayout
@@ -50,24 +53,26 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/text_followers_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="150"
+                        android:textColor="@color/black"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/text_followers_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="Followers"
-                        android:textSize="14sp"
                         android:textColor="@color/dark_gray"
-                        android:layout_marginTop="4dp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <!-- Following -->
@@ -76,24 +81,26 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/text_following_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="75"
+                        android:textColor="@color/black"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/text_following_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="Following"
-                        android:textSize="14sp"
                         android:textColor="@color/dark_gray"
-                        android:layout_marginTop="4dp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <!-- Lessons -->
@@ -102,24 +109,26 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/text_lessons_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15"
+                        android:textColor="@color/black"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/text_lessons_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="Lessons"
-                        android:textSize="14sp"
                         android:textColor="@color/dark_gray"
-                        android:layout_marginTop="4dp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -128,115 +137,109 @@
                 android:id="@+id/username"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="student"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@id/profile_image"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="8dp"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_image" />
 
             <!-- Bio / Basic Info -->
+
+            <!-- Action Buttons: Unfollow and Nudge -->
+
+            <!-- Additional Details (vertical list) -->
+
+            <!-- Circular Stats for Day and Night -->
+
             <TextView
                 android:id="@+id/user_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="72dp"
                 android:text="Driver Type: 0  |  City: Unknown  |  License: On the Way"
-                android:textSize="14sp"
                 android:textColor="@color/dark_gray"
-                app:layout_constraintTop_toBottomOf="@id/username"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="4dp"/>
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/username" />
 
-            <!-- Action Buttons: Unfollow and Nudge -->
             <LinearLayout
                 android:id="@+id/action_buttons"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
                 android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@id/user_info"
-                app:layout_constraintStart_toStartOf="parent"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="8dp">
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/user_info">
+
                 <Button
                     android:id="@+id/btn_unfollow"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="follow"
-                    android:backgroundTint="@color/blue"
-                    android:textColor="@android:color/white"
+                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="8dp"/>
+                    android:backgroundTint="@color/blue"
+                    android:text="follow"
+                    android:textColor="@android:color/white" />
+
                 <Button
                     android:id="@+id/btn_nudge"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Nudge"
-                    android:backgroundTint="@color/orange"
-                    android:textColor="@android:color/white"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:layout_marginStart="8dp"/>
+                    android:backgroundTint="@color/orange"
+                    android:text="Nudge"
+                    android:textColor="@android:color/white" />
             </LinearLayout>
 
-            <!-- Additional Details (vertical list) -->
             <LinearLayout
                 android:id="@+id/additional_details"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="44dp"
                 android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/action_buttons"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="12dp">
-                <TextView
-                    android:id="@+id/detail_green_form"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Green Form: X"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginTop="8dp"/>
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/action_buttons">
+
                 <TextView
                     android:id="@+id/detail_theory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Theory: X"
-                    android:textSize="14sp"
                     android:textColor="@color/black"
-                    android:layout_marginTop="4dp"/>
-                <TextView
-                    android:id="@+id/detail_license_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="License Release Date: 2025-05-10"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginTop="4dp"/>
+                    android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- Circular Stats for Day and Night -->
             <LinearLayout
                 android:id="@+id/stats_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginTop="32dp"
                 android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@id/additional_details"
-                app:layout_constraintStart_toStartOf="parent"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp">
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/additional_details">
 
                 <!-- Night Circle -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/night_counter"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
+                    android:layout_margin="8dp"
                     android:elevation="4dp"
-                    app:cardCornerRadius="75dp"
-                    android:layout_margin="8dp">
+                    app:cardCornerRadius="75dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -276,9 +279,9 @@
                     android:id="@+id/day_counter"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
+                    android:layout_margin="8dp"
                     android:elevation="4dp"
-                    app:cardCornerRadius="75dp"
-                    android:layout_margin="8dp">
+                    app:cardCornerRadius="75dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -315,15 +318,44 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/detail_license_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="License Release Date: 2025-05-10"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="325dp" />
+
+            <TextView
+                android:id="@+id/detail_green_form"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Green Form: X"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="260dp" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="358dp"
+                android:layout_height="76dp"
+                android:text="Bio Here...."
+                tools:layout_editor_absoluteX="3dp"
+                tools:layout_editor_absoluteY="102dp" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- RecyclerView for Posts (grid) at the bottom -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPosts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:padding="4dp"/>
+        android:layout_height="279dp"
+        android:padding="4dp"
+        app:layout_anchor="@+id/recyclerViewPosts"
+        app:layout_anchorGravity="center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

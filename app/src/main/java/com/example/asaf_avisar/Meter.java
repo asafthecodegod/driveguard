@@ -112,7 +112,7 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
             licenseDate = selectedDate;
             if (currentUser != null) {
                 currentUser.setLicenseDate(licenseDate);
-                fireBaseManager.UpdateUser(currentUser);
+                fireBaseManager.updateUser(currentUser);
             }
 
             // Update UI

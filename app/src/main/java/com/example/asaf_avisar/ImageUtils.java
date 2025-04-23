@@ -28,6 +28,7 @@ public class ImageUtils {
 
     // Convert Base64 to Bitmap
     public static Bitmap convert64base(String base64String) {
+        if (base64String == null) return null;
         try {
             byte[] decodedString = android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);

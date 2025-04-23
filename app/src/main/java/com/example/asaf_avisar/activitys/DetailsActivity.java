@@ -127,15 +127,18 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
             }
 
             // Update StudentUser object
-            studentUser.setGreenform(greenFile);
-            studentUser.setLicense(license);
+            studentUser.setHasGreenForm(greenFile);
+            studentUser.setHasLicense(license);
             studentUser.setLicenseDate(licenseDate);
-            studentUser.setTheory(theory);
-            studentUser.setType(driveType);
+            studentUser.setPassedTheory(theory);
+            if(driveType == 1)
+            studentUser.setDriverType(true);
+            else
+                studentUser.setDriverType(false);
             studentUser.setCity(selectedCity);
 
             // Update Firebase
-            fireBaseManager.UpdateUser(studentUser);
+            fireBaseManager.updateUser(studentUser);
 
             // Navigate to menu activity
             Intent intent = new Intent(DetailsActivity.this, menu.class);

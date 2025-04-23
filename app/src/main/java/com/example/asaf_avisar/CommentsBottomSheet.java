@@ -15,6 +15,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +37,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment implements Fi
     public static CommentsBottomSheet newInstance(Post post) {
         CommentsBottomSheet fragment = new CommentsBottomSheet();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_POST, post);
+        args.putSerializable(ARG_POST, (Serializable) post);
         fragment.setArguments(args);
         return fragment;
     }

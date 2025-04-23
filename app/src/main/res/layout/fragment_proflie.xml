@@ -1,300 +1,390 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
-    android:background="@color/white">
+    android:background="@color/light_gray">
 
-    <LinearLayout
+    <!-- AppBarLayout for the Profile Header -->
+
+    <!-- RecyclerView for Posts (grid) at the bottom -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_height="526dp"
+        android:padding="16dp"
+        app:elevation="4dp">
 
-        <!-- Profile Picture -->
-        <ImageView
-            android:id="@+id/profile_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_default_profile"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/circle_shape"
-            android:clipToOutline="true" />
-
-        <!-- Student Name -->
-        <TextView
-            android:id="@+id/student_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="John Doe"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/black" />
-
-        <!-- Driving Information -->
-        <TextView
-            android:id="@+id/driver_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Car Driver"
-            android:textSize="16sp"
-            android:textColor="@color/gray"
-            android:layout_marginTop="4dp" />
-
-        <TextView
-            android:id="@+id/student_city"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="City: New York"
-            android:textSize="16sp"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/gray" />
-
-        <TextView
-            android:id="@+id/license_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="License: On the Way"
-            android:textSize="16sp"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/gray" />
-
-        <!-- Add Friend Button -->
-        <Button
-            android:id="@+id/btn_add_friend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="@color/blue"
-            android:text="Add Friend"
-            android:textColor="@android:color/white" />
-
-        <!-- Following & Followers Counters -->
-        <LinearLayout
+        <!-- Header Content using ConstraintLayout -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/profile_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="16dp">
+            android:layout_height="wrap_content">
 
+            <!-- Profile Picture (small, aligned left) -->
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@drawable/circle_shape"
+                android:clipToOutline="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Counters: Followers, Following, Lessons (aligned to right of pfp) -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/counters_container"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginStart="16dp"
                 android:gravity="center"
-                android:layout_marginEnd="32dp">
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/profile_image"
+                app:layout_constraintTop_toTopOf="@id/profile_image">
 
-                <TextView
-                    android:id="@+id/following_count"
-                    android:layout_width="wrap_content"
+                <!-- Followers -->
+                <LinearLayout
+                    android:id="@+id/followers_container"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="150"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Following"
-                    android:textSize="14sp"
-                    android:textColor="@color/gray" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/followers_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="200"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Followers"
-                    android:textSize="14sp"
-                    android:textColor="@color/gray" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Time Left Circles -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="16dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_marginEnd="32dp">
-
-                <!-- Circle for Time Left 1 -->
-                <FrameLayout
-                    android:layout_width="60dp"
-                    android:layout_height="60dp">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/circle_shape"
-                        android:scaleType="centerCrop" />
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="10"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:textColor="@color/black" />
-                </FrameLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Time Left 1"
-                    android:textSize="14sp"
-                    android:textColor="@color/gray"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <!-- Circle for Time Left 2 -->
-                <FrameLayout
-                    android:layout_width="60dp"
-                    android:layout_height="60dp">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/circle_shape"
-                        android:scaleType="centerCrop" />
+                        android:id="@+id/text_followers_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="150"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/text_followers_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Followers"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Following -->
+                <LinearLayout
+                    android:id="@+id/following_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_following_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="75"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/text_following_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Following"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Lessons -->
+                <LinearLayout
+                    android:id="@+id/lessons_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_lessons_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="15"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/text_lessons_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Lessons"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Username below the top row -->
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="student"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_image" />
+
+            <!-- Bio / Basic Info -->
+
+            <!-- Action Buttons: Unfollow and Nudge -->
+
+            <!-- Additional Details (vertical list) -->
+
+            <!-- Circular Stats for Day and Night -->
+
+            <TextView
+                android:id="@+id/user_info_1"
+                android:layout_width="135dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="72dp"
+                android:text="Driver Type: 0 |"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/username" />
+
+            <TextView
+                android:id="@+id/user_info_2"
+                android:layout_width="107dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="72dp"
+                android:text="  City: Unknown  |"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.46"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/username" />
+
+            <LinearLayout
+                android:id="@+id/action_buttons"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/user_info_2">
+
+                <Button
+                    android:id="@+id/btn_unfollow"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/blue"
+                    android:text="follow"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/btn_nudge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/orange"
+                    android:text="Nudge"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/additional_details"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="44dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/action_buttons"
+                app:layout_constraintVertical_bias="0.025">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/stats_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/additional_details">
+
+                <!-- Night Circle -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/night_counter"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_margin="8dp"
+                    android:elevation="4dp"
+                    app:cardCornerRadius="75dp">
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="5"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:textColor="@color/black" />
-                </FrameLayout>
+                        android:layout_height="match_parent">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Time Left 2"
-                    android:textSize="14sp"
-                    android:textColor="@color/gray"
-                    android:layout_marginTop="4dp" />
+                        <TextView
+                            android:id="@+id/night_progress_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="180"
+                            android:textColor="@android:color/black"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <ProgressBar
+                            android:id="@+id/night_progress_bar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/circle_progress_bar"
+                            android:fromDegrees="0"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:pivotX="75%"
+                            android:pivotY="75%"
+                            android:progress="50"
+                            android:progressDrawable="@drawable/night_circle_shape"
+                            android:rotation="270"
+                            android:textAlignment="center"
+                            android:toDegrees="90" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Day Circle -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/day_counter"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_margin="8dp"
+                    android:elevation="4dp"
+                    app:cardCornerRadius="75dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/day_progress_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="90"
+                            android:textColor="@android:color/black"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <ProgressBar
+                            android:id="@+id/day_progress_bar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/circle_progress_bar"
+                            android:fromDegrees="0"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:pivotX="75%"
+                            android:pivotY="75%"
+                            android:progress="50"
+                            android:progressDrawable="@drawable/day_circle_shape"
+                            android:rotation="270"
+                            android:textAlignment="center"
+                            android:toDegrees="90" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
             </LinearLayout>
-        </LinearLayout>
 
-        <!-- Progress Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="16dp">
-
-            <!-- Theory Status -->
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/detail_license_date"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:text="License Release Date: 2025-05-10"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.635"
+                tools:layout_editor_absoluteX="0dp" />
 
-                <TextView
-                    android:id="@+id/theory_status_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Theory"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/theory_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Not Completed"
-                    android:textSize="14sp"
-                    android:textColor="@color/gray" />
-            </LinearLayout>
-
-            <!-- Green Form Status -->
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/detail_green_form"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:text="Green Form: X"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/additional_details"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.003"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/action_buttons"
+                app:layout_constraintVertical_bias="0.297" />
 
-                <TextView
-                    android:id="@+id/green_form_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Green Form"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="358dp"
+                android:layout_height="74dp"
+                android:text="Bio Here...."
+                app:layout_constraintBottom_toTopOf="@+id/action_buttons"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.837" />
 
-                <TextView
-                    android:id="@+id/green_form_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Not Submitted"
-                    android:textSize="14sp"
-                    android:textColor="@color/gray" />
-            </LinearLayout>
-
-            <!-- Lesson Counter -->
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/detail_theory"
+                android:layout_width="274dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:text="Theory: X"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.595"
+                tools:layout_editor_absoluteX="0dp" />
 
-                <TextView
-                    android:id="@+id/lesson_counter_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lessons"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-                <TextView
-                    android:id="@+id/lesson_counter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="14sp"
-                    android:textColor="@color/gray" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPosts"
+        android:layout_width="match_parent"
+        android:layout_height="279dp"
+        android:padding="4dp"
+        app:layout_anchor="@+id/recyclerViewPosts"
+        app:layout_anchorGravity="center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

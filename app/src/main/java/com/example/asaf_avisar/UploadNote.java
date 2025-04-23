@@ -31,6 +31,7 @@ public class UploadNote extends Fragment implements FirebaseCallback {
     private String userNameString, profileImageUrl;
     private TextView userName;
     private ImageView profileImage,imageView;
+    private String userId;
 
     public UploadNote() {
         // Required empty public constructor
@@ -60,7 +61,7 @@ public class UploadNote extends Fragment implements FirebaseCallback {
             String note = noteBodyInput.getText().toString();
             if (!note.isEmpty()) {
                 // Create a post with the provided note and the user's name
-                Post post = new Post(userNameString, noteInput.getText().toString(), note, profileImageUrl, new Date());
+                Post post = new Post(userNameString, noteInput.getText().toString(), note, profileImageUrl, new Date(),0);
                 fireBaseManager.savePost(post);
                 navigateToHomeFragment();
                 Toast.makeText(getContext(), "Note uploaded successfully", Toast.LENGTH_SHORT).show();
@@ -133,6 +134,7 @@ public class UploadNote extends Fragment implements FirebaseCallback {
     public void oncallbackStudent(StudentUser student) {
         if (student != null) {
             userNameString = student.getName();
+            userId = student.getId();
             profileImageUrl = student.getProfilePhotoBase64();
             userName.setText(userNameString);
             if (profileImageUrl != null && !profileImageUrl.isEmpty()) {

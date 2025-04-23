@@ -28,7 +28,7 @@ public class StartActivity extends AppCompatActivity {
 
         button = findViewById(R.id.startButton);
         fireBaseManager = new FireBaseManager(this );
-        if(fireBaseManager.isConnecet())
+        if(fireBaseManager.isConnected())
         {
             startActivity(new Intent(this, menu.class));
         }

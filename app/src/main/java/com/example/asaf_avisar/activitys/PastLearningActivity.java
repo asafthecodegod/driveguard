@@ -90,7 +90,7 @@ public class PastLearningActivity extends AppCompatActivity implements FirebaseC
             // Update license date in Firebase
             licenseDate = selectedDate;
             currentUser.setLicenseDate(licenseDate);
-            fireBaseManager.UpdateUser(currentUser);
+            fireBaseManager.updateUser(currentUser);
 
             // Update UI
             updateProgressBasedOnLicense(licenseDate);

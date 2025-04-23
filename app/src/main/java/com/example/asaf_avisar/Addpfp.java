@@ -40,7 +40,7 @@ public class Addpfp extends AppCompatActivity implements FirebaseCallback {
         flag = true;
 
         fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.studentData(this);
+        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
 
         profileImageView = findViewById(R.id.profileImageView);
         addPhotoButton = findViewById(R.id.addPhotoButton);
@@ -145,7 +145,7 @@ public class Addpfp extends AppCompatActivity implements FirebaseCallback {
     @Override
     public void oncallbackStudent(StudentUser student) {
         if (student != null) {
-            Bitmap pic = student.convert64BaseToBitmap(student.getProfilePhotoBase64());
+            Bitmap pic = ImageUtils.convert64base(student.getProfilePhotoBase64());
             profileImageView.setImageBitmap(pic);
         }
     }

@@ -5,192 +5,209 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class StudentUser {
-    protected String name;
-    protected String etEmail,etPassword;
-    protected Date dpBirthday;
-    protected boolean license;
-    protected boolean greenform;
-    protected int type;
-    protected boolean theory;
-    protected Date licenseDate;
-    protected String city;
-    protected String id;
-    protected int lessonCounter;
-    protected String profilePhotoBase64;
-    protected int day , night;
-    protected boolean privacy;
-    protected int timeHaveLicense;
+    private String id;
+    private String name;
+    private String email;
+    private String password;
+    private Date birthday;
+    private String bio;
+    // Driving-related fields
+    private boolean hasLicense;
+    private boolean hasGreenForm;
+    private boolean passedTheory;
+    private Date licenseDate;
+    private int lessonCount;
+    private int timeHaveLicense; // days since license acquired
 
-    public StudentUser(Date licenseDate, boolean theory, int type, boolean greenform, boolean license,String city) {
-        this.licenseDate = licenseDate;
-        this.theory = theory;
-        this.type = type;
-        this.greenform = greenform;
-        this.license = license;
-        this.city =city;
-    }
+    // Location and driver type
+    private boolean driverType;
+    private String city;
+
+    // Social stats
+    private int followerCount;
+    private int followingCount;
+
+    // Friend relationships and requests
+    private boolean isPrivate;
+    private List<String> friends = new ArrayList<>();
+    private List<String> friendRequests = new ArrayList<>();     // incoming requests
+    private List<String> sentRequests = new ArrayList<>();       // outgoing requests
+
+    // Investment in driving school
+    private int drivingInvestment;
+
+    // Profile photo (Base64)
+    private String profilePhotoBase64;
 
     public StudentUser() {
-
+        // Default constructor for Firebase
     }
-    public StudentUser(String name, String etEmail, String etPassword, Date dpBirthday) {
+
+    /**
+     * Convenience constructor for registration
+     */
+    public StudentUser(String name, String email, String password, Date birthday) {
         this.name = name;
-        this.etEmail = etEmail;
-        this.etPassword = etPassword;
-        this.dpBirthday = dpBirthday;
-
+        this.email = email;
+        this.password = password;
+        this.birthday = birthday;
+        this.isPrivate = false; // default public
     }
 
-    public int getTimeHaveLicense() {
-        return timeHaveLicense;
+    public String getBio() {
+        return bio;
     }
 
-    public void setTimeHaveLicense(int timeHaveLicense) {
-        this.timeHaveLicense = timeHaveLicense;
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
-    public int getDay() {
-        return day;
+    // Getters and setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public Date getBirthday() { return birthday; }
+    public void setBirthday(Date birthday) { this.birthday = birthday; }
+
+    public boolean isHasLicense() { return hasLicense; }
+    public void setHasLicense(boolean hasLicense) { this.hasLicense = hasLicense; }
+
+    public boolean isHasGreenForm() { return hasGreenForm; }
+    public void setHasGreenForm(boolean hasGreenForm) { this.hasGreenForm = hasGreenForm; }
+
+    public boolean isPassedTheory() { return passedTheory; }
+    public void setPassedTheory(boolean passedTheory) { this.passedTheory = passedTheory; }
+
+    public Date getLicenseDate() { return licenseDate; }
+    public void setLicenseDate(Date licenseDate) { this.licenseDate = licenseDate; }
+
+    public int getLessonCount() { return lessonCount; }
+    public void setLessonCount(int lessonCount) { this.lessonCount = lessonCount; }
+
+    public int getTimeHaveLicense() { return timeHaveLicense; }
+    public void setTimeHaveLicense(int timeHaveLicense) { this.timeHaveLicense = timeHaveLicense; }
+
+    public boolean isDriverType() { return driverType; }
+    public void setDriverType(boolean driverType) { this.driverType = driverType; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+
+    public int getFollowerCount() { return followerCount; }
+    public void setFollowerCount(int followerCount) { this.followerCount = followerCount; }
+
+    public int getFollowingCount() { return followingCount; }
+    public void setFollowingCount(int followingCount) { this.followingCount = followingCount; }
+
+    public int getDrivingInvestment() { return drivingInvestment; }
+    public void setDrivingInvestment(int drivingInvestment) { this.drivingInvestment = drivingInvestment; }
+
+    public boolean isPrivate() { return isPrivate; }
+    public void setPrivate(boolean isPrivate) { this.isPrivate = isPrivate; }
+
+    public List<String> getFriends() { return friends; }
+    public void setFriends(List<String> friends) { this.friends = friends; }
+
+    public List<String> getFriendRequests() { return friendRequests; }
+    public void setFriendRequests(List<String> friendRequests) { this.friendRequests = friendRequests; }
+
+    public List<String> getSentRequests() { return sentRequests; }
+    public void setSentRequests(List<String> sentRequests) { this.sentRequests = sentRequests; }
+
+    // Helpers for friend request flow
+
+    /**
+     * Send a friend request (adds to outgoing list)
+     */
+    public void sendFriendRequest(String targetUserId) {
+        if (!sentRequests.contains(targetUserId) && !friends.contains(targetUserId)) {
+            sentRequests.add(targetUserId);
+        }
     }
 
-    public void setDay(int day) {
-        this.day = (int) (90 - getTimeHaveLicense());
+    /**
+     * Receive a friend request (adds to incoming list)
+     */
+    public void receiveFriendRequest(String fromUserId) {
+        if (!friendRequests.contains(fromUserId) && !friends.contains(fromUserId)) {
+            friendRequests.add(fromUserId);
+        }
     }
 
-    public int getNight() {
-        return night;
+    /**
+     * Accept an incoming friend request
+     * @return true if accepted, false otherwise
+     */
+    public boolean acceptFriendRequest(String userId) {
+        if (friendRequests.remove(userId)) {
+            friends.add(userId);
+            followerCount++;         // they follow you
+            followingCount++;        // you follow them
+            return true;
+        }
+        return false;
     }
 
-    public void setNight(int night) {
-        this.night = (int) (180 - getTimeHaveLicense());;
+    /**
+     * Decline an incoming friend request
+     */
+    public void declineFriendRequest(String userId) {
+        friendRequests.remove(userId);
     }
 
-    public boolean isPrivacy() {
-        return privacy;
+    /**
+     * Check if a given userId is a friend
+     */
+    public boolean isFriend(String userId) {
+        return friends.contains(userId);
     }
 
-    public void setPrivacy(boolean privacy) {
-        this.privacy = privacy;
+    /**
+     * Check if a request has been sent to a specific user
+     */
+    public boolean hasSentRequest(String userId) {
+        return sentRequests.contains(userId);
     }
 
-    public String getProfilePhotoBase64() {
-        return profilePhotoBase64;
+    /**
+     * Check if there's an incoming request from a specific user
+     */
+    public boolean hasIncomingRequest(String userId) {
+        return friendRequests.contains(userId);
     }
 
-    public void setProfilePhotoBase64(String profilePhotoBase64) {
-        this.profilePhotoBase64 = profilePhotoBase64;
+    public String getProfilePhotoBase64() { return profilePhotoBase64; }
+    public void setProfilePhotoBase64(String profilePhotoBase64) { this.profilePhotoBase64 = profilePhotoBase64; }
+
+
+
+
+
+    /**
+     * Compute days left of day-only driving (90 days required)
+     */
+    public int getDaysLeft() {
+        return Math.max(0, 90 - timeHaveLicense);
     }
 
-    // Encode a Bitmap to Base64
-    public  String convertTo64Base(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] data = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(data, Base64.DEFAULT);
-    }
-
-    // Decode a Base64 String to Bitmap
-    public static   Bitmap convert64BaseToBitmap(String base64Code) {
-        byte[] decodedString = Base64.decode(base64Code, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-    }
-
-    public int getLessonCounter() {
-        return lessonCounter;
-    }
-
-    public void setLessonCounter(int lessonCounter) {
-        this.lessonCounter = lessonCounter;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEtEmail() {
-        return etEmail;
-    }
-
-    public void setEtEmail(String etEmail) {
-        this.etEmail = etEmail;
-    }
-
-    public String getEtPassword() {
-        return etPassword;
-    }
-
-    public void setEtPassword(String etPassword) {
-        this.etPassword = etPassword;
-    }
-
-    public Date getDpBirthday() {
-        return dpBirthday;
-    }
-
-    public void setDpBirthday(Date dpBirthday) {
-        this.dpBirthday = dpBirthday;
-    }
-
-    public boolean isLicense() {
-        return license;
-    }
-
-    public void setLicense(boolean license) {
-        this.license = license;
-    }
-
-    public boolean isGreenform() {
-        return greenform;
-    }
-
-    public void setGreenform(boolean greenform) {
-        this.greenform = greenform;
-    }
-
-    public int isType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public boolean isTheory() {
-        return theory;
-    }
-
-    public void setTheory(boolean theory) {
-        this.theory = theory;
-    }
-
-    public Date getLicenseDate() {
-        return licenseDate;
-    }
-
-    public void setLicenseDate(Date licenseDate) {
-        this.licenseDate = licenseDate;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    /**
+     * Compute days left of night driving (180 days required)
+     */
+    public int getNightDaysLeft() {
+        return Math.max(0, 180 - timeHaveLicense);
     }
 }

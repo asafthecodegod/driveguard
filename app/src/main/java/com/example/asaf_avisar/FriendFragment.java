@@ -1,63 +1,61 @@
 package com.example.asaf_avisar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView; // Correct import
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
-import java.util.Date;
 
-public class FriendFragment extends Fragment implements FirebaseCallback {
+public class FriendFragment extends Fragment {
 
+    private static final String TAG = "FriendFragment";
     private RecyclerView recyclerView;
-    private SearchView searchBar; // Keep the correct SearchView import
-    private StudentUserAdapter studentUserAdapter; // Adapter for StudentUser
-    private ArrayList<StudentUser> students = new ArrayList<>(); // Full student list
-    private ArrayList<StudentUser> filteredStudents = new ArrayList<>(); // Filtered student list
-    private FireBaseManager fireBaseManager;
+    private SearchView searchBar;
+    private StudentUserAdapter studentUserAdapter;
+    private ArrayList<StudentUser> students = new ArrayList<>();
+    private ArrayList<StudentUser> filteredStudents = new ArrayList<>();
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the fragment layout
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_friend, container, false);
 
-        // Initialize views
-        searchBar = rootView.findViewById(R.id.searchBar); // Use the correct SearchView reference
-        recyclerView = rootView.findViewById(R.id.viewteacher); // Assuming the same RecyclerView ID is used
+        // find views
+        searchBar    = rootView.findViewById(R.id.searchBar);
+        recyclerView = rootView.findViewById(R.id.viewteacher);
 
-        // Set up RecyclerView
+        // setup RecyclerView + adapter
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        studentUserAdapter = new StudentUserAdapter(getContext(), filteredStudents); // Set up adapter for StudentUser
+        studentUserAdapter = new StudentUserAdapter(getContext(), filteredStudents);
         recyclerView.setAdapter(studentUserAdapter);
 
-        // Initialize Firebase manager to fetch student data
-        fireBaseManager = new FireBaseManager(getContext());
-        fireBaseManager.studentData(this); // Fetch student data using FirebaseManager
+        // load the first 50 students only
+        loadFirstPage();
 
-        // Add sample data for testing (Replace this with Firebase data)
-        for (int i = 0; i < 20; i++) {
-            students.add(new StudentUser("student" + i, "student" + i + "@gmail.com", "123456", new Date(2000, 8, 1)));
-        }
-        filteredStudents.addAll(students); // Initially display all students
-        studentUserAdapter.notifyDataSetChanged();
-
-        // Set up search bar functionality
+        // wire up search filter
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false; // We don't handle the submit action
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                filterStudents(newText); // Call filter method on text change
+            @Override public boolean onQueryTextSubmit(String query) { return false; }
+            @Override public boolean onQueryTextChange(String newText) {
+                filterStudents(newText);
                 return true;
             }
         });
@@ -65,33 +63,42 @@ public class FriendFragment extends Fragment implements FirebaseCallback {
         return rootView;
     }
 
-    // Filter the student list based on the search query
+    private void loadFirstPage() {
+        DatabaseReference studentsRef = FirebaseDatabase
+                .getInstance()
+                .getReference("Student");
+
+        // only the first 50 entries
+        Query q = studentsRef.limitToFirst(15);
+        q.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                students.clear();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    StudentUser u = child.getValue(StudentUser.class);
+                    if (u != null) {
+                        u.setId(child.getKey());
+                        students.add(u);
+                    }
+                }
+                // update filtered & adapter
+                filteredStudents.clear();
+                filteredStudents.addAll(students);
+                studentUserAdapter.notifyDataSetChanged();
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "loadFirstPage:onCancelled", error.toException());
+            }
+        });
+    }
+
     private void filterStudents(String query) {
         filteredStudents.clear();
-        for (StudentUser studentUser : students) {
-            if (studentUser.getName().toLowerCase().contains(query.toLowerCase())) {
-                filteredStudents.add(studentUser);
+        String lower = query.toLowerCase();
+        for (StudentUser u : students) {
+            if (u.getName() != null && u.getName().toLowerCase().contains(lower)) {
+                filteredStudents.add(u);
             }
         }
         studentUserAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void oncallbackArryStudent(ArrayList<StudentUser> studentsFromFirebase) {
-        students.clear();
-        students.addAll(studentsFromFirebase); // Populate the full student list
-        filteredStudents.clear();
-        filteredStudents.addAll(studentsFromFirebase); // Update filtered list
-        studentUserAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void oncallbackStudent(StudentUser user) {
-        // Handle a single student callback if needed
-    }
-
-    @Override
-    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
-        // This method is unused in this fragment for StudentUser
     }
 }
