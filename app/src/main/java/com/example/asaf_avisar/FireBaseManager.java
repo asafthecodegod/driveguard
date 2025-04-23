@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -226,30 +227,34 @@ public class FireBaseManager {
                 });
     }
 
+
     public void readPosts(FirebaseCallbackPosts firebaseCallbackPosts) {
         ArrayList<Post> posts = new ArrayList<>();
-        getMyRef("Posts")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                            try {
-                                Post post = postSnapshot.getValue(Post.class);
-                                if (post != null) {
-                                    post.setKey(postSnapshot.getKey());
-                                    posts.add(post);
-                                }
-                            } catch (Exception e) {
-                                Log.e(TAG, "Error parsing post: " + e.getMessage());
-                            }
+
+        getMyRef("Posts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) { // ✅ Loop through each post
+                    try {
+                        Post post = postSnapshot.getValue(Post.class);
+                        if (post != null) {
+                            post.setKey(postSnapshot.getKey()); // ✅ Store Firebase key
+                            posts.add(post);
                         }
-                        firebaseCallbackPosts.onCallbackPosts(posts);
+                    } catch (Exception e) {
+                        Log.e("Firebase", "Error parsing post: " + e.getMessage());
                     }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.w(TAG, "Failed to read posts.", error.toException());
-                    }
-                });
+                    firebaseCallbackPosts.onCallbackPosts(posts); // ✅ Send the list
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+
+        });
     }
 
     public void updatePostLikes(Post post, String postKey) {
@@ -277,7 +282,47 @@ public class FireBaseManager {
         getMyRef("Posts").child(comment.getPostId()).child("comments").child(key)
                 .child("likedByUsers").setValue(comment.getLikedByUsers());
     }
+    public void readPostsForUser(FirebaseCallbackPosts callback, String targetUserId) {
+        ArrayList<Post> userPosts = new ArrayList<>();
+
+        // 1) get the same “Posts” reference you debugged
+        Query q = FirebaseDatabase
+                .getInstance()
+                .getReference("Posts")
+                .orderByChild("userId")
+                .equalTo(targetUserId);
+
+        // 2) single-shot listener
+        q.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // 3) collect all matching posts
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    try {
+                        Post p = postSnapshot.getValue(Post.class);
+                        if (p != null) {
+                            p.setKey(postSnapshot.getKey());
+                            userPosts.add(p);
+                        }
+                    } catch (Exception ex) {
+                        Log.e("Firebase", "Error parsing post: " + ex.getMessage());
+                    }
+                }
+                // 4) deliver the list once
+                callback.onCallbackPosts(userPosts);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Firebase", "readPostsForUser:onCancelled", error.toException());
+            }
+        });
+    }
+
+
 
     // --- Friend Request Flow ---
     // ... (שאר הקוד ללא שינוי)
+
+
 }

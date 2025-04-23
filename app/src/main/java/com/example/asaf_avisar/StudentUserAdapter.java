@@ -2,6 +2,7 @@ package com.example.asaf_avisar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -56,9 +59,19 @@ public class StudentUserAdapter extends RecyclerView.Adapter<StudentUserAdapter.
 
         // Handle item clicks to open the selected student's profile
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ProfileFragment.class);
-            intent.putExtra("STUDENT_ID", currentStudentUser.getId()); // Pass student ID
-            context.startActivity(intent);
+            // Pass the user ID to the ProfileFragment
+            Bundle bundle = new Bundle();
+            bundle.putString("userId", currentStudentUser.getId());
+
+            // Create a new ProfileFragment instance and set the arguments
+            ProfileFragment profileFragment = new ProfileFragment();
+            profileFragment.setArguments(bundle);
+
+            // Get the FragmentManager and start the transaction to replace the current fragment
+            FragmentTransaction transaction = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, profileFragment);  // Replace with your container ID
+            transaction.addToBackStack(null);  // Optional: add the transaction to the back stack so the user can navigate back
+            transaction.commit();
         });
     }
 

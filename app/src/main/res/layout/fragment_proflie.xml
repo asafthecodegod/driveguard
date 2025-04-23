@@ -13,7 +13,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="526dp"
+        android:layout_height="482dp"
         android:padding="16dp"
         app:elevation="4dp">
 
@@ -133,18 +133,6 @@
             </LinearLayout>
 
             <!-- Username below the top row -->
-            <TextView
-                android:id="@+id/username"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="student"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profile_image" />
 
             <!-- Bio / Basic Info -->
 
@@ -155,28 +143,42 @@
             <!-- Circular Stats for Day and Night -->
 
             <TextView
+                android:id="@+id/username"
+                android:layout_width="68dp"
+                android:layout_height="34dp"
+                android:layout_marginTop="68dp"
+                android:text="student"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.023"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
                 android:id="@+id/user_info_1"
                 android:layout_width="135dp"
                 android:layout_height="24dp"
-                android:layout_marginTop="72dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
                 android:text="Driver Type: 0 |"
                 android:textColor="@color/dark_gray"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintBottom_toTopOf="@+id/detail_green_form"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/username" />
+                app:layout_constraintTop_toBottomOf="@+id/action_buttons"
+                app:layout_constraintVertical_bias="0.2" />
 
             <TextView
                 android:id="@+id/user_info_2"
                 android:layout_width="107dp"
                 android:layout_height="24dp"
-                android:layout_marginTop="72dp"
-                android:text="  City: Unknown  |"
+                android:layout_marginTop="12dp"
+                android:text=""
                 android:textColor="@color/dark_gray"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.46"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/username" />
 
@@ -214,31 +216,18 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/additional_details"
+                android:id="@+id/stats_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="44dp"
-                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/action_buttons"
-                app:layout_constraintVertical_bias="0.025">
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/stats_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/additional_details">
+                app:layout_constraintTop_toBottomOf="@+id/detail_license_date"
+                app:layout_constraintVertical_bias="1.0">
 
                 <!-- Night Circle -->
                 <androidx.cardview.widget.CardView
@@ -335,33 +324,36 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.635"
+                app:layout_constraintVertical_bias="0.614"
                 tools:layout_editor_absoluteX="0dp" />
 
             <TextView
                 android:id="@+id/detail_green_form"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:layout_marginBottom="3dp"
                 android:text="Green Form: X"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toTopOf="@+id/additional_details"
+                app:layout_constraintBottom_toTopOf="@+id/detail_theory"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.003"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/action_buttons"
-                app:layout_constraintVertical_bias="0.297" />
+                app:layout_constraintVertical_bias="0.727" />
 
             <TextView
                 android:id="@+id/textView2"
-                android:layout_width="358dp"
-                android:layout_height="74dp"
+                android:layout_width="356dp"
+                android:layout_height="45dp"
                 android:text="Bio Here...."
                 app:layout_constraintBottom_toTopOf="@+id/action_buttons"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.538"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.837" />
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/detail_theory"
@@ -372,7 +364,7 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.595"
+                app:layout_constraintVertical_bias="0.57"
                 tools:layout_editor_absoluteX="0dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -381,7 +373,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPosts"
         android:layout_width="match_parent"
-        android:layout_height="279dp"
+        android:layout_height="232dp"
+        android:layout_marginBottom="180dp"
         android:padding="4dp"
         app:layout_anchor="@+id/recyclerViewPosts"
         app:layout_anchorGravity="center"

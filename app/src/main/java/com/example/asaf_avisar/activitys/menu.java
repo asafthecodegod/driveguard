@@ -32,6 +32,7 @@ import com.example.asaf_avisar.InfoActivity;
 import com.example.asaf_avisar.LessonListActivity;
 import com.example.asaf_avisar.MainActivity;
 import com.example.asaf_avisar.Meter;
+import com.example.asaf_avisar.OwnProfileFragment;
 import com.example.asaf_avisar.ProfileFragment;
 import com.example.asaf_avisar.R;
 
@@ -80,7 +81,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             if (selectedId == R.id.home) {
                 replaceFragment(new HomeFragment());
             } else if (selectedId == R.id.profile) {
-                replaceFragment(new ProfileFragment());
+                replaceFragment(new OwnProfileFragment());
             } else if (selectedId == R.id.meter) {
                 replaceFragment(new Meter());
                 //startActivity(new Intent(this, PastLearningActivity.class));
