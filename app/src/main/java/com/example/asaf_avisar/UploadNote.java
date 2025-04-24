@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class UploadNote extends Fragment implements FirebaseCallback {
             String note = noteBodyInput.getText().toString();
             if (!note.isEmpty()) {
                 // Create a post with the provided note and the user's name
+
                 Post post = new Post(userNameString, noteInput.getText().toString(), note, profileImageUrl, new Date());
                 fireBaseManager.savePost(post);
                 navigateToHomeFragment();

@@ -89,6 +89,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         } else if (holder instanceof NoteViewHolder) {
             NoteViewHolder noteHolder = (NoteViewHolder) holder;
 
+            userPfpBitmap = ImageUtils.convert64base(post.getImageUrl());
             if (userPfpBitmap != null) {
                 noteHolder.userPfp.setImageBitmap(userPfpBitmap);
             }
@@ -100,6 +101,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             noteHolder.likeButton.setOnClickListener(v -> handleLikeButtonClick(post, noteHolder.likeCount, noteHolder.likeButton));
             noteHolder.commentButton.setOnClickListener(v -> openCommentsBottomSheet(v, post));
+
         } else if (holder instanceof StatusViewHolder) {
             StatusViewHolder statusHolder = (StatusViewHolder) holder;
             if (userPfpBitmap != null) {

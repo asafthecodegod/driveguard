@@ -135,7 +135,7 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
 
             if (!base64Image.isEmpty()) {
 
-                Post post = new Post(userId, userNameString, profileImageUrl, base64Image, descriptionEditText.getText().toString(), "", new Date(), 1);
+                Post post = new Post(userId, userNameString, profileImageUrl, base64Image, descriptionEditText.getText().toString(),ImageUtils.convertTo64Base(selectedImageBitmap) , new Date(), 1);
                 fireBaseManager.savePost(post);
                 navigateToHomeFragment();
                 Toast.makeText(getContext(), "Post uploaded successfully", Toast.LENGTH_SHORT).show();
