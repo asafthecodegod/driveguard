@@ -2,11 +2,12 @@ package com.example.asaf_avisar.activitys;
 
 import com.example.asaf_avisar.Comment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Post {
+public class Post implements Serializable {
     private String key;            // Unique post ID (Firebase key)
     private String userId;        // ID of the user who posted
     private String userName;      // Name of the user who posted

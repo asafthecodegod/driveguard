@@ -37,7 +37,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment implements Fi
     public static CommentsBottomSheet newInstance(Post post) {
         CommentsBottomSheet fragment = new CommentsBottomSheet();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_POST, (Serializable) post);
+        args.putSerializable(ARG_POST, post);
         fragment.setArguments(args);
         return fragment;
     }

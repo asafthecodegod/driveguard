@@ -33,7 +33,7 @@
             android:id="@+id/et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name"
+            android:hint="Enter Name"
             android:inputType="textPersonName"
             android:layout_marginTop="16dp" />
 
@@ -43,7 +43,8 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="8dp"
-            android:hint="Bio"
+            android:maxLength="80"
+            android:hint="Enter Bio"
             android:inputType="textMultiLine"
             android:minLines="3" />
 
@@ -52,7 +53,7 @@
             android:id="@+id/et_city"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="City"
+            android:hint="Choose a City"
             android:inputType="textCapWords"
             android:layout_marginTop="8dp" />
 

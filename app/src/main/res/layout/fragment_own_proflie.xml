@@ -122,8 +122,8 @@
             <!-- Username -->
             <TextView
                 android:id="@+id/username_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="233dp"
+                android:layout_height="28dp"
                 android:layout_marginTop="68dp"
                 android:text="student"
                 android:textColor="@color/black"
