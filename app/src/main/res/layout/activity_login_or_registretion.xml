@@ -9,6 +9,7 @@
     android:padding="16dp">
 
 
+
     <TextView
         android:id="@+id/appTitle"
         android:layout_width="225dp"
@@ -29,6 +30,7 @@
         android:layout_marginTop="44dp"
         android:padding="8dp"
         android:text="lets get started! please make or sign in to your account"
+        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"

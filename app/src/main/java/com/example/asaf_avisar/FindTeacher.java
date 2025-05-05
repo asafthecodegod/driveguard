@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, FirebaseCallback {
+public class FindTeacher extends AppCompatActivity implements View.OnClickListener, FirebaseCallback {
     private ImageButton logout;
     private FireBaseManager fireBaseManager;
     private ArrayList<TeacherUser> teacher = new ArrayList<>();
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_find_teacher);
 
         // Initialize the logout button and set its click listener
         logout = findViewById(R.id.logoutButton);
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialogRecyclerView.setAdapter(adapter);
 
         // Create and configure the AlertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(FindTeacher.this);
         builder.setView(dialogView);
 
         // Create the dialog instance

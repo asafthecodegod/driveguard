@@ -3,7 +3,6 @@ package com.example.asaf_avisar;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-
-import com.example.asaf_avisar.FireBaseManager;
-import com.example.asaf_avisar.FirebaseCallback;
-import com.example.asaf_avisar.R;
-import com.example.asaf_avisar.StudentUser;
-import com.example.asaf_avisar.TeacherUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,7 +68,7 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         dayEscortEndDateTextView = rootView.findViewById(R.id.day_escort_end_date);
         nightEscortEndDateTextView = rootView.findViewById(R.id.night_escort_end_date);
 
-        changeLicenseDateButton = rootView.findViewById(R.id.logOut);
+        changeLicenseDateButton = rootView.findViewById(R.id.ChangeB);
         changeLicenseDateButton.setOnClickListener(this);
 
         hello = rootView.findViewById(R.id.textView);

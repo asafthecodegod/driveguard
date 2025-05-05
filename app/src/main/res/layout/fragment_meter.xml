@@ -82,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@id/day_permit" />
 
     <Button
-        android:id="@+id/logOut"
+        android:id="@+id/ChangeB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"

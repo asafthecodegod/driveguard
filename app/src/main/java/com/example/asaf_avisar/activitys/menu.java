@@ -30,7 +30,7 @@ import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.HomeFragment;
 import com.example.asaf_avisar.InfoActivity;
 import com.example.asaf_avisar.LessonListActivity;
-import com.example.asaf_avisar.MainActivity;
+import com.example.asaf_avisar.FindTeacher;
 import com.example.asaf_avisar.Meter;
 import com.example.asaf_avisar.OwnProfileFragment;
 import com.example.asaf_avisar.ProfileFragment;
@@ -120,7 +120,7 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
         } else if (id == R.id.nav_info) {
             startActivity(new Intent(this, InfoActivity.class));
         } else if (id == R.id.nav_find_teacher) {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, FindTeacher.class));
         } else if (id == R.id.nav_logout) {
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
             fireBaseManager.logout();

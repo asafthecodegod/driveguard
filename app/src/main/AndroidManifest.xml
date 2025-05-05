@@ -75,7 +75,7 @@
             android:name=".activitys.LoginOrRegistretionActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".FindTeacher"
             android:exported="false" />
         <activity
             android:name=".activitys.StartActivity"
