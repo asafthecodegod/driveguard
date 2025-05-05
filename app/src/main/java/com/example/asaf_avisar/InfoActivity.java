@@ -8,6 +8,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.tabs.TabLayout;
 
+/**
+ * The type Info activity.
+ */
 public class InfoActivity extends AppCompatActivity {
 
     @Override

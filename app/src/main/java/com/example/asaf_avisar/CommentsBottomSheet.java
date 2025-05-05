@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The type Comments bottom sheet.
+ */
 public class CommentsBottomSheet extends BottomSheetDialogFragment implements FirebaseCallback {
 
     private static final String ARG_POST = "arg_post";
@@ -34,6 +37,12 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment implements Fi
     private String username;
     private String profilePictureUrl;
 
+    /**
+     * New instance comments bottom sheet.
+     *
+     * @param post the post
+     * @return the comments bottom sheet
+     */
     public static CommentsBottomSheet newInstance(Post post) {
         CommentsBottomSheet fragment = new CommentsBottomSheet();
         Bundle args = new Bundle();

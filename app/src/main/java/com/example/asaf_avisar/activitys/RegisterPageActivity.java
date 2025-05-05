@@ -22,6 +22,9 @@ import com.example.asaf_avisar.StudentUser;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * The type Register page activity.
+ */
 public class RegisterPageActivity extends AppCompatActivity implements View.OnClickListener, DatePicker.OnDateChangedListener {
     private EditText etEmail, etPassword, etUsername;
     private DatePicker dpBirthday;
@@ -67,6 +70,14 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         dpBirthday.setMaxDate(today.getTimeInMillis());  // Set today's date as the maximum allowed date
     }
 
+    /**
+     * Calculate age int.
+     *
+     * @param birthYear  the birth year
+     * @param birthMonth the birth month
+     * @param birthDay   the birth day
+     * @return the int
+     */
     public int calculateAge(int birthYear, int birthMonth, int birthDay) {
         // Get the current date using Calendar
         Calendar currentDate = Calendar.getInstance();

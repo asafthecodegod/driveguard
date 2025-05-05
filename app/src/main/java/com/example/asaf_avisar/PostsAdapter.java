@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * The type Posts adapter.
+ */
 public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Post> posts;
@@ -25,6 +28,11 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int TYPE_PHOTO = 1;
     private static final int TYPE_STATUS = 3;
 
+    /**
+     * Instantiates a new Posts adapter.
+     *
+     * @param posts the posts
+     */
     public PostsAdapter(List<Post> posts) {
         this.posts = (posts != null) ? posts : new ArrayList<>();
     }
@@ -142,11 +150,43 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 .withEndAction(() -> view.animate().scaleX(1f).scaleY(1f).setDuration(150).start()).start();
     }
 
-    // ViewHolder for photo posts.
+    /**
+     * The type Photo view holder.
+     */
+// ViewHolder for photo posts.
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
-        ImageView postContent, userPfp, likeButton, commentButton;
-        TextView userName, photoDescription, postDate, likeCount;
+        /**
+         * The Post content.
+         */
+        ImageView postContent, /**
+         * The User pfp.
+         */
+        userPfp, /**
+         * The Like button.
+         */
+        likeButton, /**
+         * The Comment button.
+         */
+        commentButton;
+        /**
+         * The User name.
+         */
+        TextView userName, /**
+         * The Photo description.
+         */
+        photoDescription, /**
+         * The Post date.
+         */
+        postDate, /**
+         * The Like count.
+         */
+        likeCount;
 
+        /**
+         * Instantiates a new Photo view holder.
+         *
+         * @param itemView the item view
+         */
         PhotoViewHolder(View itemView) {
             super(itemView);
             userPfp = itemView.findViewById(R.id.user_pfp);
@@ -160,12 +200,44 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    // ViewHolder for note posts.
+    /**
+     * The type Note view holder.
+     */
+// ViewHolder for note posts.
     static class NoteViewHolder extends RecyclerView.ViewHolder {
+        /**
+         * The User pfp.
+         */
         ImageView userPfp;
-        TextView userName, postTitle, NoteContent, postDate, likeCount;
-        ImageView likeButton, commentButton;  // Changed from ImageButton to ImageView
+        /**
+         * The User name.
+         */
+        TextView userName, /**
+         * The Post title.
+         */
+        postTitle, /**
+         * The Note content.
+         */
+        NoteContent, /**
+         * The Post date.
+         */
+        postDate, /**
+         * The Like count.
+         */
+        likeCount;
+        /**
+         * The Like button.
+         */
+        ImageView likeButton, /**
+         * The Comment button.
+         */
+        commentButton;  // Changed from ImageButton to ImageView
 
+        /**
+         * Instantiates a new Note view holder.
+         *
+         * @param itemView the item view
+         */
         NoteViewHolder(View itemView) {
             super(itemView);
             userPfp = itemView.findViewById(R.id.user_pfp);
@@ -179,11 +251,31 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    // ViewHolder for status posts.
+    /**
+     * The type Status view holder.
+     */
+// ViewHolder for status posts.
     static class StatusViewHolder extends RecyclerView.ViewHolder {
+        /**
+         * The User pfp.
+         */
         ImageView userPfp;
-        TextView userName, postTitle, postDate;
+        /**
+         * The User name.
+         */
+        TextView userName, /**
+         * The Post title.
+         */
+        postTitle, /**
+         * The Post date.
+         */
+        postDate;
 
+        /**
+         * Instantiates a new Status view holder.
+         *
+         * @param itemView the item view
+         */
         StatusViewHolder(View itemView) {
             super(itemView);
             userPfp = itemView.findViewById(R.id.user_pfp);

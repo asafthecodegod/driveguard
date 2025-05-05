@@ -14,6 +14,9 @@ import com.example.asaf_avisar.Check;
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.R;
 
+/**
+ * The type Login page activity.
+ */
 public class LoginPageActivity extends AppCompatActivity implements View.OnClickListener {
     private FireBaseManager fireBaseManager;
     private EditText etEmail, etPassword;

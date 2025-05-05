@@ -21,6 +21,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The type Meter.
+ */
 public class Meter extends Fragment implements FirebaseCallback, View.OnClickListener {
 
     private FireBaseManager fireBaseManager;
@@ -37,10 +40,20 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
     private int dayCounter, nightCounter;
     private StudentUser currentUser;
 
+    /**
+     * Instantiates a new Meter.
+     */
     public Meter() {
         // Required empty public constructor
     }
 
+    /**
+     * New instance meter.
+     *
+     * @param param1 the param 1
+     * @param param2 the param 2
+     * @return the meter
+     */
     public static Meter newInstance(String param1, String param2) {
         Meter fragment = new Meter();
         Bundle args = new Bundle();

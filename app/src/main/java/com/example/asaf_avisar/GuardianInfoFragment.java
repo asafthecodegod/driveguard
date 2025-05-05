@@ -8,8 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+/**
+ * The type Guardian info fragment.
+ */
 public class GuardianInfoFragment extends Fragment {
 
+    /**
+     * Instantiates a new Guardian info fragment.
+     */
     public GuardianInfoFragment() {
         // Required empty public constructor
     }

@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * The type Details activity.
+ */
 public class DetailsActivity extends AppCompatActivity implements FirebaseCallback {
 
     // Views

@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.R;
 
+/**
+ * The type Start activity.
+ */
 public class StartActivity extends AppCompatActivity {
     private Button button;
     private FireBaseManager fireBaseManager;

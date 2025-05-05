@@ -26,46 +26,89 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Fire base manager.
+ */
 public class FireBaseManager {
     private static FirebaseAuth mAuth;
     private static FirebaseDatabase database;
     private static DatabaseReference myRef;
     private Context context;
 
+    /**
+     * Instantiates a new Fire base manager.
+     *
+     * @param context the context
+     */
     public FireBaseManager(Context context) {
         this.context = context;
     }
 
-    // --- Firebase Authentication Helpers ---
+    /**
+     * Gets auth.
+     *
+     * @return the auth
+     */
+// --- Firebase Authentication Helpers ---
     public static FirebaseAuth getmAuth() {
         if (mAuth == null) mAuth = FirebaseAuth.getInstance();
         return mAuth;
     }
 
+    /**
+     * Gets database.
+     *
+     * @return the database
+     */
     public static FirebaseDatabase getDatabase() {
         if (database == null) database = FirebaseDatabase.getInstance();
         return database;
     }
 
+    /**
+     * Gets my ref.
+     *
+     * @param key the key
+     * @return the my ref
+     */
     public static DatabaseReference getMyRef(String key) {
         myRef = getDatabase().getReference(key);
         return myRef;
     }
 
+    /**
+     * Is connected boolean.
+     *
+     * @return the boolean
+     */
     public boolean isConnected() {
         return getmAuth().getCurrentUser() != null;
     }
 
+    /**
+     * Logout.
+     */
     public void logout() {
         getmAuth().signOut();
         context.startActivity(new Intent(context, LoginOrRegistretionActivity.class));
     }
 
+    /**
+     * Gets userid.
+     *
+     * @return the userid
+     */
     public String getUserid() {
         return getmAuth().getCurrentUser().getUid();
     }
 
-    // --- User Creation & Login ---
+    /**
+     * Create user.
+     *
+     * @param user the user
+     * @param type the type
+     */
+// --- User Creation & Login ---
     public void createUser(StudentUser user, String type) {
         getmAuth().createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -85,6 +128,12 @@ public class FireBaseManager {
                 });
     }
 
+    /**
+     * Login user.
+     *
+     * @param email the email
+     * @param pass  the pass
+     */
     public void loginUser(String email, String pass) {
         getmAuth().signInWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -101,7 +150,14 @@ public class FireBaseManager {
                 });
     }
 
-    // --- Data Reading ---
+    /**
+     * Read data.
+     *
+     * @param firebaseCallback the firebase callback
+     * @param key              the key
+     * @param id               the id
+     */
+// --- Data Reading ---
     public void readData(FirebaseCallback firebaseCallback, String key, String id) {
         getMyRef(key).child(id)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -117,6 +173,11 @@ public class FireBaseManager {
                 });
     }
 
+    /**
+     * Student data.
+     *
+     * @param firebaseCallback the firebase callback
+     */
     public void studentData(FirebaseCallback firebaseCallback) {
         ArrayList<StudentUser> students = new ArrayList<>();
         getMyRef("Student")
@@ -137,6 +198,11 @@ public class FireBaseManager {
                 });
     }
 
+    /**
+     * Teacher data.
+     *
+     * @param firebaseCallback the firebase callback
+     */
     public void teacherData(FirebaseCallback firebaseCallback) {
         ArrayList<TeacherUser> teachers = new ArrayList<>();
         getMyRef("Teacher")
@@ -156,13 +222,23 @@ public class FireBaseManager {
                 });
     }
 
-    // --- Updates & Saves ---
+    /**
+     * Update user.
+     *
+     * @param studentUser the student user
+     */
+// --- Updates & Saves ---
     public void updateUser(StudentUser studentUser) {
         getMyRef("Student")
                 .child(getUserid())
                 .setValue(studentUser);
     }
 
+    /**
+     * Save image.
+     *
+     * @param profilePhotoBase64 the profile photo base 64
+     */
     public void saveImage(String profilePhotoBase64) {
         getMyRef("Student")
                 .child(getUserid())
@@ -170,6 +246,11 @@ public class FireBaseManager {
                 .setValue(profilePhotoBase64);
     }
 
+    /**
+     * Save event.
+     *
+     * @param lesson the lesson
+     */
     public void saveEvent(Lesson lesson) {
         getMyRef("Events")
                 .child(getUserid())
@@ -177,6 +258,11 @@ public class FireBaseManager {
                 .setValue(lesson);
     }
 
+    /**
+     * Gets event.
+     *
+     * @param firebaseCallback the firebase callback
+     */
     public void getEvent(FirebaseCallbackLessons firebaseCallback) {
         ArrayList<Lesson> lessons = new ArrayList<>();
         getMyRef("Events")
@@ -196,6 +282,11 @@ public class FireBaseManager {
                 });
     }
 
+    /**
+     * Save post.
+     *
+     * @param post the post
+     */
     public void savePost(Post post) {
         String userId = getUserid();
         post.setUserId(userId);
@@ -214,6 +305,11 @@ public class FireBaseManager {
                 });
     }
 
+    /**
+     * Delete post.
+     *
+     * @param postKey the post key
+     */
     public void deletePost(String postKey) {
         getMyRef("Posts")
                 .child(postKey)
@@ -228,6 +324,11 @@ public class FireBaseManager {
     }
 
 
+    /**
+     * Read posts.
+     *
+     * @param firebaseCallbackPosts the firebase callback posts
+     */
     public void readPosts(FirebaseCallbackPosts firebaseCallbackPosts) {
         ArrayList<Post> posts = new ArrayList<>();
 
@@ -257,16 +358,33 @@ public class FireBaseManager {
         });
     }
 
+    /**
+     * Update post likes.
+     *
+     * @param post    the post
+     * @param postKey the post key
+     */
     public void updatePostLikes(Post post, String postKey) {
         DatabaseReference postRef = getMyRef("Posts").child(postKey);
         postRef.child("likesCount").setValue(post.getLikesCount());
         postRef.child("likedByUsers").setValue(post.getLikedByUsers());
     }
 
+    /**
+     * Update post comments.
+     *
+     * @param post     the post
+     * @param comments the comments
+     */
     public void updatePostComments(Post post, List<Comment> comments) {
         getMyRef("Posts").child(post.getKey()).child("comments").setValue(comments);
     }
 
+    /**
+     * Update comment replies.
+     *
+     * @param parentComment the parent comment
+     */
     public void updateCommentReplies(Comment parentComment) {
         getMyRef("Posts")
                 .child(parentComment.getPostId())
@@ -275,6 +393,12 @@ public class FireBaseManager {
                 .setValue(parentComment);
     }
 
+    /**
+     * Update comment likes.
+     *
+     * @param comment the comment
+     * @param key     the key
+     */
     public void updateCommentLikes(Comment comment, String key) {
         if (comment.getPostId() == null || key == null) return;
         getMyRef("Posts").child(comment.getPostId()).child("comments").child(key)
@@ -282,6 +406,13 @@ public class FireBaseManager {
         getMyRef("Posts").child(comment.getPostId()).child("comments").child(key)
                 .child("likedByUsers").setValue(comment.getLikedByUsers());
     }
+
+    /**
+     * Read posts for user.
+     *
+     * @param callback     the callback
+     * @param targetUserId the target user id
+     */
     public void readPostsForUser(FirebaseCallbackPosts callback, String targetUserId) {
         ArrayList<Post> userPosts = new ArrayList<>();
 

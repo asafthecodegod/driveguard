@@ -18,6 +18,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+/**
+ * The type Add lesson.
+ */
 public class AddLesson extends AppCompatActivity implements FirebaseCallbackLessons {
 
     private Spinner eventTypeSpinner;

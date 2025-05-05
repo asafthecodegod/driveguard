@@ -22,6 +22,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * The type Friend fragment.
+ */
 public class FriendFragment extends Fragment {
 
     private static final String TAG = "FriendFragment";

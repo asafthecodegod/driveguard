@@ -30,6 +30,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * The type Upload photo.
+ */
 public class UploadPhoto extends Fragment implements FirebaseCallback {
 
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -42,6 +45,9 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
     private String userNameString, profileImageUrl;
     private String userId;
 
+    /**
+     * Instantiates a new Upload photo.
+     */
     public UploadPhoto() {}
 
     @Nullable

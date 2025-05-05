@@ -21,11 +21,20 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * The type Comments adapter.
+ */
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentViewHolder> {
 
     private List<Comment> commentList;
     private Context context;
 
+    /**
+     * Instantiates a new Comments adapter.
+     *
+     * @param commentList the comment list
+     * @param context     the context
+     */
     public CommentsAdapter(List<Comment> commentList, Context context) {
         this.commentList = commentList;
         this.context = context;
@@ -95,11 +104,43 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         return commentList.size();
     }
 
+    /**
+     * The type Comment view holder.
+     */
     static class CommentViewHolder extends RecyclerView.ViewHolder {
-        TextView userName, date, content, likeCount, replyButton;
-        ImageView likeButton, profilePicture;  // Added ImageView for profile picture
+        /**
+         * The User name.
+         */
+        TextView userName, /**
+         * The Date.
+         */
+        date, /**
+         * The Content.
+         */
+        content, /**
+         * The Like count.
+         */
+        likeCount, /**
+         * The Reply button.
+         */
+        replyButton;
+        /**
+         * The Like button.
+         */
+        ImageView likeButton, /**
+         * The Profile picture.
+         */
+        profilePicture;  // Added ImageView for profile picture
+        /**
+         * The Replies recycler view.
+         */
         RecyclerView repliesRecyclerView;
 
+        /**
+         * Instantiates a new Comment view holder.
+         *
+         * @param itemView the item view
+         */
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
             userName = itemView.findViewById(R.id.comment_user_name);

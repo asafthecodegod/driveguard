@@ -15,9 +15,18 @@ import android.widget.ImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * The type Image utils.
+ */
 public class ImageUtils {
 
 
+    /**
+     * Convert to 64 base string.
+     *
+     * @param bitmap the bitmap
+     * @return the string
+     */
     public static String convertTo64Base(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
@@ -26,7 +35,13 @@ public class ImageUtils {
     }
 
 
-    // Convert Base64 to Bitmap
+    /**
+     * Convert 64 base bitmap.
+     *
+     * @param base64String the base 64 string
+     * @return the bitmap
+     */
+// Convert Base64 to Bitmap
     public static Bitmap convert64base(String base64String) {
         if (base64String == null) return null;
         try {
@@ -38,6 +53,13 @@ public class ImageUtils {
         }
     }
 
+    /**
+     * Rotate image if required bitmap.
+     *
+     * @param img       the img
+     * @param imagePath the image path
+     * @return the bitmap
+     */
     public static Bitmap rotateImageIfRequired(Bitmap img, String imagePath) {
         try {
             ExifInterface exif = new ExifInterface(imagePath);

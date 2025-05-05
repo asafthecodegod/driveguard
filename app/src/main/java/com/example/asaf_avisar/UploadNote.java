@@ -22,6 +22,9 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * The type Upload note.
+ */
 public class UploadNote extends Fragment implements FirebaseCallback {
 
     private TextInputEditText noteInput;
@@ -34,6 +37,9 @@ public class UploadNote extends Fragment implements FirebaseCallback {
     private ImageView profileImage,imageView;
     private String userId;
 
+    /**
+     * Instantiates a new Upload note.
+     */
     public UploadNote() {
         // Required empty public constructor
     }

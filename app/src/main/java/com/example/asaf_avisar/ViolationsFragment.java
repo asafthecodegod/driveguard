@@ -8,8 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+/**
+ * The type Violations fragment.
+ */
 public class ViolationsFragment extends Fragment {
 
+    /**
+     * Instantiates a new Violations fragment.
+     */
     public ViolationsFragment() {
         // Required empty public constructor
     }

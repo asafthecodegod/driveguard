@@ -11,11 +11,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
+/**
+ * The type Lesson adapter.
+ */
 public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonViewHolder> {
 
     private Context context;
     private List<Lesson> lessonList;
 
+    /**
+     * Instantiates a new Lesson adapter.
+     *
+     * @param context    the context
+     * @param lessonList the lesson list
+     */
     public LessonAdapter(Context context, List<Lesson> lessonList) {
         this.context = context;
         this.lessonList = lessonList;
@@ -60,10 +69,30 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
                 .show();
     }
 
+    /**
+     * The type Lesson view holder.
+     */
     public static class LessonViewHolder extends RecyclerView.ViewHolder {
-        TextView eventName, eventDate, eventTime;
+        /**
+         * The Event name.
+         */
+        TextView eventName, /**
+         * The Event date.
+         */
+        eventDate, /**
+         * The Event time.
+         */
+        eventTime;
+        /**
+         * The Paid checkbox.
+         */
         CheckBox paidCheckbox;
 
+        /**
+         * Instantiates a new Lesson view holder.
+         *
+         * @param itemView the item view
+         */
         public LessonViewHolder(@NonNull View itemView) {
             super(itemView);
             eventName = itemView.findViewById(R.id.text_event_name);

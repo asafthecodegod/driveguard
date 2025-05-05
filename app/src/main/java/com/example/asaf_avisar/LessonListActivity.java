@@ -14,6 +14,9 @@ import com.example.asaf_avisar.activitys.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Lesson list activity.
+ */
 public class LessonListActivity extends AppCompatActivity implements FirebaseCallbackLessons {
 
     private RecyclerView recyclerView;

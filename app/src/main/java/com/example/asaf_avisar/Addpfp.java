@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+/**
+ * The type Addpfp.
+ */
 public class Addpfp extends AppCompatActivity implements FirebaseCallback {
 
     private ImageView profileImageView;

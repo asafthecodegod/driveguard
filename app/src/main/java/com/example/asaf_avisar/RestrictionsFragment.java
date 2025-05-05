@@ -8,8 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+/**
+ * The type Restrictions fragment.
+ */
 public class RestrictionsFragment extends Fragment {
 
+    /**
+     * Instantiates a new Restrictions fragment.
+     */
     public RestrictionsFragment() {
         // Required empty public constructor
     }

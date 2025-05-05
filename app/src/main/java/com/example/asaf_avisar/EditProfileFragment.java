@@ -33,6 +33,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * The type Edit profile fragment.
+ */
 public class EditProfileFragment extends Fragment implements FirebaseCallback {
 
     private EditText etName, etBio, etCity, etInvestment;
@@ -47,6 +50,9 @@ public class EditProfileFragment extends Fragment implements FirebaseCallback {
 
     private static final int IMAGE_REQUEST_CODE = 1001;
 
+    /**
+     * Instantiates a new Edit profile fragment.
+     */
     public EditProfileFragment() {
         // Required empty public constructor
     }

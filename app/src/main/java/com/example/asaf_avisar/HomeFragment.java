@@ -21,6 +21,9 @@ import com.example.asaf_avisar.activitys.Post;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Home fragment.
+ */
 public class HomeFragment extends Fragment {
 
     private BroadcastReceiver networkChangeReceiver;

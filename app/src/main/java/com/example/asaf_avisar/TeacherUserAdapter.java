@@ -12,10 +12,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * The type Teacher user adapter.
+ */
 public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.ViewTeacherUser> {
+    /**
+     * The Teacher users.
+     */
     ArrayList<TeacherUser> teacherUsers;
 
 
+    /**
+     * Instantiates a new Teacher user adapter.
+     *
+     * @param teacherUsers the teacher users
+     */
     public TeacherUserAdapter(ArrayList<TeacherUser> teacherUsers) {
         this.teacherUsers = teacherUsers;
     }
@@ -50,14 +61,34 @@ public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.
         return teacherUsers.size();
     }
 
+    /**
+     * The type View teacher user.
+     */
     public static class ViewTeacherUser extends RecyclerView.ViewHolder {
 
+        /**
+         * The Name text view.
+         */
         public TextView nameTextView;
+        /**
+         * The Type text view.
+         */
         public TextView typeTextView;
+        /**
+         * The Rating bar.
+         */
         public RatingBar ratingBar;
+        /**
+         * The Iconimage view.
+         */
         public ImageView iconimageView;
 
 
+        /**
+         * Instantiates a new View teacher user.
+         *
+         * @param itemView the item view
+         */
         public ViewTeacherUser(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.teacher_name);

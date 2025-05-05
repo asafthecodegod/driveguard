@@ -10,8 +10,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.asaf_avisar.R;
 
+/**
+ * The type Login or registretion activity.
+ */
 public class LoginOrRegistretionActivity extends AppCompatActivity {
+    /**
+     * The Login button.
+     */
     Button loginButton;
+    /**
+     * The Create account button.
+     */
     Button createAccountButton;
 
     @Override

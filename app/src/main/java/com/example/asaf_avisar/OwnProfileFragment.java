@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The type Own profile fragment.
+ */
 public class OwnProfileFragment extends Fragment implements FirebaseCallback, FirebaseCallbackPosts {
 
     private String userId;
@@ -128,6 +131,12 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
     // RecyclerView adapter
     private static class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.VH> {
         private final List<Post> items;
+
+        /**
+         * Instantiates a new Posts adapter.
+         *
+         * @param items the items
+         */
         PostsAdapter(List<Post> items) { this.items = items; }
 
         @NonNull @Override
@@ -150,8 +159,20 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
 
         @Override public int getItemCount() { return items.size(); }
 
+        /**
+         * The type Vh.
+         */
         static class VH extends RecyclerView.ViewHolder {
+            /**
+             * The Iv.
+             */
             ImageView iv;
+
+            /**
+             * Instantiates a new Vh.
+             *
+             * @param iv the iv
+             */
             VH(ImageView iv) { super(iv); this.iv = iv; }
         }
     }

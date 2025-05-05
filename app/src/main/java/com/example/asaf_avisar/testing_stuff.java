@@ -8,6 +8,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * The type Testing stuff.
+ */
 public class testing_stuff extends AppCompatActivity {
 
     @Override
