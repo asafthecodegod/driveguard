@@ -237,4 +237,9 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment implements Fi
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
         // Not used in this fragment
     }
+
+    @Override
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+
+    }
 }

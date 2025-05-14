@@ -20,5 +20,6 @@
     <color name="progress_green">#4CAF50</color>  <!-- Completed progress -->
     <color name="progress_yellow">#FFC107</color>  <!-- In progress -->
     <color name="progress_red">#FF5722</color>  <!-- Not started -->
+    <color name="gold">#FFD700</color>
 
 </resources>

@@ -13,13 +13,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.asaf_avisar.activitys.Post;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The type Home fragment.
@@ -30,6 +31,8 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private PostsAdapter postsAdapter;
     private FireBaseManager firebaseManager;
+    private ProgressBar loadingProgressBar;
+    private TextView noPostsTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,20 +51,21 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize RecyclerView
+        // Initialize UI components
         recyclerView = view.findViewById(R.id.recyclerView);
+        loadingProgressBar = view.findViewById(R.id.loading_progress_bar);
+        noPostsTextView = view.findViewById(R.id.no_posts_text_view);
+
+        // Initially show loading state
+        showLoading(true);
+
+        // Setup RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        postsAdapter = new PostsAdapter(null); // Set initial empty list of posts
+        postsAdapter = new PostsAdapter(new ArrayList<>()); // Initialize with empty list
         recyclerView.setAdapter(postsAdapter);
 
-        // Fetch posts from Firebase
-        firebaseManager.readPosts(new FirebaseCallbackPosts() {
-            @Override
-            public void onCallbackPosts(ArrayList<Post> posts) {
-                postsAdapter = new PostsAdapter(posts); // Initialize PostsAdapter with fetched posts
-                recyclerView.setAdapter(postsAdapter);
-            }
-        });
+        // Load posts
+        loadPosts();
 
         // Initialize the BroadcastReceiver for network connectivity changes
         networkChangeReceiver = new BroadcastReceiver() {
@@ -71,7 +75,10 @@ public class HomeFragment extends Fragment {
                 if (connectivityManager != null) {
                     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        // Internet is connected
+                        // Internet is connected - try to load posts if we don't have any
+                        if (postsAdapter == null || postsAdapter.getItemCount() == 0) {
+                            loadPosts();
+                        }
                     } else {
                         Toast.makeText(context, "Wi-Fi Disconnected", Toast.LENGTH_SHORT).show();
                     }
@@ -82,6 +89,48 @@ public class HomeFragment extends Fragment {
         // Register the receiver for connectivity changes
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         requireContext().registerReceiver(networkChangeReceiver, filter);
+    }
+
+    /**
+     * Load posts from Firebase
+     */
+    private void loadPosts() {
+        // Show loading indicator
+        showLoading(true);
+
+        // Fetch posts from Firebase
+        firebaseManager.readPosts(new FirebaseCallbackPosts() {
+            @Override
+            public void onCallbackPosts(ArrayList<Post> posts) {
+                // Hide loading indicator
+                showLoading(false);
+
+                if (posts != null && !posts.isEmpty()) {
+                    // We have posts to display
+                    postsAdapter = new PostsAdapter(posts);
+                    recyclerView.setAdapter(postsAdapter);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    noPostsTextView.setVisibility(View.GONE);
+                } else {
+                    // No posts to display
+                    recyclerView.setVisibility(View.GONE);
+                    noPostsTextView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    /**
+     * Show or hide loading indicator
+     */
+    private void showLoading(boolean isLoading) {
+        if (isLoading) {
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            noPostsTextView.setVisibility(View.GONE);
+        } else {
+            loadingProgressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override

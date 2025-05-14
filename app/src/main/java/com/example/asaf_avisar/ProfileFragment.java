@@ -280,6 +280,11 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
     }
 
     @Override
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+
+    }
+
+    @Override
     public void onCallbackPosts(ArrayList<Post> postsList) {
         updatePostsDisplay(postsList);
     }

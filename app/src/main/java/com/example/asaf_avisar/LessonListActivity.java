@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,57 +18,122 @@ import java.util.List;
 /**
  * The type Lesson list activity.
  */
-public class LessonListActivity extends AppCompatActivity implements FirebaseCallbackLessons {
+public class LessonListActivity extends AppCompatActivity implements FirebaseCallbackLessons, FirebaseCallback {
 
     private RecyclerView recyclerView;
     private LessonAdapter adapter;
     private List<Lesson> lessonList;
-    private Button addEventButton;
+    private Button addEventButton, goBackButton;
+    private TextView investmentTitleTextView;
     private FireBaseManager fireBaseManager;
+    private StudentUser currentUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson_list);
-        fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.getEvent(this);
 
+        // Initialize Firebase
+        fireBaseManager = new FireBaseManager(this);
+
+        // Initialize UI components
+        initializeUIComponents();
+
+        // Fetch user data to get investment amount
+        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+
+        // Fetch lessons from Firebase
+        fireBaseManager.getEvent(this);
+    }
+
+    /**
+     * Initialize UI components and set up click listeners
+     */
+    private void initializeUIComponents() {
+        // RecyclerView setup
         recyclerView = findViewById(R.id.recycler_view_lessons);
-        addEventButton = findViewById(R.id.button_add_event);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize lesson list
-        lessonList = new ArrayList<>();
-      //  loadSampleData();
+        // Investment title
+        investmentTitleTextView = findViewById(R.id.tv_investment_title);
+        investmentTitleTextView.setText("Your Learning Investment: Loading...");
 
-        // Set up adapter
-//        adapter = new LessonAdapter(this, lessonList);
-//        recyclerView.setAdapter(adapter);
-
-        // Set up the Add Event button
+        // Add Event button
+        addEventButton = findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LessonListActivity.this, AddLesson.class));
             }
         });
+
+        // Go Back button
+        goBackButton = findViewById(R.id.button_go_back);
+        goBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate back to the main menu/home
+                Intent intent = new Intent(LessonListActivity.this, menu.class);
+                startActivity(intent);
+                finish(); // Close this activity
+            }
+        });
+
+        // Initialize lesson list
+        lessonList = new ArrayList<>();
     }
 
-    private void loadSampleData() {
-        // Add some example lessons
-        lessonList.add(new Lesson("Lesson", "01/01/2025", "10:00 AM", false));
-        lessonList.add(new Lesson("Double Lesson", "05/01/2025", "12:00 PM", true));
-    }
-
-    private void addNewLesson() {
-        // Add a new lesson to the list and notify the adapter
-        lessonList.add(new Lesson("New Lesson", "01/02/2025", "2:00 PM", false));
-        adapter.notifyItemInserted(lessonList.size() - 1); // Update the RecyclerView
+    /**
+     * Update the investment title with the user's investment amount
+     */
+    private void updateInvestmentTitle() {
+        if (currentUser != null) {
+            int investmentAmount = currentUser.getDrivingInvestment();
+            investmentTitleTextView.setText("Your Learning Investment: ₪" + investmentAmount);
+        } else {
+            investmentTitleTextView.setText("Your Learning Investment: Not Available");
+        }
     }
 
     @Override
     public void oncallbackArryLessons(ArrayList<Lesson> lessons) {
-        adapter = new LessonAdapter(this, lessons);
-        recyclerView.setAdapter(adapter);
+        if (lessons != null) {
+            // Set up adapter with lessons
+            adapter = new LessonAdapter(this, lessons);
+            recyclerView.setAdapter(adapter);
+        }
+    }
+
+    // Firebase callback for Student User data
+    @Override
+    public void oncallbackStudent(StudentUser user) {
+        if (user != null) {
+            this.currentUser = user;
+            updateInvestmentTitle();
+        }
+    }
+
+    @Override
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Not used in this activity
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        // Not used in this activity
+    }
+
+    @Override
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh lessons when returning to this activity
+        fireBaseManager.getEvent(this);
+        // Also refresh user data in case investment amount changed
+        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
     }
 }

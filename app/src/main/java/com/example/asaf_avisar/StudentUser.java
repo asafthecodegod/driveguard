@@ -26,6 +26,7 @@ public class StudentUser {
     private Date licenseDate;
     private int lessonCount;
     private int timeHaveLicense; // days since license acquired
+    private boolean isTeacher;
 
     // Location and driver type
     private boolean driverType;
@@ -479,5 +480,13 @@ public class StudentUser {
      */
     public int getNightDaysLeft() {
         return Math.max(0, 180 - timeHaveLicense);
+    }
+
+    public boolean isTeacher() {
+        return isTeacher;
+    }
+
+    public void setTeacher(boolean teacher) {
+        isTeacher = teacher;
     }
 }

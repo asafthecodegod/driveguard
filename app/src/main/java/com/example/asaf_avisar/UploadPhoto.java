@@ -335,4 +335,9 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
         // Not used in this fragment
     }
+
+    @Override
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+
+    }
 }

@@ -26,8 +26,9 @@ public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.
      * Instantiates a new Teacher user adapter.
      *
      * @param teacherUsers the teacher users
+     * @param findTeacher
      */
-    public TeacherUserAdapter(ArrayList<TeacherUser> teacherUsers) {
+    public TeacherUserAdapter(ArrayList<TeacherUser> teacherUsers, FindTeacher findTeacher) {
         this.teacherUsers = teacherUsers;
     }
 
@@ -59,6 +60,9 @@ public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.
     @Override
     public int getItemCount() {
         return teacherUsers.size();
+    }
+
+    public interface OnTeacherClickListener {
     }
 
     /**

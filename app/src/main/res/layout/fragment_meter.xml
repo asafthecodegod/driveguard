@@ -1,201 +1,288 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:fillViewport="true"
+    android:background="@color/white">
 
-    <!-- Permissions Section -->
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="96dp"
-        android:text="Hi, User!"
-        android:textSize="35sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:paddingBottom="80dp"> <!-- Adding bottom padding to account for bottom menu -->
 
-    <CheckBox
-        android:id="@+id/day_permit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:checked="false"
-        android:enabled="false"
-        android:text="רשאי לנסוע ללא ליווי ביום"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.51" />
-
-    <TextView
-        android:id="@+id/license_issue_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="תאריך הפקת רישיון: 14/03/2024"
-        app:layout_constraintEnd_toEndOf="@+id/day_escort_end_date"
-        app:layout_constraintHorizontal_bias="0.471"
-        app:layout_constraintStart_toStartOf="@+id/day_escort_end_date"
-        app:layout_constraintTop_toBottomOf="@id/night_permit" />
-
-    <TextView
-        android:id="@+id/night_escort_end_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="תאריך סיום מלווה לילה: ...."
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.455"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/day_escort_end_date" />
-
-    <TextView
-        android:id="@+id/day_escort_end_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="תאריך סיום מלווה יום: ..."
-        app:layout_constraintEnd_toEndOf="@+id/night_escort_end_date"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/night_escort_end_date"
-        app:layout_constraintTop_toBottomOf="@id/license_issue_date" />
-
-    <CheckBox
-        android:id="@+id/night_permit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:checked="false"
-        android:enabled="false"
-        android:text="רשאי לנסוע ללא ליווי בלילה"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/day_permit" />
-
-    <Button
-        android:id="@+id/ChangeB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:text="שינוי תאריך קבלת רישיון"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.447"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/night_escort_end_date" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/day_counter"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="136dp"
-        android:elevation="4dp"
-        app:cardCornerRadius="75dp"
-        app:layout_constraintStart_toEndOf="@id/NightCounter"
-        app:layout_constraintTop_toTopOf="parent">
+        <!-- Header Section (without CardView) -->
+        <ImageView
+            android:id="@+id/butrrom"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/logo" />
 
         <TextView
-            android:id="@+id/day_progress_text"
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="90"
-            android:textColor="@android:color/black"
-            android:textSize="36sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="8dp"
+            android:text="שלום, משתמש!"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/butrrom" />
 
-        <ProgressBar
-            android:id="@+id/day_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
+        <!-- Progress Circles Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/progressCard"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/circle_progress_bar"
-            android:fromDegrees="0"
-            android:indeterminate="false"
-            android:max="100"
-            android:pivotX="75%"
-            android:pivotY="75%"
-            android:progress="50"
-            android:progressDrawable="@drawable/day_circle_shape"
-            android:rotation="270"
-            android:textAlignment="center"
-            android:toDegrees="90" />
-    </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/permissions_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="היתרים והגבלות"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/day_counter" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/NightCounter"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="136dp"
-        android:layout_marginEnd="48dp"
-        android:elevation="4dp"
-        app:cardCornerRadius="75dp"
-        app:layout_constraintEnd_toStartOf="@id/day_counter"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/night_progress_text"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="180"
-            android:textColor="@android:color/black"
-            android:textSize="36sp"
-            android:textStyle="bold" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView">
 
-        <ProgressBar
-            android:id="@+id/night_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/progressTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="מצב הגבלות נהיגה"
+                    android:textAlignment="center"
+                    android:textColor="@color/lavender"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- NIGHT COUNTER - SIGNIFICANTLY LARGER -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/NightCounter"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="16dp"
+                    android:elevation="4dp"
+                    app:cardCornerRadius="75dp"
+                    app:layout_constraintEnd_toStartOf="@id/day_counter"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/progressTitle">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/night_progress_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="180"
+                            android:textColor="@android:color/black"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/night_progress_text"
+                            android:layout_centerHorizontal="true"
+                            android:text="ימים לילה"
+                            android:textColor="@color/gray"
+                            android:textSize="14sp" />
+
+                        <ProgressBar
+                            android:id="@+id/night_progress_bar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/circle_progress_bar"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:progress="50"
+                            android:progressDrawable="@drawable/night_circle_shape"
+                            android:rotation="270" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- DAY COUNTER - SIGNIFICANTLY LARGER -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/day_counter"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="16dp"
+                    android:elevation="4dp"
+                    app:cardCornerRadius="75dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/NightCounter"
+                    app:layout_constraintTop_toBottomOf="@id/progressTitle">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/day_progress_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="90"
+                            android:textColor="@android:color/black"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/day_progress_text"
+                            android:layout_centerHorizontal="true"
+                            android:text="ימים יום"
+                            android:textColor="@color/gray"
+                            android:textSize="14sp" />
+
+                        <ProgressBar
+                            android:id="@+id/day_progress_bar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/circle_progress_bar"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:progress="50"
+                            android:progressDrawable="@drawable/day_circle_shape"
+                            android:rotation="270" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/license_issue_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="תאריך הפקת רישיון: 14/03/2024"
+                    android:textColor="@color/dark_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/NightCounter" />
+
+                <TextView
+                    android:id="@+id/day_escort_end_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="תאריך סיום מלווה יום: 14/06/2024"
+                    android:textColor="@color/dark_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/license_issue_date" />
+
+                <TextView
+                    android:id="@+id/night_escort_end_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="תאריך סיום מלווה לילה: 14/09/2024"
+                    android:textColor="@color/dark_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/day_escort_end_date" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Status Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/statusCard"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/circle_progress_bar"
-            android:fromDegrees="0"
-            android:indeterminate="false"
-            android:max="100"
-            android:pivotX="75%"
-            android:pivotY="75%"
-            android:progress="50"
-            android:progressDrawable="@drawable/night_circle_shape"
-            android:rotation="270"
-            android:textAlignment="center"
-            android:toDegrees="90" />
-    </androidx.cardview.widget.CardView>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progressCard">
 
-    <ImageButton
-        android:id="@+id/butrrom"
-        android:layout_width="120dp"
-        android:layout_height="87dp"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:backgroundTint="@android:color/transparent"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.695"
-        app:srcCompat="@drawable/logo"
-        tools:ignore="MissingConstraints" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/statusTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="היתרים והגבלות"
+                    android:textAlignment="center"
+                    android:textColor="@color/lavender"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <CheckBox
+                    android:id="@+id/day_permit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:checked="false"
+                    android:enabled="false"
+                    android:text="רשאי לנסוע ללא ליווי ביום"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/statusTitle" />
+
+                <CheckBox
+                    android:id="@+id/night_permit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:checked="false"
+                    android:enabled="false"
+                    android:text="רשאי לנסוע ללא ליווי בלילה"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/day_permit" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Action Button - Now positioned with bottom margin to stay above navigation -->
+        <Button
+            android:id="@+id/ChangeB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="@color/lavender"
+            android:padding="12dp"
+            android:text="שינוי תאריך קבלת רישיון"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:cornerRadius="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statusCard"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

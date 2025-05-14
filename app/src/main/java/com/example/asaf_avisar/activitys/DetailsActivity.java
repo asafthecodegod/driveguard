@@ -340,4 +340,9 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
         // Not used in this activity
     }
+
+    @Override
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+
+    }
 }

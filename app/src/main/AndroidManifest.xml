@@ -6,9 +6,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
@@ -20,12 +20,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Asaf_avisar"
-
         tools:targetApi="31">
         <activity
-            android:name=".LessonListActivity"
+            android:name=".activitys.TeacherDetailsActivity"
             android:exported="false" />
-        <!-- Fixed BroadcastReceiver for Network Changes -->
+        <activity
+            android:name=".TeacherProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LessonListActivity"
+            android:exported="false" /> <!-- Fixed BroadcastReceiver for Network Changes -->
         <receiver
             android:name=".NetworkChangeReceiver"
             android:enabled="true"
@@ -41,16 +45,11 @@
         <activity
             android:name=".InfoActivity"
             android:exported="false" />
-
         <activity
             android:name=".AddLesson"
             android:exported="false" />
-
         <activity
             android:name=".Addpfp"
-            android:exported="false" />
-        <activity
-            android:name=".StudentProfile"
             android:exported="false" />
         <activity
             android:name=".testing_stuff"
@@ -61,10 +60,6 @@
         <activity
             android:name=".activitys.DetailsActivity"
             android:exported="false" />
-        <activity
-            android:name=".activitys.PastLearningActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MainActivity" />
         <activity
             android:name=".activitys.LoginPageActivity"
             android:exported="false" />
@@ -79,8 +74,8 @@
             android:exported="false" />
         <activity
             android:name=".activitys.StartActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

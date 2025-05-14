@@ -28,4 +28,6 @@ public interface FirebaseCallback
      */
     void onCallbackTeacher(ArrayList<TeacherUser> teachers);
 
+    void onCallbackSingleTeacher(TeacherUser teacher);
+
 }

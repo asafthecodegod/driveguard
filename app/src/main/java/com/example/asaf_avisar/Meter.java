@@ -30,10 +30,10 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
     // UI COMPONENTS (DISPLAY LAYER)
     //==============================================================================================
 
-    private CheckBox daycheckBox, nightcheckBox;
-    private TextView hello, licenseIssueDateTextView, dayEscortEndDateTextView, nightEscortEndDateTextView;
-    private ProgressBar nightprogressBar, dayprogressBar;
-    private TextView dayprogressText, nightprogressText;
+    private CheckBox dayPermitCheckBox, nightPermitCheckBox;
+    private TextView welcomeTextView, licenseIssueDateTextView, dayEscortEndDateTextView, nightEscortEndDateTextView;
+    private ProgressBar nightProgressBar, dayProgressBar;
+    private TextView dayProgressText, nightProgressText;
     private Button changeLicenseDateButton;
 
     /**
@@ -43,21 +43,6 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         // Required empty public constructor
     }
 
-    /**
-     * New instance meter.
-     *
-     * @param param1 the param 1
-     * @param param2 the param 2
-     * @return the meter
-     */
-    public static Meter newInstance(String param1, String param2) {
-        Meter fragment = new Meter();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        args.putString("param2", param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,23 +66,29 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
      * Initialize UI components and set up click listeners
      */
     private void initializeUIComponents(View rootView) {
+        // Text views for dates
         licenseIssueDateTextView = rootView.findViewById(R.id.license_issue_date);
         dayEscortEndDateTextView = rootView.findViewById(R.id.day_escort_end_date);
         nightEscortEndDateTextView = rootView.findViewById(R.id.night_escort_end_date);
 
+        // Welcome text and button
+        welcomeTextView = rootView.findViewById(R.id.textView);
         changeLicenseDateButton = rootView.findViewById(R.id.ChangeB);
         changeLicenseDateButton.setOnClickListener(this);
 
-        hello = rootView.findViewById(R.id.textView);
-        nightprogressBar = rootView.findViewById(R.id.night_progress_bar);
-        dayprogressBar = rootView.findViewById(R.id.day_progress_bar);
-        dayprogressText = rootView.findViewById(R.id.day_progress_text);
-        nightprogressText = rootView.findViewById(R.id.night_progress_text);
-        daycheckBox = rootView.findViewById(R.id.day_permit);
-        nightcheckBox = rootView.findViewById(R.id.night_permit);
+        // Progress indicators
+        nightProgressBar = rootView.findViewById(R.id.night_progress_bar);
+        dayProgressBar = rootView.findViewById(R.id.day_progress_bar);
+        dayProgressText = rootView.findViewById(R.id.day_progress_text);
+        nightProgressText = rootView.findViewById(R.id.night_progress_text);
 
-        nightprogressBar.setProgress(0);
-        dayprogressBar.setProgress(0);
+        // Checkboxes for permissions
+        dayPermitCheckBox = rootView.findViewById(R.id.day_permit);
+        nightPermitCheckBox = rootView.findViewById(R.id.night_permit);
+
+        // Initialize progress bars to 0
+        nightProgressBar.setProgress(0);
+        dayProgressBar.setProgress(0);
     }
 
     /**
@@ -183,7 +174,7 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
             @Override
             public void run() {
                 if (i <= pn) {
-                    nightprogressBar.setProgress(i);
+                    nightProgressBar.setProgress(i);
                     userNight = i;
                     i++;
                     handler.postDelayed(this, 10);
@@ -197,7 +188,7 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
             @Override
             public void run() {
                 if (j <= pd) {
-                    dayprogressBar.setProgress(j);
+                    dayProgressBar.setProgress(j);
                     userDay = j;
                     j++;
                     handler.postDelayed(this, 10);
@@ -214,7 +205,7 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
      */
     private void updateProgressBasedOnLicense(Date licenseDate) {
         if (licenseDate == null) {
-            Toast.makeText(getContext(), "Invalid license date", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "לא הוכנס תאריך הוצאת רישיון", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
@@ -243,13 +234,17 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
     private void calculateEscortEndDates(Date licenseDate, SimpleDateFormat dateFormat) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(licenseDate);
+
+        // Set license issue date text
+        licenseIssueDateTextView.setText("תאריך הפקת רישיון: " + dateFormat.format(licenseDate));
+
+        // Calculate and set day escort end date (3 months after license issue)
         calendar.add(Calendar.MONTH, 3);
         Date dayEscortEndDate = calendar.getTime();
         String dayEscortEndDateText = dateFormat.format(dayEscortEndDate);
-        licenseIssueDateTextView.setText("תאריך הפקת רישיון: " + dateFormat.format(licenseDate));
-
         dayEscortEndDateTextView.setText("תאריך סיום מלווה יום: " + dayEscortEndDateText);
 
+        // Calculate and set night escort end date (6 months after license issue)
         calendar.add(Calendar.MONTH, 3);
         Date nightEscortEndDate = calendar.getTime();
         String nightEscortEndDateText = dateFormat.format(nightEscortEndDate);
@@ -266,11 +261,11 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         if (dayCounter < 0) dayCounter = 0;
         if (nightCounter < 0) nightCounter = 0;
 
-        nightprogressText.setText(String.valueOf(nightCounter));
-        dayprogressText.setText(String.valueOf(dayCounter));
+        nightProgressText.setText(String.valueOf(nightCounter));
+        dayProgressText.setText(String.valueOf(dayCounter));
 
-        daycheckBox.setChecked(diffInDays > 90);
-        nightcheckBox.setChecked(diffInDays > 180);
+        dayPermitCheckBox.setChecked(diffInDays > 90);
+        nightPermitCheckBox.setChecked(diffInDays > 180);
     }
 
     //==============================================================================================
@@ -286,7 +281,7 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
     public void oncallbackStudent(StudentUser user) {
         currentUser = user;
         if (user != null) {
-            hello.setText("Hi, " + user.getName());
+            welcomeTextView.setText("שלום, " + user.getName());
             updateProgressBasedOnLicense(user.getLicenseDate());
         }
     }
@@ -294,5 +289,10 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
     @Override
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
         // Not used in this fragment
+    }
+
+    @Override
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+
     }
 }

@@ -1,143 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:paddingBottom="80dp"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/white">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:paddingBottom="80dp">
 
-        <!-- Profile Photo -->
+        <!-- Header Section -->
         <ImageView
             android:id="@+id/et_profile_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_default_profile"
+            android:layout_marginTop="24dp"
             android:background="@drawable/circle_shape"
             android:clipToOutline="true"
-            android:contentDescription="Profile Photo"/>
+            android:contentDescription="Profile Photo"
+            android:src="@drawable/ic_default_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <Button
             android:id="@+id/btn_change_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/lavender"
             android:text="Change Photo"
-            android:layout_marginTop="8dp" />
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:cornerRadius="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_profile_image" />
 
-        <!-- Name -->
-        <EditText
-            android:id="@+id/et_name"
+        <!-- Basic Information Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/basic_info_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Name"
-            android:inputType="textPersonName"
-            android:layout_marginTop="16dp" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_change_photo">
 
-        <!-- Bio -->
-        <EditText
-            android:id="@+id/et_bio"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:maxLength="80"
-            android:hint="Enter Bio"
-            android:inputType="textMultiLine"
-            android:minLines="3" />
-
-        <!-- City -->
-        <EditText
-            android:id="@+id/et_city"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Choose a City"
-            android:inputType="textCapWords"
-            android:layout_marginTop="8dp" />
-
-        <!-- Driver Type (RadioGroup instead of Spinner) -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Driver Type"
-            android:layout_marginTop="8dp"/>
-
-        <RadioGroup
-            android:id="@+id/rg_driver_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/rb_manual"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Manual"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <RadioButton
-                android:id="@+id/rb_automatic"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Basic Information"
+                    android:textAlignment="center"
+                    android:textColor="@color/lavender"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Full Name"
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_bio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Bio (Max 80 characters)"
+                        android:inputType="textMultiLine"
+                        android:maxLength="80"
+                        android:minLines="2" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_city"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="City"
+                        android:inputType="textCapWords" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Driver Details Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/driver_details_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/basic_info_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Automatic" />
-        </RadioGroup>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <!-- Green Form & Theory Checkboxes -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Driver Details"
+                    android:textAlignment="center"
+                    android:textColor="@color/lavender"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
 
-        <CheckBox
-            android:id="@+id/cb_green_form"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Green Form Submitted" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Driver Type"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
 
-        <CheckBox
-            android:id="@+id/cb_theory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Theory Completed" />
+                <RadioGroup
+                    android:id="@+id/rg_driver_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/tv_license_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="License Date" />
+                    <RadioButton
+                        android:id="@+id/rb_manual"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Manual"
+                        android:buttonTint="@color/lavender" />
 
-        <TextView
-            android:id="@+id/tv_license_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Select date"
-            android:padding="12dp"
-            android:background="@drawable/uploadbox"
-            android:clickable="true"
-            android:focusable="false" />
+                    <RadioButton
+                        android:id="@+id/rb_automatic"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Automatic"
+                        android:buttonTint="@color/lavender" />
+                </RadioGroup>
 
-        <!-- Investment -->
-        <EditText
-            android:id="@+id/et_investment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Driving Investment"
-            android:inputType="number"
-            android:layout_marginTop="8dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Status"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
 
-        <!-- Save Button (moved inside ScrollView) -->
+                <CheckBox
+                    android:id="@+id/cb_green_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Green Form Submitted"
+                    android:buttonTint="@color/lavender" />
+
+                <CheckBox
+                    android:id="@+id/cb_theory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Theory Completed"
+                    android:buttonTint="@color/lavender" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="License Date"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_license_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/uploadbox"
+                    android:clickable="true"
+                    android:drawableEnd="@drawable/baseline_calendar_month_24"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:hint="Select date"
+                    android:padding="16dp"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_investment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Driving Investment (₪)"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Save Button -->
         <Button
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="@color/lavender"
+            android:padding="12dp"
             android:text="Save Changes"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="80dp"
-            />
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:cornerRadius="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/driver_details_card"
+            app:layout_constraintVertical_bias="0.0" />
 
-
-
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

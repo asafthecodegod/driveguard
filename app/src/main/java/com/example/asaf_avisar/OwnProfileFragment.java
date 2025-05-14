@@ -196,6 +196,11 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
         // Not used in this fragment
     }
 
+    @Override
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+
+    }
+
     // FirebaseCallbackPosts
     @Override
     public void onCallbackPosts(ArrayList<Post> postsList) {

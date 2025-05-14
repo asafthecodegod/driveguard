@@ -16,26 +16,28 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.asaf_avisar.Check;
 import com.example.asaf_avisar.FireBaseManager;
+import com.example.asaf_avisar.FirebaseCallback;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.StudentUser;
+import com.example.asaf_avisar.TeacherUser;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Activity that handles user registration functionality.
  */
-public class RegisterPageActivity extends AppCompatActivity implements View.OnClickListener, DatePicker.OnDateChangedListener {
+public class RegisterPageActivity extends AppCompatActivity implements View.OnClickListener, DatePicker.OnDateChangedListener, FirebaseCallback {
 
     //==========================================================================================
     // DISPLAY LAYER - UI Components and Display Methods
     //==========================================================================================
 
-    // UI components
     private EditText etEmail, etPassword, etUsername;
     private DatePicker dpBirthday;
     private Button registerButton;
-    private CheckBox isTeacher;
+    private CheckBox isTeacherCheckBox;
     private TextView registerLink;
 
     @Override
@@ -56,9 +58,6 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         configureDatePickerLimits();
     }
 
-    /**
-     * Initialize all UI components
-     */
     private void initializeUIComponents() {
         registerLink = findViewById(R.id.ToLoginText);
         etEmail = findViewById(R.id.userEmail);
@@ -66,12 +65,9 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         dpBirthday = findViewById(R.id.birthday_picker);
         etPassword = findViewById(R.id.register_password);
         registerButton = findViewById(R.id.RegisterButton);
-        isTeacher = findViewById(R.id.userType);
+        isTeacherCheckBox = findViewById(R.id.userType);
     }
 
-    /**
-     * Set up all event listeners
-     */
     private void setupEventListeners() {
         registerLink.setOnClickListener(this);
         registerButton.setOnClickListener(this);
@@ -79,48 +75,29 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             dpBirthday.setOnDateChangedListener(this);
         }
-
-        isTeacher.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            userRole = isChecked ? "Teacher" : "Student";
-        });
     }
 
-    /**
-     * Configure date picker restrictions
-     */
     private void configureDatePickerLimits() {
-        // Restrict the DatePicker to not select future dates
         Calendar today = Calendar.getInstance();
         dpBirthday.setMaxDate(today.getTimeInMillis());
     }
 
-    /**
-     * Display validation errors for inputs
-     */
     private void showValidationErrors(boolean isEmailValid, boolean isNameValid, boolean isPasswordValid) {
         if (!isEmailValid) {
             etEmail.setError("Invalid email.");
         }
-
         if (!isNameValid) {
             etUsername.setError("Invalid name.");
         }
-
         if (!isPasswordValid) {
             etPassword.setError("Invalid password.");
         }
     }
 
-    /**
-     * Display toast message to user
-     */
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Navigate to login screen
-     */
     private void navigateToLogin() {
         startActivity(new Intent(this, LoginPageActivity.class));
     }
@@ -137,7 +114,7 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        // Not needed for functionality but required for implementation
+        // Not used, but required
     }
 
     //==========================================================================================
@@ -147,43 +124,31 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
     private Check check;
     private FireBaseManager fireBaseManager;
     private Date birthDate;
-    private String userRole = "Student"; // Default role
+    private boolean registrationSuccessful = false;
+    private boolean registeredAsTeacher = false;
 
-    /**
-     * Initialize logic components
-     */
     private void initializeLogicComponents() {
         check = new Check();
         fireBaseManager = new FireBaseManager(this);
     }
 
-    /**
-     * Handle the registration process
-     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void handleRegistration() {
-        // Get user inputs
-        String email = etEmail.getText().toString();
-        String username = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
+        String email = etEmail.getText().toString().trim();
+        String username = etUsername.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
-        // Validate inputs
         boolean isEmailValid = check.checkEmail(email);
         boolean isNameValid = check.checkName(username);
         boolean isPasswordValid = check.checkPass(password);
 
-        // Show validation errors if any
         showValidationErrors(isEmailValid, isNameValid, isPasswordValid);
 
-        // If all inputs are valid, check age
         if (isEmailValid && isNameValid && isPasswordValid) {
             validateAgeAndRegister();
         }
     }
 
-    /**
-     * Validate user age and proceed with registration if valid
-     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void validateAgeAndRegister() {
         int age = calculateAge(dpBirthday.getYear(), dpBirthday.getMonth(), dpBirthday.getDayOfMonth());
@@ -191,45 +156,90 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
         if (age < 16) {
             showToast("You must be at least 16 years old");
         } else {
-            // Create user data and register
+            showToast("Age verified. Creating your account...");
             createUserAndRegister();
-            showToast("Age verified. Proceeding...");
         }
     }
 
-    /**
-     * Create user object and register with Firebase
-     */
     private void createUserAndRegister() {
-        String email = etEmail.getText().toString();
-        String username = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
+        String email = etEmail.getText().toString().trim();
+        String username = etUsername.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
-        StudentUser newUser = new StudentUser(username, email, password, birthDate);
-        fireBaseManager.createUser(newUser, userRole);
+        // Save the checkbox state for later use
+        registeredAsTeacher = isTeacherCheckBox.isChecked();
+
+        if (registeredAsTeacher) {
+            TeacherUser newTeacher = new TeacherUser(username, email, password, birthDate, 0);
+            newTeacher.setTeacher(true);
+            fireBaseManager.createUser(newTeacher, "Teacher");
+        } else {
+            StudentUser newStudent = new StudentUser(username, email, password, birthDate);
+            newStudent.setTeacher(false);
+            fireBaseManager.createUser(newStudent, "Student");
+        }
+
+        // Registration is complete, now check for successful authentication
+        registrationSuccessful = true;
     }
 
-    /**
-     * Calculate user age based on birth date
-     */
     public int calculateAge(int birthYear, int birthMonth, int birthDay) {
-        // Get the current date using Calendar
         Calendar currentDate = Calendar.getInstance();
         int currentYear = currentDate.get(Calendar.YEAR);
         int currentMonth = currentDate.get(Calendar.MONTH); // 0-based
         int currentDay = currentDate.get(Calendar.DAY_OF_MONTH);
 
-        // Store the birth date for user creation
-        birthDate = new Date(birthYear, birthMonth, birthDay);
+        // Save birth date
+        birthDate = new Date(birthYear - 1900, birthMonth, birthDay); // Adjust year for java.util.Date
 
-        // Calculate the age
         int age = currentYear - birthYear;
-
-        // Adjust age if birthday hasn't occurred this year yet
         if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
             age--;
         }
 
         return age;
+    }
+
+    //==========================================================================================
+    // FIREBASE CALLBACKS - Handle Firebase responses
+    //==========================================================================================
+
+    // Assuming these methods are called after user creation is successful
+    // We need to implement the FirebaseCallback methods
+
+    @Override
+    public void oncallbackStudent(StudentUser student) {
+        if (registrationSuccessful) {
+            // User registration was successful as a student
+            navigateToMenuActivity(false);
+        }
+    }
+
+    @Override
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Not used for registration
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        // Not used for registration
+    }
+
+    @Override
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+        if (registrationSuccessful) {
+            // User registration was successful as a teacher
+            navigateToMenuActivity(true);
+        }
+    }
+
+    /**
+     * Navigate to the menu activity with user type information
+     */
+    private void navigateToMenuActivity(boolean isTeacher) {
+        Intent menuIntent = new Intent(this, menu.class);
+        menuIntent.putExtra("isTeacher", isTeacher);
+        startActivity(menuIntent);
+        finish(); // Close the registration activity
     }
 }
