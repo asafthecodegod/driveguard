@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,20 +30,19 @@ public class FindTeacher extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_teacher);
 
+
+
         // Initialize controller
         controller = new TeacherController();
 
-        // Set up the main RecyclerView
-        recyclerView = findViewById(R.id.viewteacher);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Add a button to trigger the dialog
         Button showDialogButton = findViewById(R.id.showDialogButton);
         showDialogButton.setOnClickListener(v -> showRecyclerViewDialog());
 
         // Load teacher data
         controller.loadTeacherData();
     }
+
+
 
     /**
      * Shows a dialog with the RecyclerView of teachers
@@ -52,7 +52,7 @@ public class FindTeacher extends AppCompatActivity implements View.OnClickListen
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.teacher_list, null);
 
-        // Find the RecyclerView inside the dialog layout
+        // Find the RecyclerView inside the dialog layout (correct ID)
         RecyclerView dialogRecyclerView = dialogView.findViewById(R.id.viewteacher);
 
         // Set up the layout manager for the RecyclerView inside the dialog
@@ -69,13 +69,9 @@ public class FindTeacher extends AppCompatActivity implements View.OnClickListen
         // Create the dialog instance
         AlertDialog dialog = builder.create();
 
+
         // Show the dialog
         dialog.show();
-    }
-
-    @Override
-    public void onClick(View v) {
-        // Implemented for View.OnClickListener but not used
     }
 
     // FirebaseCallback implementations (View layer)
@@ -102,6 +98,11 @@ public class FindTeacher extends AppCompatActivity implements View.OnClickListen
     private void updateTeacherList() {
         TeacherUserAdapter teacherUserAdapter = new TeacherUserAdapter(controller.getTeacherList());
         recyclerView.setAdapter(teacherUserAdapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 
     // ============================
@@ -136,7 +137,7 @@ public class FindTeacher extends AppCompatActivity implements View.OnClickListen
          */
         private void addSampleTeacherData() {
             for (int i = 0; i < 50; i++) {
-                teacherList.add(new TeacherUser("gili", "gili@gmail.com", "123456", new Date(2000, 8, 1), 234));
+                teacherList.add(new TeacherUser("gili", "gili@gmail.com", "123456", new Date(2000, 8, 1), 2));
             }
         }
 
@@ -155,6 +156,13 @@ public class FindTeacher extends AppCompatActivity implements View.OnClickListen
          */
         public ArrayList<TeacherUser> getTeacherList() {
             return teacherList;
+        }
+
+        /**
+         * Handles user logout
+         */
+        public void performLogout() {
+            fireBaseManager.logout();
         }
     }
 }

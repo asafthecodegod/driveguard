@@ -11,15 +11,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.asaf_avisar.R;
 
 /**
- * The type Login or registretion activity.
+ * Initial screen allowing users to either log in or create a new account.
  */
 public class LoginOrRegistretionActivity extends AppCompatActivity {
+
+    //==========================================================================================
+    // DISPLAY LAYER - UI Components and Display Methods
+    //==========================================================================================
+
     /**
-     * The Login button.
+     * Button for navigating to login screen
      */
     Button loginButton;
+
     /**
-     * The Create account button.
+     * Button for navigating to account creation screen
      */
     Button createAccountButton;
 
@@ -27,25 +33,51 @@ public class LoginOrRegistretionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_login_or_registretion); // Corrected the layout name
+        setContentView(R.layout.activity_login_or_registretion);
 
+        // Initialize UI components
+        initializeUIComponents();
+
+        // Set up event listeners
+        setupEventListeners();
+    }
+
+    /**
+     * Initialize all UI components
+     */
+    private void initializeUIComponents() {
         loginButton = findViewById(R.id.loginButton);
-        createAccountButton = findViewById(R.id.createAccountButton); // Use separate variable
+        createAccountButton = findViewById(R.id.createAccountButton);
+    }
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginOrRegistretionActivity.this, LoginPageActivity.class);
-                startActivity(intent);
-            }
-        });
+    /**
+     * Set up all event listeners
+     */
+    private void setupEventListeners() {
+        // Set up login button click listener
+        loginButton.setOnClickListener(v -> navigateToLogin());
 
-        createAccountButton.setOnClickListener(new View.OnClickListener() { // Added OnClickListener for createAccountButton
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginOrRegistretionActivity.this, RegisterPageActivity.class); // Assuming you have a RegistrationPageActivity
-                startActivity(intent);
-            }
-        });
+        // Set up create account button click listener
+        createAccountButton.setOnClickListener(v -> navigateToRegistration());
+    }
+
+    //==========================================================================================
+    // LOGIC LAYER - Navigation Logic
+    //==========================================================================================
+
+    /**
+     * Navigate to the login screen
+     */
+    private void navigateToLogin() {
+        Intent intent = new Intent(LoginOrRegistretionActivity.this, LoginPageActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Navigate to the registration screen
+     */
+    private void navigateToRegistration() {
+        Intent intent = new Intent(LoginOrRegistretionActivity.this, RegisterPageActivity.class);
+        startActivity(intent);
     }
 }

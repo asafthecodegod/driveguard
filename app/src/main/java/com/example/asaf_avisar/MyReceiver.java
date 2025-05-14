@@ -14,37 +14,54 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 /**
- * The type My receiver.
+ * The type My receiver - BroadcastReceiver for handling and displaying notifications.
  */
 public class MyReceiver extends BroadcastReceiver {
 
+    //==========================================================================================
+    // DISPLAY LAYER - UI related functionality
+    //==========================================================================================
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Create notification channel for API 26+ (Oreo and above)
+        // Create notification channel (UI component)
+        createNotificationChannel(context);
+
+        // Get notification content and PendingIntent from logic layer
+        PendingIntent pendingIntent = createPendingIntent(context);
+
+        // Build and display the notification (UI component)
+        displayNotification(context, pendingIntent);
+    }
+
+    /**
+     * Creates a notification channel for Android 8.0 (Oreo) and above
+     */
+    private void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel1 = new NotificationChannel("channel", "Channel 1", NotificationManager.IMPORTANCE_HIGH);
-            channel1.setDescription("Channel 1...");
-            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel channel = new NotificationChannel(
+                    "channel",
+                    "Channel 1",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Channel 1...");
+
+            NotificationManager manager = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
+
             if (manager != null) {
-                manager.createNotificationChannel(channel1);
+                manager.createNotificationChannel(channel);
             }
         }
+    }
 
-        // Create an intent for opening the HomeFragment activity
-        Intent notificationIntent = new Intent(context, HomeFragment.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        // Use FLAG_IMMUTABLE for PendingIntent security
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        // Create notification
+    /**
+     * Builds and displays the notification to the user
+     */
+    private void displayNotification(Context context, PendingIntent pendingIntent) {
+        // Build the notification with UI components
         Notification notification = new NotificationCompat.Builder(context, "channel")
-                .setSmallIcon(android.R.drawable.ic_dialog_info) // Use a default icon or your own
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle("Title")
                 .setContentText("Message")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -52,17 +69,47 @@ public class MyReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .build();
 
-        // Get the NotificationManager and notify the user
+        // Get the NotificationManager
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-        // Request permission if necessary (for Android 13 and above)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                return; // You can also request permission here if needed
-            }
+        // Only display if we have permission
+        if (hasNotificationPermission(context)) {
+            // Show notification with ID 1
+            notificationManager.notify(1, notification);
         }
+    }
 
-        // Notify with a unique ID (1 here)
-        notificationManager.notify(1, notification);
+    //==========================================================================================
+    // LOGIC LAYER - Business logic and data processing
+    //==========================================================================================
+
+    /**
+     * Creates a PendingIntent for the notification
+     */
+    private PendingIntent createPendingIntent(Context context) {
+        // Create intent for HomeFragment
+        Intent notificationIntent = new Intent(context, HomeFragment.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        // Create and return PendingIntent with proper flags for security
+        return PendingIntent.getActivity(
+                context,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+    }
+
+    /**
+     * Checks if the app has notification permission
+     */
+    private boolean hasNotificationPermission(Context context) {
+        // For Android 13+ (API 33+), check POST_NOTIFICATIONS permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED;
+        }
+        // For older versions, permission is granted at install time
+        return true;
     }
 }

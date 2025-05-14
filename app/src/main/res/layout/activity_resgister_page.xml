@@ -127,16 +127,16 @@
 </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-<TextView
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:padding="8dp"
-android:text="Already an user? Login"
-android:textSize="14sp"
-android:textAlignment="center"
-android:id="@+id/ToLoginText"
-android:textColor="@color/lavender"
-android:layout_marginBottom="20dp"/>
+        <TextView
+            android:id="@+id/ToLoginText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:padding="8dp"
+            android:text="Already a user? Login"
+            android:textAlignment="center"
+            android:textColor="@color/lavender"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

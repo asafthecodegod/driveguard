@@ -37,6 +37,7 @@ import com.example.asaf_avisar.ProfileFragment;
 import com.example.asaf_avisar.R;
 
 import com.example.asaf_avisar.FriendFragment;
+import com.example.asaf_avisar.ShareFragment;
 import com.example.asaf_avisar.UploadNote;
 import com.example.asaf_avisar.UploadPhoto;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -129,6 +130,8 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             fireBaseManager.logout();
         } else if (id == R.id.profile) {
             replaceFragment(new ProfileFragment());
+        }else if (id == R.id.nav_share) {
+            replaceFragment(new ShareFragment());
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

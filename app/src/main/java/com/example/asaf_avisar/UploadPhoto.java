@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,64 +20,71 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.asaf_avisar.activitys.LoginOrRegistretionActivity;
 import com.example.asaf_avisar.activitys.Post;
-import com.example.asaf_avisar.activitys.RegisterPageActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * The type Upload photo.
+ * The type Upload photo - Fragment for uploading photo posts.
  */
 public class UploadPhoto extends Fragment implements FirebaseCallback {
 
+    //==========================================================================================
+    // DISPLAY LAYER - UI Components and Display Methods
+    //==========================================================================================
+
+    // Constants
     private static final int PICK_IMAGE_REQUEST = 1;
+
+    // UI components
     private Bitmap selectedImageBitmap;
     private ImageView uploadIcon, selectedImageView, profileImage;
-    private TextView userName, selectPhotoText,descriptionEditText;
+    private TextView userName, selectPhotoText, descriptionEditText;
     private TabLayout tabLayout;
     private MaterialButton postButton;
-    private FireBaseManager fireBaseManager;
-    private String userNameString, profileImageUrl;
-    private String userId;
 
     /**
-     * Instantiates a new Upload photo.
+     * Required empty constructor
      */
     public UploadPhoto() {}
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout that includes selectedImageView, uploadIcon, and selectPhotoText
+        // Inflate the layout
         View view = inflater.inflate(R.layout.fragment_upload_photo, container, false);
 
+        // Initialize components
+        initializeUIComponents(view);
+        initializeDataComponents();
+        setupEventListeners();
+        configureInitialState();
+
+        return view;
+    }
+
+    /**
+     * Initialize all UI components
+     */
+    private void initializeUIComponents(View view) {
         userName = view.findViewById(R.id.userName);
         profileImage = view.findViewById(R.id.profileImage);
         tabLayout = view.findViewById(R.id.tabLayout);
         postButton = view.findViewById(R.id.postButton);
         uploadIcon = view.findViewById(R.id.uploadIcon);
-        descriptionEditText =view.findViewById(R.id.descriptionEditText);
+        descriptionEditText = view.findViewById(R.id.descriptionEditText);
         selectedImageView = view.findViewById(R.id.selectedImageView);
         selectPhotoText = view.findViewById(R.id.selectPhotoText);
+    }
 
-        fireBaseManager = new FireBaseManager(requireContext());
-        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
-
+    /**
+     * Set up event listeners for interactive UI elements
+     */
+    private void setupEventListeners() {
         uploadIcon.setOnClickListener(v -> openImageChooser());
-
-        // If an image Bitmap is passed via arguments, use it.
-        if (getArguments() != null && getArguments().getParcelable("imageBitmap") != null) {
-            selectedImageBitmap = getArguments().getParcelable("imageBitmap");
-            selectedImageView.setImageBitmap(selectedImageBitmap);
-
-            selectedImageView.setVisibility(View.VISIBLE);
-            uploadIcon.setVisibility(View.GONE);
-            selectPhotoText.setVisibility(View.GONE);
-        }
+        postButton.setOnClickListener(v -> handlePostButtonClick());
 
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.selectTab(tabLayout.getTabAt(1));
@@ -94,73 +100,172 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
-
-        postButton.setOnClickListener(v -> uploadPost());
-        return view;
     }
 
+    /**
+     * Configure initial state of UI elements
+     */
+    private void configureInitialState() {
+        // Check if an image bitmap was passed in arguments
+        if (getArguments() != null && getArguments().getParcelable("imageBitmap") != null) {
+            selectedImageBitmap = getArguments().getParcelable("imageBitmap");
+            displaySelectedImage(selectedImageBitmap);
+        }
+    }
+
+    /**
+     * Display the selected image and update UI visibility
+     */
+    private void displaySelectedImage(Bitmap bitmap) {
+        if (bitmap != null) {
+            selectedImageView.setImageBitmap(bitmap);
+            selectedImageView.setVisibility(View.VISIBLE);
+            uploadIcon.setVisibility(View.GONE);
+            selectPhotoText.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Update UI with user profile data
+     */
+    private void updateProfileUI(StudentUser student) {
+        if (student != null) {
+            userName.setText(student.getName());
+            displayProfileImage(student.getProfilePhotoBase64());
+        }
+    }
+
+    /**
+     * Display profile image from base64 string
+     */
+    private void displayProfileImage(String base64Image) {
+        if (base64Image != null && !base64Image.isEmpty()) {
+            byte[] decodedString = Base64.decode(base64Image, Base64.DEFAULT);
+            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            profileImage.setImageBitmap(decodedBitmap);
+        } else {
+            profileImage.setImageResource(R.drawable.ic_default_profile);
+        }
+    }
+
+    /**
+     * Show success message to user
+     */
+    private void showSuccessMessage() {
+        Toast.makeText(getContext(), "Post uploaded successfully", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Show error message to user
+     */
+    private void showErrorMessage(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    //==========================================================================================
+    // LOGIC LAYER - Business Logic and Data Management
+    //==========================================================================================
+
+    private FireBaseManager fireBaseManager;
+    private String userNameString, profileImageUrl;
+    private String userId;
+
+    /**
+     * Initialize data-related components
+     */
+    private void initializeDataComponents() {
+        fireBaseManager = new FireBaseManager(requireContext());
+        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+    }
+
+    /**
+     * Handle post button click - validate and create post
+     */
+    private void handlePostButtonClick() {
+        if (validatePostData()) {
+            createAndUploadPost();
+            navigateToHomeFragment();
+            showSuccessMessage();
+        } else {
+            showErrorMessage("You need to upload a photo");
+        }
+    }
+
+    /**
+     * Validate all required post data
+     */
+    private boolean validatePostData() {
+        return selectedImageBitmap != null &&
+                !ImageUtils.convertTo64Base(selectedImageBitmap).isEmpty();
+    }
+
+    /**
+     * Create and upload post to Firebase
+     */
+    private void createAndUploadPost() {
+        String base64Image = ImageUtils.convertTo64Base(selectedImageBitmap);
+        String description = descriptionEditText.getText().toString();
+
+        Post post = new Post(
+                userId,
+                userNameString,
+                profileImageUrl,
+                base64Image,
+                description,
+                base64Image,
+                new Date(),
+                1  // Type photo
+        );
+
+        fireBaseManager.savePost(post);
+    }
+
+    /**
+     * Open image chooser intent
+     */
     private void openImageChooser() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
+    /**
+     * Process selected image from gallery
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && data != null && requestCode == PICK_IMAGE_REQUEST) {
-            try {
-                Uri imageUri = data.getData();
-                String imagePath = getRealPathFromURI(imageUri);
-
-                if (imagePath != null) {
-                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                    selectedImageBitmap = ImageUtils.rotateImageIfRequired(bitmap, imagePath); // 🔥 Fix image rotation
-                    selectedImageView.setImageBitmap(selectedImageBitmap);
-                    selectedImageView.setVisibility(View.VISIBLE);
-                    uploadIcon.setVisibility(View.GONE);
-                    selectPhotoText.setVisibility(View.GONE);
-                } else {
-                    Toast.makeText(getContext(), "Failed to get image path", Toast.LENGTH_SHORT).show();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(getContext(), "Error loading image", Toast.LENGTH_SHORT).show();
-            }
+            processSelectedImage(data);
         }
     }
 
+    /**
+     * Process the selected image data
+     */
+    private void processSelectedImage(Intent data) {
+        try {
+            Uri imageUri = data.getData();
+            String imagePath = getRealPathFromURI(imageUri);
 
-    private void uploadPost() {
-        if (selectedImageBitmap != null) {
-            String base64Image = ImageUtils.convertTo64Base(selectedImageBitmap);
-//            if (!descriptionEditText.getText().toString().isEmpty()) {
-//                Toast.makeText(getContext(), "Please add a description", Toast.LENGTH_SHORT).show();
-//                return; // Prevent posting without a description
-//            }
+            if (imagePath != null) {
+                // Load and rotate image if needed
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                selectedImageBitmap = ImageUtils.rotateImageIfRequired(bitmap, imagePath);
 
-            if (!base64Image.isEmpty()) {
-
-                Post post = new Post(userId, userNameString, profileImageUrl, base64Image, descriptionEditText.getText().toString(),ImageUtils.convertTo64Base(selectedImageBitmap) , new Date(), 1);
-                fireBaseManager.savePost(post);
-                navigateToHomeFragment();
-                Toast.makeText(getContext(), "Post uploaded successfully", Toast.LENGTH_SHORT).show();
+                // Update UI
+                displaySelectedImage(selectedImageBitmap);
             } else {
-                Toast.makeText(getContext(), "You need to upload a photo", Toast.LENGTH_SHORT).show();
+                showErrorMessage("Failed to get image path");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorMessage("Error loading image");
         }
     }
 
-    private void navigateToHomeFragment() {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        Bundle bundle = new Bundle();
-        bundle.putInt("selectedTab", 1);
-        HomeFragment homeFragment = new HomeFragment();
-        homeFragment.setArguments(bundle);
-        transaction.replace(R.id.fragment_container, homeFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
+    /**
+     * Get real file path from content URI
+     */
     private String getRealPathFromURI(Uri uri) {
         String filePath = null;
         String[] projection = {MediaStore.Images.Media.DATA};
@@ -175,34 +280,59 @@ public class UploadPhoto extends Fragment implements FirebaseCallback {
         return filePath;
     }
 
+    /**
+     * Navigate to home fragment
+     */
+    private void navigateToHomeFragment() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("selectedTab", 1);
+        HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setArguments(bundle);
+
+        transaction.replace(R.id.fragment_container, homeFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    /**
+     * Navigate to upload note fragment
+     */
     private void navigateToUploadNote() {
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+
         UploadNote uploadNoteFragment = new UploadNote();
+
         transaction.replace(R.id.fragment_container, uploadNoteFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
 
-    @Override
-    public void oncallbackArryStudent(ArrayList<StudentUser> students) {}
+    //==========================================================================================
+    // CALLBACK IMPLEMENTATIONS - Firebase Data Handling
+    //==========================================================================================
 
     @Override
     public void oncallbackStudent(StudentUser student) {
         if (student != null) {
+            // Store data in class fields
             userId = student.getId();
             userNameString = student.getName();
             profileImageUrl = student.getProfilePhotoBase64();
-            userName.setText(userNameString);
-            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-                byte[] decodedString = Base64.decode(profileImageUrl, Base64.DEFAULT);
-                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                profileImage.setImageBitmap(decodedBitmap);
-            } else {
-                profileImage.setImageResource(R.drawable.ic_default_profile);
-            }
+
+            // Update UI
+            updateProfileUI(student);
         }
     }
 
     @Override
-    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {}
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Not used in this fragment
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        // Not used in this fragment
+    }
 }

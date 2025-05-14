@@ -16,26 +16,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.asaf_avisar.activitys.Post;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 /**
- * The type Own profile fragment.
+ * The type Own profile fragment - Shows the current user's profile information and posts.
  */
 public class OwnProfileFragment extends Fragment implements FirebaseCallback, FirebaseCallbackPosts {
 
-    private String userId;
+    //==========================================================================================
+    // DISPLAY LAYER - UI Components and Display Methods
+    //==========================================================================================
 
     // header views
     private ImageView profileImage_1;
@@ -47,10 +41,6 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
 
     // posts RecyclerView
     private RecyclerView recyclerViewPosts_1;
-    private List<Post> posts = new ArrayList<>();
-    private PostsAdapter adapter;
-
-    private FireBaseManager fbm;
 
     @Nullable
     @Override
@@ -59,11 +49,18 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
 
         View view = inflater.inflate(R.layout.fragment_own_proflie, container, false);
 
-        // initialize Firebase manager and userId
-        fbm = new FireBaseManager(requireContext());
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // Initialize UI components and data
+        initializeUIComponents(view);
+        initializeData();
 
-        // bind header views
+        return view;
+    }
+
+    /**
+     * Initialize all UI components by binding views from the layout
+     */
+    private void initializeUIComponents(View view) {
+        // Bind header views
         profileImage_1 = view.findViewById(R.id.profile_image_1);
         username_1 = view.findViewById(R.id.username_1);
         textView2_1 = view.findViewById(R.id.textView2_1);
@@ -72,63 +69,146 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
         following_count_1 = view.findViewById(R.id.following_count_1);
         lessons_count_1 = view.findViewById(R.id.lessons_count_1);
 
+        // Bind detail views
         detail_green_form_1 = view.findViewById(R.id.detail_green_form_1);
         detail_theory_1 = view.findViewById(R.id.detail_theory_1);
         detail_license_date_1 = view.findViewById(R.id.detail_license_date_1);
 
-        // setup RecyclerView
+        // Setup RecyclerView
         recyclerViewPosts_1 = view.findViewById(R.id.recyclerViewPosts_1);
         recyclerViewPosts_1.setLayoutManager(new GridLayoutManager(getContext(), 3));
         adapter = new PostsAdapter(posts);
         recyclerViewPosts_1.setAdapter(adapter);
-
-        // load profile data and posts after views are bound
-        fbm.readData(this, "Student", userId);
-        fbm.readPostsForUser(this, userId);
-
-        return view;
     }
 
-    // FirebaseCallback for StudentUser
-    @Override
-    public void oncallbackStudent(StudentUser u) {
-        if (u == null) return;
+    /**
+     * Update UI with user profile data
+     */
+    private void updateUIWithUserData(StudentUser user) {
+        if (user == null) return;
 
-        // profile image
-        String b64 = u.getProfilePhotoBase64();
-        if (b64 != null) {
-            Bitmap bmp = ImageUtils.convert64base(b64);
-            if (bmp != null) profileImage_1.setImageBitmap(bmp);
+        // Display profile image
+        displayProfileImage(user.getProfilePhotoBase64());
+
+        // Set basic profile info
+        username_1.setText(user.getName());
+        textView2_1.setText(user.getBio() != null ? user.getBio() : "");
+        user_info_1_1.setText("Driver Type: " + (user.isDriverType() ? "manual" : "automatic"));
+
+        // Set count statistics
+        followers_count_1.setText(String.valueOf(user.getFollowerCount()));
+        following_count_1.setText(String.valueOf(user.getFollowingCount()));
+        lessons_count_1.setText(String.valueOf(user.getLessonCount()));
+
+        // Set additional details
+        detail_green_form_1.setText("Green Form: " + (user.isHasGreenForm() ? "Submitted" : "Not Submitted"));
+        detail_theory_1.setText("Theory: " + (user.isPassedTheory() ? "Completed" : "Not Completed"));
+
+        // Set license date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String licenseDate = user.getLicenseDate() != null
+                ? dateFormat.format(user.getLicenseDate())
+                : "On their way!";
+        detail_license_date_1.setText("License Release Date: " + licenseDate);
+    }
+
+    /**
+     * Display profile image from base64 string
+     */
+    private void displayProfileImage(String base64Image) {
+        if (base64Image != null) {
+            Bitmap bitmap = ImageUtils.convert64base(base64Image);
+            if (bitmap != null) {
+                profileImage_1.setImageBitmap(bitmap);
+            }
         }
-
-        username_1.setText(u.getName());
-        textView2_1.setText(u.getBio() != null ? u.getBio() : "");
-        user_info_1_1.setText("Driver Type: " + (u.isDriverType() ? "manual" : "automatic"));
-
-        followers_count_1.setText(String.valueOf(u.getFollowerCount()));
-        following_count_1.setText(String.valueOf(u.getFollowingCount()));
-        lessons_count_1.setText(String.valueOf(u.getLessonCount()));
-
-        detail_green_form_1.setText("Green Form: " + (u.isHasGreenForm() ? "Submitted" : "Not Submitted"));
-        detail_theory_1.setText("Theory: " + (u.isPassedTheory() ? "Completed" : "Not Completed"));
-        detail_license_date_1.setText("License Release Date: " +
-                (u.getLicenseDate() != null
-                        ? new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(u.getLicenseDate())
-                        : "On their way!"));
     }
 
-    @Override public void oncallbackArryStudent(ArrayList<StudentUser> s) {}
-    @Override public void onCallbackTeacher(ArrayList<TeacherUser> t) {}
-
-    // FirebaseCallbackPosts
-    @Override
-    public void onCallbackPosts(ArrayList<Post> list) {
+    /**
+     * Update posts display with new data
+     */
+    private void updatePostsDisplay(ArrayList<Post> newPosts) {
         posts.clear();
-        posts.addAll(list);
+        posts.addAll(newPosts);
         adapter.notifyDataSetChanged();
     }
 
-    // RecyclerView adapter
+    //==========================================================================================
+    // LOGIC LAYER - Business Logic and Data Management
+    //==========================================================================================
+
+    private String userId;
+    private List<Post> posts = new ArrayList<>();
+    private PostsAdapter adapter;
+    private FireBaseManager fbm;
+
+    /**
+     * Initialize data sources and load data
+     */
+    private void initializeData() {
+        // Initialize Firebase manager and user ID
+        fbm = new FireBaseManager(requireContext());
+        userId = getCurrentUserId();
+
+        // Load user profile data and posts
+        loadUserData();
+        loadUserPosts();
+    }
+
+    /**
+     * Get current user ID from Firebase
+     */
+    private String getCurrentUserId() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    /**
+     * Load user profile data from Firebase
+     */
+    private void loadUserData() {
+        fbm.readData(this, "Student", userId);
+    }
+
+    /**
+     * Load user posts from Firebase
+     */
+    private void loadUserPosts() {
+        fbm.readPostsForUser(this, userId);
+    }
+
+    //==========================================================================================
+    // CALLBACK IMPLEMENTATIONS - Firebase Data Handling
+    //==========================================================================================
+
+    // FirebaseCallback for StudentUser
+    @Override
+    public void oncallbackStudent(StudentUser user) {
+        updateUIWithUserData(user);
+    }
+
+    @Override
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Not used in this fragment
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        // Not used in this fragment
+    }
+
+    // FirebaseCallbackPosts
+    @Override
+    public void onCallbackPosts(ArrayList<Post> postsList) {
+        updatePostsDisplay(postsList);
+    }
+
+    //==========================================================================================
+    // INNER ADAPTER CLASS - For displaying posts grid
+    //==========================================================================================
+
+    /**
+     * Adapter for displaying user posts in a grid layout
+     */
     private static class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.VH> {
         private final List<Post> items;
 
@@ -137,7 +217,9 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
          *
          * @param items the items
          */
-        PostsAdapter(List<Post> items) { this.items = items; }
+        PostsAdapter(List<Post> items) {
+            this.items = items;
+        }
 
         @NonNull @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -150,30 +232,45 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
-            String b64 = items.get(position).getContent();
-            if (b64 != null) {
-                Bitmap bmp = ImageUtils.convert64base(b64);
-                if (bmp != null) holder.iv.setImageBitmap(bmp);
+            displayPostImage(holder, position);
+        }
+
+        /**
+         * Display post image from base64 string
+         */
+        private void displayPostImage(VH holder, int position) {
+            String base64 = items.get(position).getContent();
+            if (base64 != null) {
+                Bitmap bitmap = ImageUtils.convert64base(base64);
+                if (bitmap != null) {
+                    holder.iv.setImageBitmap(bitmap);
+                }
             }
         }
 
-        @Override public int getItemCount() { return items.size(); }
+        @Override
+        public int getItemCount() {
+            return items.size();
+        }
 
         /**
-         * The type Vh.
+         * ViewHolder for post grid items
          */
         static class VH extends RecyclerView.ViewHolder {
             /**
-             * The Iv.
+             * The ImageView for displaying post content
              */
             ImageView iv;
 
             /**
-             * Instantiates a new Vh.
+             * Instantiates a new ViewHolder
              *
-             * @param iv the iv
+             * @param iv the image view
              */
-            VH(ImageView iv) { super(iv); this.iv = iv; }
+            VH(ImageView iv) {
+                super(iv);
+                this.iv = iv;
+            }
         }
     }
 }

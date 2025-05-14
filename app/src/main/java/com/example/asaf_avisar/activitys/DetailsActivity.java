@@ -32,22 +32,22 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * The type Details activity.
+ * Activity for capturing additional user details like license information,
+ * driving preferences, and city.
  */
 public class DetailsActivity extends AppCompatActivity implements FirebaseCallback {
 
-    // Views
+    //==========================================================================================
+    // DISPLAY LAYER - UI Components and Display Methods
+    //==========================================================================================
+
+    // View components
     private TextView licenseDateLabel, hello;
     private RadioGroup radioGroupDriveType, radioGroupTheory, radioGroupGreenFile, radioGroupLicense;
-    private RadioButton radioManual, radioAutomatic, radioYesTheory,radioYesGreenFile;
+    private RadioButton radioManual, radioAutomatic, radioYesTheory, radioYesGreenFile;
     private Spinner citySpinner;
     private DatePicker licenseDatePicker;
     private Button submitButton;
-
-    private String selectedCity = "Not selected"; // Default value 1
-    private FireBaseManager fireBaseManager;
-    private String userName;
-    private StudentUser studentUser;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -55,14 +55,21 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        // Initialize UI components
+        initializeUIComponents();
+
+        // Initialize data components
+        initializeDataComponents();
+
+        // Set up UI event listeners
+        setupEventListeners();
+    }
+
+    /**
+     * Initialize all UI components
+     */
+    private void initializeUIComponents() {
         hello = findViewById(R.id.userName);
-        if (userName != null) {
-            hello.setText("Hi, " + userName);
-        }
-
-        fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
-
         licenseDateLabel = findViewById(R.id.licenseDateLabel);
         citySpinner = findViewById(R.id.citySpinner);
         radioGroupDriveType = findViewById(R.id.radioGroupDriveType);
@@ -76,14 +83,38 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
         licenseDatePicker = findViewById(R.id.licenseDatePicker);
         submitButton = findViewById(R.id.submitButton);
 
-        // Restrict future dates in DatePicker
-        licenseDatePicker.setMaxDate(System.currentTimeMillis());
-
         // Initially hide the license date picker and label
         licenseDateLabel.setVisibility(View.GONE);
         licenseDatePicker.setVisibility(View.GONE);
 
-        // Set up the city spinner
+        // Restrict future dates in DatePicker
+        licenseDatePicker.setMaxDate(System.currentTimeMillis());
+    }
+
+    /**
+     * Set up UI event listeners
+     */
+    private void setupEventListeners() {
+        // Set up city spinner
+        setupCitySpinner();
+
+        // Show/hide license date picker based on selection
+        radioGroupLicense.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radioYesLicense) {
+                showLicenseDatePicker(true);
+            } else {
+                showLicenseDatePicker(false);
+            }
+        });
+
+        // Handle submit button click
+        submitButton.setOnClickListener(v -> handleSubmit());
+    }
+
+    /**
+     * Set up the city spinner with adapter and listener
+     */
+    private void setupCitySpinner() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.israel_cities,
@@ -103,55 +134,105 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
                 selectedCity = "Not selected";
             }
         });
-
-        // Show or hide license date picker based on selection
-        radioGroupLicense.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.radioYesLicense) {
-                licenseDateLabel.setVisibility(View.VISIBLE);
-                licenseDatePicker.setVisibility(View.VISIBLE);
-            } else {
-                licenseDateLabel.setVisibility(View.GONE);
-                licenseDatePicker.setVisibility(View.GONE);
-            }
-        });
-
-        // Handle submit button click
-        submitButton.setOnClickListener(v -> {
-            int driveType = getDriveType();
-            boolean theory = getTheoryStatus();
-            boolean greenFile = getGreenFileStatus();
-            boolean license = getLicenseStatus();
-            Date licenseDate = getLicenseDate();
-
-            // Check if the license is provided and the licenseDate is not null
-            if (license && licenseDate == null) {
-                Toast.makeText(DetailsActivity.this, "Please provide your license date", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Update StudentUser object
-            studentUser.setHasGreenForm(greenFile);
-            studentUser.setHasLicense(license);
-            studentUser.setLicenseDate(licenseDate);
-            studentUser.setPassedTheory(theory);
-            if(driveType == 1)
-            studentUser.setDriverType(true);
-            else
-                studentUser.setDriverType(false);
-            studentUser.setCity(selectedCity);
-
-            // Update Firebase
-            fireBaseManager.updateUser(studentUser);
-
-            // Navigate to menu activity
-            Intent intent = new Intent(DetailsActivity.this, menu.class);
-            if (license) {
-                intent.putExtra("LICENSE_DATE", licenseDate);
-            }
-            startActivity(intent);
-        });
     }
 
+    /**
+     * Show or hide license date picker
+     */
+    private void showLicenseDatePicker(boolean show) {
+        int visibility = show ? View.VISIBLE : View.GONE;
+        licenseDateLabel.setVisibility(visibility);
+        licenseDatePicker.setVisibility(visibility);
+    }
+
+    /**
+     * Update greeting with user name
+     */
+    private void updateGreeting(String name) {
+        if (name != null) {
+            hello.setText("Hi, " + name);
+        }
+    }
+
+    /**
+     * Show a toast message to the user
+     */
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Navigate to menu activity
+     */
+    private void navigateToMenuActivity(Date licenseDate) {
+        Intent intent = new Intent(DetailsActivity.this, menu.class);
+        if (licenseDate != null) {
+            intent.putExtra("LICENSE_DATE", licenseDate);
+        }
+        startActivity(intent);
+    }
+
+    //==========================================================================================
+    // LOGIC LAYER - Business Logic and Data Management
+    //==========================================================================================
+
+    private String selectedCity = "Not selected"; // Default value
+    private FireBaseManager fireBaseManager;
+    private String userName;
+    private StudentUser studentUser;
+
+    /**
+     * Initialize data components
+     */
+    private void initializeDataComponents() {
+        fireBaseManager = new FireBaseManager(this);
+        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+    }
+
+    /**
+     * Handle submit button click
+     */
+    private void handleSubmit() {
+        // Get all user input values
+        int driveType = getDriveType();
+        boolean theory = getTheoryStatus();
+        boolean greenFile = getGreenFileStatus();
+        boolean license = getLicenseStatus();
+        Date licenseDate = getLicenseDate();
+
+        // Validate license date if user has a license
+        if (license && licenseDate == null) {
+            showToast("Please provide your license date");
+            return;
+        }
+
+        // Update student user object with new details
+        updateStudentUser(driveType, theory, greenFile, license, licenseDate);
+
+        // Save to Firebase
+        fireBaseManager.updateUser(studentUser);
+
+        // Navigate to menu activity
+        navigateToMenuActivity(licenseDate);
+    }
+
+    /**
+     * Update the StudentUser object with user inputs
+     */
+    private void updateStudentUser(int driveType, boolean theory, boolean greenFile,
+                                   boolean license, Date licenseDate) {
+        studentUser.setHasGreenForm(greenFile);
+        studentUser.setHasLicense(license);
+        studentUser.setLicenseDate(licenseDate);
+        studentUser.setPassedTheory(theory);
+        studentUser.setDriverType(driveType == 1);  // 1 = automatic
+        studentUser.setCity(selectedCity);
+    }
+
+    /**
+     * Get user-selected drive type
+     * @return 0 for manual, 1 for automatic, -1 if none selected
+     */
     private int getDriveType() {
         int selectedId = radioGroupDriveType.getCheckedRadioButtonId();
         if (selectedId == radioManual.getId()) return 0;
@@ -159,18 +240,30 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
         return -1;
     }
 
+    /**
+     * Get user-selected theory status
+     */
     private boolean getTheoryStatus() {
         return radioGroupTheory.getCheckedRadioButtonId() == radioYesTheory.getId();
     }
 
+    /**
+     * Get user-selected green file status
+     */
     private boolean getGreenFileStatus() {
         return radioGroupGreenFile.getCheckedRadioButtonId() == radioYesGreenFile.getId();
     }
 
+    /**
+     * Get user-selected license status
+     */
     private boolean getLicenseStatus() {
         return radioGroupLicense.getCheckedRadioButtonId() == R.id.radioYesLicense;
     }
 
+    /**
+     * Get user-selected license date
+     */
     private Date getLicenseDate() {
         if (licenseDatePicker.getVisibility() == View.VISIBLE) {
             int day = licenseDatePicker.getDayOfMonth();
@@ -180,14 +273,12 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
             Calendar selectedDate = Calendar.getInstance();
             selectedDate.set(year, month, day);
 
-            // Prevent future dates
-            Calendar today = Calendar.getInstance();
-            if (selectedDate.after(today)) {
-                Toast.makeText(this, "Future dates are not allowed!", Toast.LENGTH_SHORT).show();
+            // Validate: prevent future dates
+            if (!validateLicenseDate(selectedDate)) {
                 return null;
             }
 
-            // Schedule a notification 3 months later
+            // Schedule notification for 3 months later
             scheduleNotification(selectedDate);
 
             return selectedDate.getTime();
@@ -195,11 +286,25 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
         return null;
     }
 
+    /**
+     * Validate the license date
+     */
+    private boolean validateLicenseDate(Calendar selectedDate) {
+        // Prevent future dates
+        Calendar today = Calendar.getInstance();
+        if (selectedDate.after(today)) {
+            showToast("Future dates are not allowed!");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Schedule notification for 3 months after license date
+     */
     private void scheduleNotification(Calendar licenseDate) {
         Calendar notificationDate = (Calendar) licenseDate.clone();
         notificationDate.add(Calendar.MONTH, 3);
-        //notificationDate.add(Calendar.SECOND, 3);
-
 
         Intent intent = new Intent(this, MyReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, FLAG_IMMUTABLE);
@@ -207,22 +312,32 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         if (alarmManager != null) {
             alarmManager.set(AlarmManager.RTC_WAKEUP, notificationDate.getTimeInMillis(), pendingIntent);
-            // תאריך נוכחי פלוס כמה שניות
+        }
+    }
+
+    //==========================================================================================
+    // CALLBACK IMPLEMENTATIONS - Firebase Data Handling
+    //==========================================================================================
+
+    @Override
+    public void oncallbackStudent(StudentUser user) {
+        if (user != null) {
+            userName = user.getName();
+            studentUser = user;
+
+            // Update UI with user data
+            updateGreeting(userName);
+            showToast("Hi " + userName);
         }
     }
 
     @Override
-    public void oncallbackArryStudent(ArrayList<StudentUser> students) {}
-
-    @Override
-    public void oncallbackStudent(StudentUser user) {
-        userName = user.getName();
-        hello.setText("Hi, " + userName);
-        Toast.makeText(this, "Hi " + user.getName(), Toast.LENGTH_SHORT).show();
-        studentUser = user;
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Not used in this activity
     }
 
     @Override
-    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {}
-
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        // Not used in this activity
+    }
 }

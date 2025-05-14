@@ -18,8 +18,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.asaf_avisar.activitys.Post;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
@@ -31,41 +29,49 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The type Profile fragment.
+ * The type Profile fragment - Displays a user's profile information.
  */
 public class ProfileFragment extends Fragment implements FirebaseCallback, FirebaseCallbackPosts {
 
-    private String userId;
+    //==========================================================================================
+    // DISPLAY LAYER - UI Components and Display Methods
+    //==========================================================================================
 
+    // Profile UI components
     private ImageView profileImage;
     private TextView username, tvBio, tvDriverType, textFollowersCount, textFollowingCount;
     private TextView tvGreenForm, tvTheory, tvLicenseDateDetail;
     private Button btnUnfollow, btnNudge;
+
+    // Progress UI components
     private ProgressBar nightProgressBar, dayProgressBar;
     private TextView nightCounter, dayCounter;
+
+    // Posts UI component
     private RecyclerView rvPosts;
-    private List<Post> posts = new ArrayList<>();
-    private PostsAdapter adapter;
-    private FireBaseManager fbm;
-    private long diffInDays;
-    private int progress;
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_proflie, container, false);
 
-        fbm = new FireBaseManager(requireContext());
+        // Initialize data components
+        initializeDataComponents();
 
-        // get userId passed in arguments
-        if (getArguments() != null) {
-            userId = getArguments().getString("userId");
-        }
-        if (userId == null) {
-            // fallback to own
-            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        }
+        // Initialize UI components
+        initializeUIComponents(view);
+        setupEventListeners();
 
-        // bind views
+        // Load data
+        loadUserData();
+
+        return view;
+    }
+
+    /**
+     * Initialize all UI components by binding views from the layout
+     */
+    private void initializeUIComponents(View view) {
+        // Bind profile views
         profileImage = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
         tvBio = view.findViewById(R.id.textView2);
@@ -75,71 +81,212 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
         tvGreenForm = view.findViewById(R.id.detail_green_form);
         tvTheory = view.findViewById(R.id.detail_theory);
         tvLicenseDateDetail = view.findViewById(R.id.detail_license_date);
+
+        // Bind action buttons
         btnUnfollow = view.findViewById(R.id.btn_unfollow);
         btnNudge = view.findViewById(R.id.btn_nudge);
+
+        // Bind progress views
         nightProgressBar = view.findViewById(R.id.night_progress_bar);
         dayProgressBar = view.findViewById(R.id.day_progress_bar);
         nightCounter = view.findViewById(R.id.night_progress_text);
         dayCounter = view.findViewById(R.id.day_progress_text);
-        rvPosts = view.findViewById(R.id.recyclerViewPosts);
 
-        // setup posts grid
+        // Bind and setup RecyclerView
+        rvPosts = view.findViewById(R.id.recyclerViewPosts);
         rvPosts.setLayoutManager(new GridLayoutManager(getContext(), 3));
         adapter = new PostsAdapter(posts);
         rvPosts.setAdapter(adapter);
-
-        // load profile data & posts for this user
-        fbm.readData(this, "Student", userId);
-        fbm.readPostsForUser(this, userId);
-
-        btnUnfollow.setOnClickListener(v -> Toast.makeText(getContext(), "Follow/Unfollow clicked", Toast.LENGTH_SHORT).show());
-        btnNudge.setOnClickListener(v -> Toast.makeText(getContext(), "Nudge clicked", Toast.LENGTH_SHORT).show());
-
-        return view;
     }
 
-    @Override
-    public void oncallbackStudent(StudentUser u) {
-        if (u == null) return;
-        String b64 = u.getProfilePhotoBase64();
-        if (b64 != null) {
-            Bitmap bmp = ImageUtils.convert64base(b64);
-            if (bmp != null) profileImage.setImageBitmap(bmp);
+    /**
+     * Set up event listeners for interactive UI elements
+     */
+    private void setupEventListeners() {
+        btnUnfollow.setOnClickListener(v -> handleFollowButtonClick());
+        btnNudge.setOnClickListener(v -> handleNudgeButtonClick());
+    }
+
+    /**
+     * Handle unfollow/follow button click
+     */
+    private void handleFollowButtonClick() {
+        Toast.makeText(getContext(), "Follow/Unfollow clicked", Toast.LENGTH_SHORT).show();
+        // Logic for follow/unfollow would go here
+    }
+
+    /**
+     * Handle nudge button click
+     */
+    private void handleNudgeButtonClick() {
+        Toast.makeText(getContext(), "Nudge clicked", Toast.LENGTH_SHORT).show();
+        // Logic for nudge would go here
+    }
+
+    /**
+     * Update UI with user profile data
+     */
+    private void updateProfileUI(StudentUser user) {
+        if (user == null) return;
+
+        // Display profile image
+        displayProfileImage(user.getProfilePhotoBase64());
+
+        // Set basic profile information
+        username.setText(user.getName());
+        tvBio.setText(user.getBio() == null ? "" : user.getBio());
+        tvDriverType.setText("Driver Type: " + (user.isDriverType() ? "manual" : "automatic"));
+
+        // Set statistics counters
+        textFollowersCount.setText(String.valueOf(user.getFollowerCount()));
+        textFollowingCount.setText(String.valueOf(user.getFollowingCount()));
+
+        // Set license details
+        tvGreenForm.setText("Green Form: " + (user.isHasGreenForm() ? "Submitted" : "Not Submitted"));
+        tvTheory.setText("Theory: " + (user.isPassedTheory() ? "Completed" : "Not Completed"));
+
+        // Format and set license date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String licenseDate = user.getLicenseDate() != null
+                ? dateFormat.format(user.getLicenseDate())
+                : "On their way!";
+        tvLicenseDateDetail.setText("License Release Date: " + licenseDate);
+
+        // Update progress indicators
+        updateProgressDisplay(user.getLicenseDate());
+    }
+
+    /**
+     * Display profile image from base64 string
+     */
+    private void displayProfileImage(String base64Image) {
+        if (base64Image != null) {
+            Bitmap bitmap = ImageUtils.convert64base(base64Image);
+            if (bitmap != null) {
+                profileImage.setImageBitmap(bitmap);
+            }
         }
-        username.setText(u.getName());
-        tvBio.setText(u.getBio() == null ? "" : u.getBio());
-        tvDriverType.setText("Driver Type: " + (u.isDriverType() ? "manual" : "automatic"));
-        textFollowersCount.setText(String.valueOf(u.getFollowerCount()));
-        textFollowingCount.setText(String.valueOf(u.getFollowingCount()));
-        tvGreenForm.setText("Green Form: " + (u.isHasGreenForm() ? "Submitted" : "Not Submitted"));
-        tvTheory.setText("Theory: " + (u.isPassedTheory() ? "Completed" : "Not Completed"));
-        tvLicenseDateDetail.setText("License Release Date: " +
-                (u.getLicenseDate() != null ? new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(u.getLicenseDate()) : "On their way!"));
-        updateProgress(u.getLicenseDate());
     }
 
-    private void updateProgress(Date licenseDate) {
-        if (licenseDate == null) return;
-        long diff = Calendar.getInstance().getTimeInMillis() - licenseDate.getTime();
-        diffInDays = TimeUnit.MILLISECONDS.toDays(diff);
-        progress = (int) diffInDays;
-        int dayLeft = (int) Math.max(0, 90 - diffInDays);
-        int nightLeft = (int) Math.max(0, 180 - diffInDays);
+    /**
+     * Update progress UI elements
+     */
+    private void updateProgressDisplay(Date licenseDate) {
+        // Calculate days left using business logic
+        int[] daysLeft = calculateDaysLeft(licenseDate);
+        if (daysLeft == null) return;
+
+        int dayLeft = daysLeft[0];
+        int nightLeft = daysLeft[1];
+
+        // Update UI with calculated values
         dayCounter.setText(String.valueOf(dayLeft));
         nightCounter.setText(String.valueOf(nightLeft));
+
+        // Calculate and set progress bar values
         dayProgressBar.setProgress((dayLeft * 100) / 90);
         nightProgressBar.setProgress((nightLeft * 100) / 180);
     }
 
-    @Override public void oncallbackArryStudent(ArrayList<StudentUser> s) {}
-    @Override public void onCallbackTeacher(ArrayList<TeacherUser> t) {}
-
-    @Override
-    public void onCallbackPosts(ArrayList<Post> list) {
+    /**
+     * Update posts display with new data
+     */
+    private void updatePostsDisplay(ArrayList<Post> newPosts) {
         posts.clear();
-        posts.addAll(list);
+        posts.addAll(newPosts);
         adapter.notifyDataSetChanged();
     }
+
+    //==========================================================================================
+    // LOGIC LAYER - Business Logic and Data Management
+    //==========================================================================================
+
+    private String userId;
+    private List<Post> posts = new ArrayList<>();
+    private PostsAdapter adapter;
+    private FireBaseManager fbm;
+    private long diffInDays;
+    private int progress;
+
+    /**
+     * Initialize data-related components
+     */
+    private void initializeDataComponents() {
+        fbm = new FireBaseManager(requireContext());
+
+        // Get userId from arguments or fallback to current user
+        userId = determineUserId();
+    }
+
+    /**
+     * Determine which user ID to display
+     */
+    private String determineUserId() {
+        String id = null;
+        if (getArguments() != null) {
+            id = getArguments().getString("userId");
+        }
+        if (id == null) {
+            // Fallback to current user
+            id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
+        return id;
+    }
+
+    /**
+     * Load user data and posts from Firebase
+     */
+    private void loadUserData() {
+        fbm.readData(this, "Student", userId);
+        fbm.readPostsForUser(this, userId);
+    }
+
+    /**
+     * Calculate days left for day and night escort periods
+     * @return int array with [dayLeft, nightLeft] or null if license date is null
+     */
+    private int[] calculateDaysLeft(Date licenseDate) {
+        if (licenseDate == null) return null;
+
+        // Calculate days since license was issued
+        long diff = Calendar.getInstance().getTimeInMillis() - licenseDate.getTime();
+        diffInDays = TimeUnit.MILLISECONDS.toDays(diff);
+        progress = (int) diffInDays;
+
+        // Calculate days left for each period
+        int dayLeft = (int) Math.max(0, 90 - diffInDays);
+        int nightLeft = (int) Math.max(0, 180 - diffInDays);
+
+        return new int[] {dayLeft, nightLeft};
+    }
+
+    //==========================================================================================
+    // CALLBACK IMPLEMENTATIONS - Firebase Data Handling
+    //==========================================================================================
+
+    @Override
+    public void oncallbackStudent(StudentUser user) {
+        updateProfileUI(user);
+    }
+
+    @Override
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Not used in this fragment
+    }
+
+    @Override
+    public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
+        // Not used in this fragment
+    }
+
+    @Override
+    public void onCallbackPosts(ArrayList<Post> postsList) {
+        updatePostsDisplay(postsList);
+    }
+
+    //==========================================================================================
+    // INNER ADAPTER CLASS - For displaying posts grid
+    //==========================================================================================
 
     private static class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.VH> {
         private final List<Post> items;
@@ -149,39 +296,53 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
          *
          * @param items the items
          */
-        PostsAdapter(List<Post> items) { this.items = items; }
+        PostsAdapter(List<Post> items) {
+            this.items = items;
+        }
+
         @NonNull @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            // Create an ImageView for each grid item
             ImageView iv = new ImageView(parent.getContext());
             int w = parent.getResources().getDisplayMetrics().widthPixels / 3;
             iv.setLayoutParams(new RecyclerView.LayoutParams(w, w));
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
             return new VH(iv);
         }
-        @Override public void onBindViewHolder(@NonNull VH holder, int position) {
-            String b64 = items.get(position).getContent();
-            if (b64 != null) {
-                Bitmap bmp = ImageUtils.convert64base(b64);
-                if (bmp != null) holder.iv.setImageBitmap(bmp);
+
+        @Override
+        public void onBindViewHolder(@NonNull VH holder, int position) {
+            // Convert base64 content to bitmap and display
+            String base64 = items.get(position).getContent();
+            if (base64 != null) {
+                Bitmap bitmap = ImageUtils.convert64base(base64);
+                if (bitmap != null) holder.iv.setImageBitmap(bitmap);
             }
         }
-        @Override public int getItemCount() { return items.size(); }
+
+        @Override
+        public int getItemCount() {
+            return items.size();
+        }
 
         /**
-         * The type Vh.
+         * The ViewHolder for post items
          */
         static class VH extends RecyclerView.ViewHolder {
             /**
-             * The Iv.
+             * The ImageView for post content
              */
             ImageView iv;
 
             /**
-             * Instantiates a new Vh.
+             * Instantiates a new ViewHolder
              *
-             * @param iv the iv
+             * @param iv the image view
              */
-            VH(ImageView iv) { super(iv); this.iv = iv; }
+            VH(ImageView iv) {
+                super(iv);
+                this.iv = iv;
+            }
         }
     }
 }

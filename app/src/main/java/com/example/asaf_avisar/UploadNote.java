@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,22 +22,24 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * The type Upload note.
+ * The type Upload note - Fragment for creating and uploading text notes.
  */
 public class UploadNote extends Fragment implements FirebaseCallback {
 
+    //==========================================================================================
+    // DISPLAY LAYER - UI Components and Display Methods
+    //==========================================================================================
+
+    // UI components
     private TextInputEditText noteInput;
     private TextInputEditText noteBodyInput;
     private MaterialButton saveNoteButton;
     private TabLayout tabLayout;
-    private FireBaseManager fireBaseManager;
-    private String userNameString, profileImageUrl;
     private TextView userName;
-    private ImageView profileImage,imageView;
-    private String userId;
+    private ImageView profileImage, imageView;
 
     /**
-     * Instantiates a new Upload note.
+     * Empty constructor required for fragments
      */
     public UploadNote() {
         // Required empty public constructor
@@ -50,11 +51,21 @@ public class UploadNote extends Fragment implements FirebaseCallback {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload_note, container, false);
 
-        fireBaseManager = new FireBaseManager(requireContext());
-        String studentId = getArguments() != null ? getArguments().getString("STUDENT_ID") : fireBaseManager.getUserid();
-        fireBaseManager.readData(this, "Student", studentId);
+        // Initialize data components
+        initializeDataComponents();
 
-        // Initialize views
+        // Set up UI components
+        initializeUIComponents(view);
+        setupEventListeners();
+
+        return view;
+    }
+
+    /**
+     * Initialize all UI components
+     */
+    private void initializeUIComponents(View view) {
+        // Bind all views
         userName = view.findViewById(R.id.userName);
         profileImage = view.findViewById(R.id.profileImage);
         imageView = view.findViewById(R.id.imageView);
@@ -62,35 +73,20 @@ public class UploadNote extends Fragment implements FirebaseCallback {
         noteBodyInput = view.findViewById(R.id.noteBodyInput);
         saveNoteButton = view.findViewById(R.id.postButton);
         tabLayout = view.findViewById(R.id.tabLayout);
+    }
 
+    /**
+     * Set up event listeners for interactive UI elements
+     */
+    private void setupEventListeners() {
         // Handle the "Save Note" button click
-        saveNoteButton.setOnClickListener(v -> {
-            String note = noteBodyInput.getText().toString();
-            if (!note.isEmpty()) {
-                // Create a post with the provided note and the user's name
-
-                Post post = new Post(userNameString, noteInput.getText().toString(), note, profileImageUrl, new Date());
-                fireBaseManager.savePost(post);
-                navigateToHomeFragment();
-                Toast.makeText(getContext(), "Note uploaded successfully", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getContext(), "Note cannot be empty", Toast.LENGTH_SHORT).show();
-            }
-        });
+        saveNoteButton.setOnClickListener(v -> handleSaveNoteClick());
 
         // Handle tab selection
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0:
-                        // "Text Only" tab selected, stay here
-                        break;
-                    case 1:
-                        // "Image Only" tab selected, navigate to the Add Photo Fragment
-                        navigateToAddPhotoFragment();
-                        break;
-                }
+                handleTabSelection(tab.getPosition());
             }
 
             @Override
@@ -99,11 +95,126 @@ public class UploadNote extends Fragment implements FirebaseCallback {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
-
-        return view;
     }
 
-    // Method to navigate to the Add Photo Fragment
+    /**
+     * Update UI with user profile data
+     */
+    private void updateProfileUI(StudentUser student) {
+        if (student != null) {
+            // Set username
+            userName.setText(student.getName());
+
+            // Set profile image
+            displayProfileImage(student.getProfilePhotoBase64());
+        }
+    }
+
+    /**
+     * Display profile image from base64 string
+     */
+    private void displayProfileImage(String profileImageUrl) {
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            byte[] decodedString = Base64.decode(profileImageUrl, Base64.DEFAULT);
+            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            profileImage.setImageBitmap(decodedBitmap);
+        } else {
+            profileImage.setImageResource(R.drawable.ic_default_profile);
+        }
+    }
+
+    /**
+     * Display success message to user
+     */
+    private void showSuccessMessage() {
+        Toast.makeText(getContext(), "Note uploaded successfully", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Display error message to user
+     */
+    private void showEmptyNoteError() {
+        Toast.makeText(getContext(), "Note cannot be empty", Toast.LENGTH_SHORT).show();
+    }
+
+    //==========================================================================================
+    // LOGIC LAYER - Business Logic and Data Management
+    //==========================================================================================
+
+    private FireBaseManager fireBaseManager;
+    private String userNameString, profileImageUrl;
+    private String userId;
+
+    /**
+     * Initialize data-related components
+     */
+    private void initializeDataComponents() {
+        fireBaseManager = new FireBaseManager(requireContext());
+        String studentId = getArguments() != null ?
+                getArguments().getString("STUDENT_ID") :
+                fireBaseManager.getUserid();
+
+        // Load user data
+        loadUserData(studentId);
+    }
+
+    /**
+     * Load user data from Firebase
+     */
+    private void loadUserData(String studentId) {
+        fireBaseManager.readData(this, "Student", studentId);
+    }
+
+    /**
+     * Handle save note button click
+     */
+    private void handleSaveNoteClick() {
+        String noteBody = noteBodyInput.getText().toString();
+        String noteTitle = noteInput.getText().toString();
+
+        if (validateNote(noteBody)) {
+            // Create and save post
+            createAndSavePost(noteTitle, noteBody);
+            navigateToHomeFragment();
+            showSuccessMessage();
+        } else {
+            showEmptyNoteError();
+        }
+    }
+
+    /**
+     * Validate the note content
+     */
+    private boolean validateNote(String noteBody) {
+        return noteBody != null && !noteBody.isEmpty();
+    }
+
+    /**
+     * Create and save a new post
+     */
+    private void createAndSavePost(String title, String content) {
+        Post post = new Post(userNameString, title, content, profileImageUrl, new Date());
+        fireBaseManager.savePost(post);
+    }
+
+    /**
+     * Handle tab selection
+     */
+    private void handleTabSelection(int position) {
+        switch (position) {
+            case 0:
+                // "Text Only" tab selected, stay here
+                break;
+            case 1:
+                // "Image Only" tab selected, navigate to the Add Photo Fragment
+                navigateToAddPhotoFragment();
+                break;
+        }
+    }
+
+    /**
+     * Navigate to the Add Photo Fragment
+     */
     private void navigateToAddPhotoFragment() {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -118,50 +229,48 @@ public class UploadNote extends Fragment implements FirebaseCallback {
         transaction.commit();
     }
 
-    // Method to navigate to the Home Fragment
+    /**
+     * Navigate to the Home Fragment
+     */
     private void navigateToHomeFragment() {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        // Pass the flag to select the "Image Only" tab
+        // Create and configure the home fragment
         Bundle bundle = new Bundle();
-        bundle.putInt("selectedTab", 1); // 1 for "Image Only"
+        bundle.putInt("selectedTab", 1);
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setArguments(bundle);
 
+        // Execute the transition
         transaction.replace(R.id.fragment_container, homeFragment);
-        transaction.addToBackStack(null);  // Adds the transaction to the back stack
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
-    @Override
-    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
-        // You can implement this if needed
-    }
+    //==========================================================================================
+    // CALLBACK IMPLEMENTATIONS - Firebase Data Handling
+    //==========================================================================================
 
     @Override
     public void oncallbackStudent(StudentUser student) {
         if (student != null) {
+            // Store data in class fields
             userNameString = student.getName();
             userId = student.getId();
             profileImageUrl = student.getProfilePhotoBase64();
-            userName.setText(userNameString);
-            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-                if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-                    byte[] decodedString = Base64.decode(profileImageUrl, Base64.DEFAULT);
-                    Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    profileImage.setImageBitmap(decodedBitmap);
-                } else {
-                    profileImage.setImageResource(R.drawable.ic_default_profile);
-                }
 
-            } else {
-                profileImage.setImageResource(R.drawable.ic_default_profile);
-            }
+            // Update UI
+            updateProfileUI(student);
         }
     }
 
     @Override
+    public void oncallbackArryStudent(ArrayList<StudentUser> students) {
+        // Not used in this fragment
+    }
+
+    @Override
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
-        // You can implement this if needed
+        // Not used in this fragment
     }
 }

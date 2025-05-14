@@ -13,37 +13,24 @@
 
     <!-- Button to open the RecyclerView Dialog -->
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/viewteacher"
-        android:layout_width="393dp"
-        android:layout_height="646dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
     <Button
         android:id="@+id/showDialogButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
         android:text="Show Recycler View"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewteacher" />
+        tools:layout_editor_absoluteY="698dp" />
 
     <Button
         android:id="@+id/dismissDialogButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
         android:text="dissmiss Recycler View"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.067"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewteacher" />
+        tools:layout_editor_absoluteY="698dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

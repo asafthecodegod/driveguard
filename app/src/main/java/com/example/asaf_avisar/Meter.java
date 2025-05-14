@@ -22,23 +22,19 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The type Meter.
+ * The type Meter - Fragment for displaying and managing escort period progress.
  */
 public class Meter extends Fragment implements FirebaseCallback, View.OnClickListener {
 
-    private FireBaseManager fireBaseManager;
+    //==============================================================================================
+    // UI COMPONENTS (DISPLAY LAYER)
+    //==============================================================================================
+
     private CheckBox daycheckBox, nightcheckBox;
     private TextView hello, licenseIssueDateTextView, dayEscortEndDateTextView, nightEscortEndDateTextView;
     private ProgressBar nightprogressBar, dayprogressBar;
     private TextView dayprogressText, nightprogressText;
     private Button changeLicenseDateButton;
-
-    private int progress, userDay, userNight;
-    private Handler handler = new Handler();
-    private Date licenseDate;
-    private long diffInDays;
-    private int dayCounter, nightCounter;
-    private StudentUser currentUser;
 
     /**
      * Instantiates a new Meter.
@@ -66,10 +62,8 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Optionally, retrieve parameters from getArguments() if needed
-        fireBaseManager = new FireBaseManager(getContext());
-        // Ensure a valid userId is provided
-        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+        // Initialize Firebase manager
+        initializeFirebaseManager();
     }
 
     @Override
@@ -77,6 +71,16 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         // Inflate the fragment layout (fragment_meter.xml)
         View rootView = inflater.inflate(R.layout.fragment_meter, container, false);
 
+        // Initialize UI components
+        initializeUIComponents(rootView);
+
+        return rootView;
+    }
+
+    /**
+     * Initialize UI components and set up click listeners
+     */
+    private void initializeUIComponents(View rootView) {
         licenseIssueDateTextView = rootView.findViewById(R.id.license_issue_date);
         dayEscortEndDateTextView = rootView.findViewById(R.id.day_escort_end_date);
         nightEscortEndDateTextView = rootView.findViewById(R.id.night_escort_end_date);
@@ -93,10 +97,12 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         nightcheckBox = rootView.findViewById(R.id.night_permit);
 
         nightprogressBar.setProgress(0);
-
-        return rootView;
+        dayprogressBar.setProgress(0);
     }
 
+    /**
+     * Shows the date picker dialog for license date selection
+     */
     private void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -108,21 +114,8 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
             selectedDateCalendar.set(selectedYear, selectedMonth, selectedDay);
             Date selectedDate = selectedDateCalendar.getTime();
 
-            // Prevent future date selection
-            if (selectedDate.after(new Date())) {
-                Toast.makeText(getContext(), "You can't select a future date!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Update license date in Firebase if currentUser is available
-            licenseDate = selectedDate;
-            if (currentUser != null) {
-                currentUser.setLicenseDate(licenseDate);
-                fireBaseManager.updateUser(currentUser);
-            }
-
-            // Update UI
-            updateProgressBasedOnLicense(licenseDate);
+            // Handle the selected date with business logic
+            handleDateSelection(selectedDate);
 
         }, year, month, day);
 
@@ -131,6 +124,58 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         datePickerDialog.show();
     }
 
+    @Override
+    public void onClick(View v) {
+        if (v == changeLicenseDateButton) {
+            showDatePickerDialog();
+        }
+    }
+
+    //==============================================================================================
+    // BUSINESS LOGIC LAYER
+    //==============================================================================================
+
+    private FireBaseManager fireBaseManager;
+    private int progress, userDay, userNight;
+    private Handler handler = new Handler();
+    private Date licenseDate;
+    private long diffInDays;
+    private int dayCounter, nightCounter;
+    private StudentUser currentUser;
+
+    /**
+     * Initialize Firebase manager and load user data
+     */
+    private void initializeFirebaseManager() {
+        fireBaseManager = new FireBaseManager(getContext());
+        // Ensure a valid userId is provided
+        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+    }
+
+    /**
+     * Handle date selection from the date picker
+     */
+    private void handleDateSelection(Date selectedDate) {
+        // Prevent future date selection
+        if (selectedDate.after(new Date())) {
+            Toast.makeText(getContext(), "You can't select a future date!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Update license date in Firebase if currentUser is available
+        licenseDate = selectedDate;
+        if (currentUser != null) {
+            currentUser.setLicenseDate(licenseDate);
+            fireBaseManager.updateUser(currentUser);
+        }
+
+        // Update UI
+        updateProgressBasedOnLicense(licenseDate);
+    }
+
+    /**
+     * Start the progress bar animation for visual feedback
+     */
     private void startProgressBarUpdate() {
         int pn = (progress * 100) / 180;
         Runnable updateProgressRunnable = new Runnable() {
@@ -164,6 +209,9 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         handler.post(updateProgressRunnableday);
     }
 
+    /**
+     * Calculate progress based on license date and update UI
+     */
     private void updateProgressBasedOnLicense(Date licenseDate) {
         if (licenseDate == null) {
             Toast.makeText(getContext(), "Invalid license date", Toast.LENGTH_SHORT).show();
@@ -189,6 +237,9 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         }
     }
 
+    /**
+     * Calculate escort end dates and update UI labels
+     */
     private void calculateEscortEndDates(Date licenseDate, SimpleDateFormat dateFormat) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(licenseDate);
@@ -205,6 +256,9 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         nightEscortEndDateTextView.setText("תאריך סיום מלווה לילה: " + nightEscortEndDateText);
     }
 
+    /**
+     * Update progress counters and checkboxes based on days since license was issued
+     */
     private void updateProgress(long diffInDays) {
         dayCounter = (int) (90 - diffInDays);
         nightCounter = (int) (180 - diffInDays);
@@ -219,27 +273,26 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
         nightcheckBox.setChecked(diffInDays > 180);
     }
 
+    //==============================================================================================
+    // FIREBASE CALLBACKS
+    //==============================================================================================
+
     @Override
     public void oncallbackArryStudent(ArrayList<StudentUser> students) {
-        // Optionally, update UI with the list of students
+        // Not used in this fragment
     }
 
     @Override
     public void oncallbackStudent(StudentUser user) {
         currentUser = user;
-        hello.setText("Hi, " + user.getName());
-        updateProgressBasedOnLicense(user.getLicenseDate());
+        if (user != null) {
+            hello.setText("Hi, " + user.getName());
+            updateProgressBasedOnLicense(user.getLicenseDate());
+        }
     }
 
     @Override
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
-        // Handle teacher data if needed
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v == changeLicenseDateButton) {
-            showDatePickerDialog();
-        }
+        // Not used in this fragment
     }
 }
