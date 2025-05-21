@@ -178,6 +178,11 @@ public class FindTeacher extends AppCompatActivity implements FirebaseCallback, 
         teacherCountTextView.setText(count + " teacher" + (count != 1 ? "s" : "") + " found");
     }
 
+    @Override
+    public void onTeacherClick(TeacherUser teacher, int position) {
+
+    }
+
     // ============================
     // === CONTROLLER LAYER (BUSINESS LOGIC) ===
     // ============================

@@ -21,30 +21,36 @@ public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.
      */
     ArrayList<TeacherUser> teacherUsers;
 
+    /**
+     * Interface for handling teacher item clicks
+     */
+    public interface OnTeacherClickListener {
+        void onTeacherClick(TeacherUser teacher, int position);
+    }
+
+    private OnTeacherClickListener listener;
 
     /**
      * Instantiates a new Teacher user adapter.
      *
      * @param teacherUsers the teacher users
-     * @param findTeacher
+     * @param listener the click listener
      */
-    public TeacherUserAdapter(ArrayList<TeacherUser> teacherUsers, FindTeacher findTeacher) {
+    public TeacherUserAdapter(ArrayList<TeacherUser> teacherUsers, OnTeacherClickListener listener) {
         this.teacherUsers = teacherUsers;
+        this.listener = listener;
     }
-
-
-
 
     @NonNull
     @Override
     public ViewTeacherUser onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View teacherview = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_teacher, parent,false );
+        View teacherview = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_teacher, parent, false);
         return new ViewTeacherUser(teacherview);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewTeacherUser holder, int position) {
-        TeacherUser currentTeacherUser =teacherUsers.get(position);
+        TeacherUser currentTeacherUser = teacherUsers.get(position);
         holder.nameTextView.setText(String.valueOf(currentTeacherUser.getName()));
         holder.typeTextView.setText(String.valueOf(currentTeacherUser.getRank()));
         holder.ratingBar.setRating(currentTeacherUser.getRank());
@@ -55,14 +61,17 @@ public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.
 //
 //        );
 
+        // Set click listener for the entire item view
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onTeacherClick(currentTeacherUser, position);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return teacherUsers.size();
-    }
-
-    public interface OnTeacherClickListener {
     }
 
     /**
@@ -87,7 +96,6 @@ public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.
          */
         public ImageView iconimageView;
 
-
         /**
          * Instantiates a new View teacher user.
          *
@@ -96,12 +104,9 @@ public class TeacherUserAdapter extends RecyclerView.Adapter<TeacherUserAdapter.
         public ViewTeacherUser(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.teacher_name);
-            typeTextView =itemView.findViewById(R.id.type);
-            ratingBar =itemView.findViewById(R.id.ratingBar);
-            iconimageView =itemView.findViewById(R.id.teacher_icon);
-
-
+            typeTextView = itemView.findViewById(R.id.type);
+            ratingBar = itemView.findViewById(R.id.ratingBar);
+            iconimageView = itemView.findViewById(R.id.teacher_icon);
         }
     }
-
 }
