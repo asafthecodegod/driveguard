@@ -111,9 +111,14 @@ public class HomeFragment extends Fragment {
                 showLoading(false);
 
                 if (posts != null && !posts.isEmpty()) {
-                    // We have posts to display
-                    postsAdapter = new PostsAdapter(posts);
-                    recyclerView.setAdapter(postsAdapter);
+                    // Update existing adapter if we have one, otherwise create new
+                    if (postsAdapter == null) {
+                        postsAdapter = new PostsAdapter(posts);
+                        recyclerView.setAdapter(postsAdapter);
+                    } else {
+                        // Update the adapter's data
+                        postsAdapter.updatePosts(posts);
+                    }
                     recyclerView.setVisibility(View.VISIBLE);
                     noPostsTextView.setVisibility(View.GONE);
                 } else {

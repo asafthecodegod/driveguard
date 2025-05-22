@@ -44,6 +44,19 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.posts = (posts != null) ? posts : new ArrayList<>();
     }
 
+    /**
+     * Update the adapter's data with new posts
+     *
+     * @param newPosts the new posts to display
+     */
+    public void updatePosts(List<Post> newPosts) {
+        this.posts.clear();
+        if (newPosts != null) {
+            this.posts.addAll(newPosts);
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemViewType(int position) {
         Post post = posts.get(position);

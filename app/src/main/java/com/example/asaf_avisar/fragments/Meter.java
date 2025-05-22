@@ -222,8 +222,6 @@ public class Meter extends Fragment implements FirebaseCallback, View.OnClickLis
 
             progress = (int) diffInDays;
             startProgressBarUpdate();
-
-            Toast.makeText(getContext(), "You have held your license for " + diffInDays + " days", Toast.LENGTH_SHORT).show();
             updateProgress(diffInDays);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

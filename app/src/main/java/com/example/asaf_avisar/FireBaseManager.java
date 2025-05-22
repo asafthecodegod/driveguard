@@ -353,29 +353,30 @@ public class FireBaseManager {
     public void readPosts(FirebaseCallbackPosts firebaseCallbackPosts) {
         ArrayList<Post> posts = new ArrayList<>();
 
-        getMyRef("Posts").addListenerForSingleValueEvent(new ValueEventListener() {
+        getMyRef("Posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) { // ✅ Loop through each post
+                posts.clear(); // Clear existing posts
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     try {
                         Post post = postSnapshot.getValue(Post.class);
                         if (post != null) {
-                            post.setKey(postSnapshot.getKey()); // ✅ Store Firebase key
+                            post.setKey(postSnapshot.getKey());
                             posts.add(post);
                         }
                     } catch (Exception e) {
                         Log.e("Firebase", "Error parsing post: " + e.getMessage());
                     }
-                    firebaseCallbackPosts.onCallbackPosts(posts); // ✅ Send the list
                 }
-
-
+                // Call the callback once after all posts are collected
+                firebaseCallbackPosts.onCallbackPosts(posts);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to read posts", error.toException());
+                firebaseCallbackPosts.onCallbackPosts(new ArrayList<>()); // Return empty list on error
             }
-
         });
     }
 
@@ -426,7 +427,7 @@ public class FireBaseManager {
     public void readPostsForUser(FirebaseCallbackPosts callback, String targetUserId) {
         ArrayList<Post> userPosts = new ArrayList<>();
 
-        // 1) get the same “Posts” reference you debugged
+        // 1) get the same "Posts" reference you debugged
         Query q = FirebaseDatabase
                 .getInstance()
                 .getReference("Posts")
