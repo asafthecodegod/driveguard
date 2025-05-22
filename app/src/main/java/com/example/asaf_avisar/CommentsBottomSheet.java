@@ -10,7 +10,11 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.asaf_avisar.activitys.Post;
+import com.example.asaf_avisar.adapters.CommentsAdapter;
+import com.example.asaf_avisar.objects.Post;
+import com.example.asaf_avisar.objects.Comment;
+import com.example.asaf_avisar.objects.StudentUser;
+import com.example.asaf_avisar.objects.TeacherUser;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.example.asaf_avisar.callbacks.FirebaseCallback;
 
 /**
  * Bottom sheet dialog for displaying and adding comments to posts.

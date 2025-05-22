@@ -41,7 +41,7 @@
 
 
     <LinearLayout
-        android:id="@+id/layoutVideo"
+        android:id="@+id/layoutPhoto"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layoutShorts"
+        android:id="@+id/layoutStatus"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layoutLive"
+        android:id="@+id/layoutNote"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,118 +1,209 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
 
-    <!-- User Information (Profile Picture and Name) -->
     <LinearLayout
-        android:id="@+id/user_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/user_pfp"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_default_profile"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_shape"
-            android:layout_marginEnd="8dp" />
-
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="wrap_content"
+        <!-- User info section -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="User Name"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:gravity="center_vertical" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:id="@+id/user_pfp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_default_profile"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User Name"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/post_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="May 21, 2025"
+                    android:textSize="12sp"
+                    android:textColor="#757575" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Guardian Time Title (Fixed) -->
+        <TextView
+            android:id="@+id/guardian_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Remaining Guardian Time:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#3F51B5"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Day Guardian Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#F5F8FF"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Day Guardian"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/day_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="30"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:textColor="#3F51B5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" days remaining"
+                    android:textSize="16sp"
+                    android:layout_gravity="center_vertical" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/day_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:progress="50"
+                android:progressTint="#3F51B5" />
+        </LinearLayout>
+
+        <!-- Night Guardian Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#F0F2F8"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Night Guardian"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/night_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:textColor="#303F9F" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" days remaining"
+                    android:textSize="16sp"
+                    android:layout_gravity="center_vertical" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/night_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:progress="70"
+                android:progressTint="#303F9F" />
+        </LinearLayout>
+
+        <!-- Motivational message (optional) -->
+        <TextView
+            android:id="@+id/motivation_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Keep going! You're making great progress!"
+            android:textStyle="italic"
+            android:textAlignment="center"
+            android:textSize="14sp" />
+
+        <!-- Like and comment section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginEnd="16dp">
+
+                <ImageView
+                    android:id="@+id/like_button"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/baseline_like_24"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:id="@+id/like_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/comment_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/baseline_comment_24" />
+        </LinearLayout>
     </LinearLayout>
-
-    <!-- Post Content (Image or Video Placeholder) -->
-    <ImageView
-        android:id="@+id/post_image"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/status_post_template"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_info" />
-
-    <!-- Like, Comment, and Share Buttons -->
-    <LinearLayout
-        android:id="@+id/action_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="start"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/post_image">
-
-        <ImageButton
-            android:id="@+id/like_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_like_24"
-            android:background="@android:color/transparent"
-            android:tint="@color/black"
-            android:contentDescription="Like button" />
-
-        <ImageButton
-            android:id="@+id/comment_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_comment_24"
-            android:background="@android:color/transparent"
-            android:tint="@color/black"
-            android:contentDescription="Comment button"
-            android:layout_marginStart="16dp" />
-
-        <ImageButton
-            android:id="@+id/share_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/nav_share"
-            android:background="@android:color/transparent"
-            android:tint="@color/black"
-            android:contentDescription="Share button"
-            android:layout_marginStart="16dp" />
-    </LinearLayout>
-
-    <!-- Post Description -->
-    <TextView
-        android:id="@+id/post_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="This is a sample post description."
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/action_buttons" />
-
-    <!-- Comments Section -->
-    <TextView
-        android:id="@+id/comments_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View all 10 comments"
-        android:textSize="14sp"
-        android:textColor="@color/gray"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/post_description" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

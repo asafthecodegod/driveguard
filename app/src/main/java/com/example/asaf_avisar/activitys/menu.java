@@ -25,32 +25,35 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.asaf_avisar.AboutFragment;
-import com.example.asaf_avisar.EditProfileFragment;
-import com.example.asaf_avisar.EditTeacherProfileFragment;
+import com.example.asaf_avisar.fragments.AboutFragment;
+import com.example.asaf_avisar.fragments.EditProfileFragment;
+import com.example.asaf_avisar.fragments.EditTeacherProfileFragment;
 import com.example.asaf_avisar.FireBaseManager;
-import com.example.asaf_avisar.FirebaseCallback;
-import com.example.asaf_avisar.HomeFragment;
-import com.example.asaf_avisar.InfoActivity;
-import com.example.asaf_avisar.LessonListActivity;
-import com.example.asaf_avisar.FindTeacher;
-import com.example.asaf_avisar.Meter;
-import com.example.asaf_avisar.OwnProfileFragment;
-import com.example.asaf_avisar.ProfileFragment;
+import com.example.asaf_avisar.callbacks.FirebaseCallback;
+import com.example.asaf_avisar.fragments.HomeFragment;
+import com.example.asaf_avisar.fragments.Meter;
+import com.example.asaf_avisar.fragments.OwnProfileFragment;
+import com.example.asaf_avisar.fragments.ProfileFragment;
 import com.example.asaf_avisar.R;
-import com.example.asaf_avisar.StudentUser;
-import com.example.asaf_avisar.TeacherProfileFragment;
-import com.example.asaf_avisar.TeacherUser;
-
-import com.example.asaf_avisar.FriendFragment;
-import com.example.asaf_avisar.ShareFragment;
-import com.example.asaf_avisar.UploadNote;
-import com.example.asaf_avisar.UploadPhoto;
+import com.example.asaf_avisar.objects.StudentUser;
+import com.example.asaf_avisar.fragments.TeacherProfileFragment;
+import com.example.asaf_avisar.objects.TeacherUser;
+import com.example.asaf_avisar.fragments.FriendFragment;
+import com.example.asaf_avisar.fragments.ShareFragment;
+import com.example.asaf_avisar.fragments.UploadNote;
+import com.example.asaf_avisar.fragments.UploadPhoto;
+import com.example.asaf_avisar.objects.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The type Menu.
@@ -64,33 +67,52 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
     private FireBaseManager fireBaseManager;
     private FloatingActionButton fab;
     private NavigationView navigationView;
+    private int timeHaveLicense;
 
-    // These flags track the state of user role checking
-    private boolean checkedTeacher = false;
-    private boolean checkedStudent = false;
-    private boolean foundAsTeacher = false;
-    private boolean foundAsStudent = false;
+    // User role flags
     private boolean isTeacher = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.menu);  // Ensure this layout includes both DrawerLayout and BottomNavigationView
+        setContentView(R.layout.menu);
 
+        // Initialize FireBaseManager
         fireBaseManager = new FireBaseManager(this);
 
-        // Check if a user type was passed via Intent
+        // Check if user type was passed via Intent
         if (getIntent().hasExtra("isTeacher")) {
             isTeacher = getIntent().getBooleanExtra("isTeacher", false);
-            Log.d(TAG, "Got isTeacher from intent: " + isTeacher);
         } else {
             // If not passed via Intent, check from Firebase
             checkUserType();
         }
 
+        initializeUIComponents();
+        setupNavigationComponents();
+        setupEventListeners();
+
+        // Load default fragment on first launch
+        if (savedInstanceState == null) {
+            replaceFragment(new HomeFragment());
+            if (navigationView != null) {
+                navigationView.setCheckedItem(R.id.nav_home);
+            }
+        }
+
+        // Update menu based on user type if already known
+        if (getIntent().hasExtra("isTeacher")) {
+            updateMenuForUserType();
+        }
+    }
+
+    /**
+     * Initialize UI components
+     */
+    private void initializeUIComponents() {
         try {
             // Initialize the FloatingActionButton
-            fab = findViewById(R.id.fab); // Ensure the ID matches the FAB in your XML
+            fab = findViewById(R.id.fab);
 
             // Drawer layout setup
             drawerLayout = findViewById(R.id.drawer_layout);
@@ -98,79 +120,75 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             setSupportActionBar(toolbar);
 
             navigationView = findViewById(R.id.nav_view);
-            if (navigationView == null) {
-                Log.e(TAG, "NavigationView (nav_view) not found in layout!");
-                // Handle the null navigationView gracefully
-            } else {
-                navigationView.setNavigationItemSelectedListener(this);
-            }
-
-            // Set up the drawer toggle
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);
-            drawerLayout.addDrawerListener(toggle);
-            toggle.syncState();
-
-            // BottomNavigationView setup
             bottomNavigationView = findViewById(R.id.bottomNavigationView);
-            bottomNavigationView.setOnItemSelectedListener(item -> {
-                int selectedId = item.getItemId();
-                if (selectedId == R.id.home) {
-                    replaceFragment(new HomeFragment());
-                } else if (selectedId == R.id.profile) {
-                    if (isTeacher) {
-                        replaceFragment(new TeacherProfileFragment()); // Use teacher-specific profile
-                    } else {
-                        replaceFragment(new OwnProfileFragment()); // Use regular student profile
-                    }
-                } else if (selectedId == R.id.meter) {
-                    replaceFragment(new Meter());
-                } else if (selectedId == R.id.friend) {
-                    replaceFragment(new FriendFragment());
-                }
-
-                return true;
-            });
-
-            // FAB click listener to show bottom sheet
-            if (fab != null) {
-                fab.setOnClickListener(view -> showBottomDialog());
-            }
-
-            // Load default fragment on first launch
-            if (savedInstanceState == null) {
-                replaceFragment(new HomeFragment());
-                if (navigationView != null) {
-                    navigationView.setCheckedItem(R.id.nav_home);  // Set home as the selected item in the drawer
-                }
-            }
-
-            // If we know isTeacher already, update the menu
-            if (getIntent().hasExtra("isTeacher")) {
-                updateMenuForUserType();
-            }
         } catch (Exception e) {
-            Log.e(TAG, "Error during initialization: " + e.getMessage());
-            e.printStackTrace();
-            Toast.makeText(this, "There was an error initializing the app", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error initializing UI components: " + e.getMessage());
+            Toast.makeText(this, "Error initializing app components", Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
-     * Check user type by querying Teacher collection first, then Student if needed
+     * Set up navigation components
+     */
+    private void setupNavigationComponents() {
+        try {
+            // Set up navigation drawer
+            if (navigationView != null) {
+                navigationView.setNavigationItemSelectedListener(this);
+            }
+
+            // Set up drawer toggle
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);
+            drawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting up navigation: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Set up event listeners for UI interactions
+     */
+    private void setupEventListeners() {
+        // Bottom navigation listener
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int selectedId = item.getItemId();
+            if (selectedId == R.id.home) {
+                replaceFragment(new HomeFragment());
+            } else if (selectedId == R.id.profile) {
+                if (isTeacher) {
+                    replaceFragment(new TeacherProfileFragment());
+                } else {
+                    replaceFragment(new OwnProfileFragment());
+                }
+            } else if (selectedId == R.id.meter) {
+                replaceFragment(new Meter());
+            } else if (selectedId == R.id.friend) {
+                replaceFragment(new FriendFragment());
+            }
+            return true;
+        });
+
+        // FAB click listener
+        if (fab != null) {
+            fab.setOnClickListener(view -> showBottomDialog());
+        }
+    }
+
+    /**
+     * Check user type by querying Firebase
      */
     private void checkUserType() {
-        Log.d(TAG, "Checking user type for userId: " + fireBaseManager.getUserid());
+        String currentUserId = fireBaseManager.getUserid();
+        if (currentUserId == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Reset check flags
-        checkedTeacher = false;
-        checkedStudent = false;
-        foundAsTeacher = false;
-        foundAsStudent = false;
-
-        // First check if user is in Teacher collection
-        fireBaseManager.readData(this, "Teacher", fireBaseManager.getUserid());
-        // The callback will check Student collection if needed
+        // Just read the user from Student collection and check isTeacher field
+        fireBaseManager.readData(this, "Student", currentUserId);
     }
 
     /**
@@ -178,37 +196,218 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
      */
     private void updateMenuForUserType() {
         try {
-            Log.d(TAG, "Updating menu for user type, isTeacher = " + isTeacher);
-
-            if (navigationView == null) {
-                Log.e(TAG, "NavigationView is null in updateMenuForUserType");
-                return;
-            }
-
-            if (navigationView.getMenu() == null) {
-                Log.e(TAG, "NavigationView menu is null");
+            if (navigationView == null || navigationView.getMenu() == null) {
                 return;
             }
 
             MenuItem editProfileItem = navigationView.getMenu().findItem(R.id.nav_settings);
+            MenuItem infoItem = navigationView.getMenu().findItem(R.id.nav_info);
+
+            // Hide "New Driver Info" for teachers
+            if (infoItem != null) {
+                infoItem.setVisible(!isTeacher);
+            }
+
+            // Hide meter option for teachers in bottom navigation
+            if (bottomNavigationView != null) {
+                MenuItem meterItem = bottomNavigationView.getMenu().findItem(R.id.meter);
+                if (meterItem != null) {
+                    meterItem.setVisible(!isTeacher);
+                }
+            }
 
             if (isTeacher) {
-                // Update menu item text for teachers
+                // Update menu text for teachers
                 if (editProfileItem != null) {
                     editProfileItem.setTitle("Edit Teacher Profile");
                 }
-
-                Toast.makeText(this, "Teacher profile loaded", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Teacher profile loaded", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Student profile loaded", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Student profile loaded", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error updating menu for user type: " + e.getMessage());
+            Log.e(TAG, "Error updating menu: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Show Bottom Dialog with creation options
+     */
+    private void showBottomDialog() {
+        try {
+            final Dialog dialog = new Dialog(this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.bottomsheetlayout);
+
+            // Find views by their IDs
+            LinearLayout photoLayout = dialog.findViewById(R.id.layoutPhoto);
+            LinearLayout statusLayout = dialog.findViewById(R.id.layoutStatus);
+            LinearLayout noteLayout = dialog.findViewById(R.id.layoutNote);
+            ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
+
+            // Click listener for PHOTO option
+            photoLayout.setOnClickListener(v -> {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, new UploadPhoto());
+                transaction.addToBackStack(null);
+                transaction.commit();
+                dialog.dismiss();
+            });
+
+            // Click listener for STATUS option - posts guardian time update directly
+            statusLayout.setOnClickListener(v -> {
+                if (!isTeacher) {
+                    // Post guardian time update directly without any popup
+                    createAndPostGuardianTimeUpdate();
+                } else {
+                    Toast.makeText(menu.this, "Teachers cannot post guardian time updates", Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
+            });
+
+            // Click listener for NOTE option
+            noteLayout.setOnClickListener(v -> {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, new UploadNote());
+                transaction.addToBackStack(null);
+                transaction.commit();
+                dialog.dismiss();
+            });
+
+            // Cancel button click listener
+            cancelButton.setOnClickListener(view -> dialog.dismiss());
+
+            // Show and configure dialog
+            dialog.show();
+            setupDialogWindow(dialog);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error showing bottom dialog: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Handle drawer item clicks
+    /**
+     * Set up dialog window properties
+     */
+    private void setupDialogWindow(Dialog dialog) {
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+        // Enable background dimming
+        WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
+        layoutParams.dimAmount = 0.7f;
+        dialog.getWindow().setAttributes(layoutParams);
+        dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+    }
+
+    /**
+     * Create and post guardian time update directly
+     */
+    private void createAndPostGuardianTimeUpdate() {
+        // Show toast to indicate action
+        Toast.makeText(this, "Posting guardian time update...", Toast.LENGTH_SHORT).show();
+
+        // Get current user ID
+        String userId = fireBaseManager.getUserid();
+
+        // Get current date for the post
+        Date currentDate = new Date();
+
+        // Get user data and create the guardian time post
+        fetchUserDataForGuardianTime(userId, currentDate);
+    }
+
+    /**
+     * Fetch user data and create guardian time post
+     */
+    private void fetchUserDataForGuardianTime(String userId, Date postDate) {
+        DatabaseReference ref = fireBaseManager.getDatabase().getReference("Student").child(userId);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    if (dataSnapshot.exists()) {
+                        StudentUser student = dataSnapshot.getValue(StudentUser.class);
+                        if (student != null) {
+                            // Get license date from student object
+                            Date licenseDate = student.getLicenseDate();
+
+                            // Handle case if license date is not set
+                            if (licenseDate == null) {
+                                Toast.makeText(menu.this, "License date not set. Please update your profile.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            // Calculate days since license issue - using same logic from Meter class
+                            Date currentDate = new Date(); // Current date
+                            long diffInMillis = currentDate.getTime() - licenseDate.getTime();
+                            long diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
+
+                            // Calculate remaining days - using same logic from Meter class
+                            int daysRemaining = (int) Math.max(0, 90 - diffInDays);
+                            int nightsRemaining = (int) Math.max(0, 180 - diffInDays);
+
+                            // Create guardian time post (type 2)
+                            Post guardianTimePost = new Post(
+                                    userId,
+                                    student.getName(),
+                                    student.getProfilePhotoBase64(),
+                                    daysRemaining,
+                                    nightsRemaining,
+                                    postDate
+                            );
+
+                            // Save post to Firebase database
+                            fireBaseManager.savePost(guardianTimePost);
+                            replaceFragment(new HomeFragment());
+
+                            // Log the calculation for debugging
+                            Log.d("GuardianTime", "License Date: " + licenseDate +
+                                    ", Days since license: " + diffInDays +
+                                    ", Day remaining: " + daysRemaining +
+                                    ", Night remaining: " + nightsRemaining);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(() ->
+                            Toast.makeText(menu.this, "Error creating guardian time update: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                    );
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Database error: " + databaseError.getMessage());
+                runOnUiThread(() ->
+                        Toast.makeText(menu.this, "Database error", Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
+    }
+
+
+    /**
+     * Replace current fragment
+     */
+    public void replaceFragment(Fragment fragment) {
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, fragment);
+            fragmentTransaction.commit();
+        } catch (Exception e) {
+            Log.e(TAG, "Error replacing fragment: " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * Handle navigation item selection
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         try {
@@ -218,9 +417,9 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
                 replaceFragment(new HomeFragment());
             } else if (id == R.id.nav_settings) {
                 if (isTeacher) {
-                    replaceFragment(new EditTeacherProfileFragment()); // Use teacher-specific edit profile
+                    replaceFragment(new EditTeacherProfileFragment());
                 } else {
-                    replaceFragment(new EditProfileFragment()); // Use regular edit profile
+                    replaceFragment(new EditProfileFragment());
                 }
             } else if (id == R.id.nav_about) {
                 replaceFragment(new AboutFragment());
@@ -235,9 +434,9 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
                 fireBaseManager.logout();
             } else if (id == R.id.profile) {
                 if (isTeacher) {
-                    replaceFragment(new TeacherProfileFragment()); // Use teacher-specific profile
+                    replaceFragment(new TeacherProfileFragment());
                 } else {
-                    replaceFragment(new ProfileFragment()); // Use regular profile
+                    replaceFragment(new ProfileFragment());
                 }
             } else if (id == R.id.nav_share) {
                 replaceFragment(new ShareFragment());
@@ -248,241 +447,66 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             }
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "Error in onNavigationItemSelected: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Error in navigation selection: " + e.getMessage());
             return false;
-        }
-    }
-
-    // Replace fragments method
-    private void replaceFragment(Fragment fragment) {
-        try {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);  // Make sure R.id.fragment_container is present in your layout
-            fragmentTransaction.commit();
-        } catch (Exception e) {
-            Log.e(TAG, "Error replacing fragment: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
     // Handle back press to close drawer if open
     @Override
     public void onBackPressed() {
-        try {
-            if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error in onBackPressed: " + e.getMessage());
-            e.printStackTrace();
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
             super.onBackPressed();
         }
     }
 
-    // Show Bottom Dialog (Bottom Sheet)
-    private void showBottomDialog() {
-        try {
-            final Dialog dialog = new Dialog(this);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.bottomsheetlayout);  // Ensure you have this layout
-
-            LinearLayout uploadPhotoLayout = dialog.findViewById(R.id.layoutVideo);
-            LinearLayout uploadNoteLayout = dialog.findViewById(R.id.layoutShorts);
-            LinearLayout liveLayout = dialog.findViewById(R.id.layoutLive);
-            ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
-
-            // Click listener for video option
-            uploadPhotoLayout.setOnClickListener(v -> {
-                // Open UploadPhoto Fragment
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, new UploadPhoto());  // Ensure fragment_container is defined in your layout
-                transaction.addToBackStack(null);  // Allows going back to the previous fragment
-                transaction.commit();
-                dialog.dismiss();  // Close the dialog after starting the fragment
-            });
-
-            // Click listener for shorts option
-            uploadNoteLayout.setOnClickListener(v -> {
-                // Open UploadNote Fragment
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, new AboutFragment());  // Replace with UploadNote Fragment
-                transaction.addToBackStack(null);  // Allows going back to the previous fragment
-                transaction.commit();
-                dialog.dismiss();  // Close the dialog after starting the fragment
-            });
-
-            // Click listener for live option
-            liveLayout.setOnClickListener(v -> {
-                // Open another Fragment if needed, otherwise you can use a different Fragment like UploadLive
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, new UploadNote());  // Replace with appropriate fragment, like UploadLive
-                transaction.addToBackStack(null);  // Allows going back to the previous fragment
-                transaction.commit();
-                dialog.dismiss();  // Close the dialog after starting the fragment
-            });
-
-            // Cancel button click listener
-            cancelButton.setOnClickListener(view -> dialog.dismiss());
-
-            // Show the dialog
-            dialog.show();
-
-            // Set dialog window layout
-            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;  // Ensure this style exists
-            dialog.getWindow().setGravity(Gravity.BOTTOM);
-
-            // Enable background dimming effect after the dialog is shown
-            WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
-            layoutParams.dimAmount = 0.7f;  // Set dim amount for the background (70% dim)
-            dialog.getWindow().setAttributes(layoutParams);
-
-            // Ensure the background dimming flag is set
-            dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        } catch (Exception e) {
-            Log.e(TAG, "Error showing bottom dialog: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     //==========================================================================================
-    // CALLBACK IMPLEMENTATIONS - Firebase Data Handling - Using the Addpfp approach
+    // CALLBACK IMPLEMENTATIONS - Firebase Data Handling
     //==========================================================================================
 
     @Override
     public void onCallbackSingleTeacher(TeacherUser teacher) {
-        Log.d(TAG, "Single teacher callback received with: " + (teacher != null ? "data" : "null"));
-
-        checkedTeacher = true;
-
         if (teacher != null) {
-            // Found as teacher - try to get the isTeacher flag from the object
-            foundAsTeacher = true;
-
-            try {
-                // Try to access the isTeacher field from TeacherUser
-                // This may not exist in your TeacherUser class
-                if (teacher.isTeacher()) {
-                    isTeacher = true;
-                }
-            } catch (Exception e) {
-                // No isTeacher method, assume true since it's a TeacherUser object
-                isTeacher = true;
-                Log.d(TAG, "No isTeacher method in TeacherUser, assuming true");
-            }
+            isTeacher = true;
         }
-
-        // Always check student collection too to find if user has dual roles
-        Log.d(TAG, "Checking if user is also in Student collection");
+        // Always check student collection too
         fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
     }
 
     @Override
     public void oncallbackStudent(StudentUser student) {
-        Log.d(TAG, "Student callback received with: " + (student != null ? "data" : "null"));
+        if (student != null && !isTeacher) {
+            // Only set isTeacher = false if we didn't already find a teacher
+            timeHaveLicense = student.getTimeHaveLicense();
+            isTeacher = student.isTeacher();
 
-        checkedStudent = true;
-
-        if (student != null) {
-            // Found as student
-            foundAsStudent = true;
-
-            // Try to get isTeacher flag if it's not already set from a teacher object
-            if (!foundAsTeacher) {
-                try {
-                    // Try to get isTeacher flag from StudentUser
-                    // This assumes StudentUser has an isTeacher method
-                    isTeacher = student.isTeacher();
-                    Log.d(TAG, "Student isTeacher flag: " + isTeacher);
-                } catch (Exception e) {
-                    // No isTeacher method, assume false for student
-                    isTeacher = false;
-                    Log.d(TAG, "No isTeacher method in StudentUser, assuming false");
-                }
-            }
+            // Update the UI based on final user type determination
+            updateMenuForUserType();
         }
-
-        // Now that we've checked both collections, make the final decision
-        // Prioritize teacher role if found in both collections
-        if (foundAsTeacher) {
-            isTeacher = true;
+        else{
+            isTeacher = false;
+            updateMenuForUserType();
         }
-
-        Log.d(TAG, "Final user type: " + (isTeacher ? "TEACHER" : "STUDENT") +
-                " (Found as Teacher: " + foundAsTeacher +
-                ", Found as Student: " + foundAsStudent + ")");
-
-        // Update the UI now that we have determined the user type
-        updateMenuForUserType();
     }
 
     @Override
     public void oncallbackArryStudent(ArrayList<StudentUser> students) {
-        Log.d(TAG, "Student array callback received with: " + (students != null ? students.size() + " students" : "null"));
-
-        checkedStudent = true;
-
-        if (students != null && !students.isEmpty()) {
-            foundAsStudent = true;
-
-            // If not already identified as a teacher, use data from first matching student
-            if (!foundAsTeacher) {
-                for (StudentUser student : students) {
-                    if (student.getId().equals(fireBaseManager.getUserid())) {
-                        try {
-                            isTeacher = student.isTeacher();
-                            Log.d(TAG, "Student array isTeacher flag: " + isTeacher);
-                        } catch (Exception e) {
-                            isTeacher = false;
-                            Log.d(TAG, "No isTeacher method in StudentUser, assuming false");
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Ensure teacher role gets priority
-        if (foundAsTeacher) {
-            isTeacher = true;
-        }
-
-        // Update UI
-        updateMenuForUserType();
+        // Not used in this simplified implementation
     }
 
     @Override
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
-        Log.d(TAG, "Teacher array callback received with: " + (teachers != null ? teachers.size() + " teachers" : "null"));
-
-        checkedTeacher = true;
-
         if (teachers != null && !teachers.isEmpty()) {
-            foundAsTeacher = true;
-
-            // Find matching teacher if possible
             for (TeacherUser teacher : teachers) {
                 if (teacher.getTeacherId().equals(fireBaseManager.getUserid())) {
-                    try {
-                        isTeacher = teacher.isTeacher();
-                        Log.d(TAG, "Teacher array isTeacher flag: " + isTeacher);
-                    } catch (Exception e) {
-                        // No isTeacher method, assume true since it's a TeacherUser
-                        isTeacher = true;
-                        Log.d(TAG, "No isTeacher method in TeacherUser array, assuming true");
-                    }
+                    isTeacher = true;
                     break;
                 }
             }
         }
-
         // Check student collection also
-        Log.d(TAG, "Checking if user is also in Student collection");
         fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
     }
 }

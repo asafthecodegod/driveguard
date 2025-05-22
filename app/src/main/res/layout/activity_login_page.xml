@@ -8,8 +8,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/loginbkg"
-    tools:context=".FindTeacher">
+    android:background="@drawable/loginbkg">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

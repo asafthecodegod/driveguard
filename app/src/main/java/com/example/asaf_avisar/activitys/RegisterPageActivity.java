@@ -3,6 +3,7 @@ package com.example.asaf_avisar.activitys;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -14,12 +15,12 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.asaf_avisar.Check;
+import com.example.asaf_avisar.objects.Check;
 import com.example.asaf_avisar.FireBaseManager;
-import com.example.asaf_avisar.FirebaseCallback;
+import com.example.asaf_avisar.callbacks.FirebaseCallback;
 import com.example.asaf_avisar.R;
-import com.example.asaf_avisar.StudentUser;
-import com.example.asaf_avisar.TeacherUser;
+import com.example.asaf_avisar.objects.StudentUser;
+import com.example.asaf_avisar.objects.TeacherUser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -171,11 +172,29 @@ public class RegisterPageActivity extends AppCompatActivity implements View.OnCl
 
         if (registeredAsTeacher) {
             TeacherUser newTeacher = new TeacherUser(username, email, password, birthDate, 0);
+            // Set required fields
             newTeacher.setTeacher(true);
+            newTeacher.setName(username);
+            newTeacher.setEmail(email);
+            newTeacher.setPassword(password);
+            newTeacher.setBirthday(birthDate);
+            newTeacher.setFollowerCount(0);
+            newTeacher.setFollowingCount(0);
+            newTeacher.setDrivingInvestment(0);
+            newTeacher.setProfilePhotoBase64("");
             fireBaseManager.createUser(newTeacher, "Teacher");
         } else {
             StudentUser newStudent = new StudentUser(username, email, password, birthDate);
+            // Set required fields
             newStudent.setTeacher(false);
+            newStudent.setName(username);
+            newStudent.setEmail(email);
+            newStudent.setPassword(password);
+            newStudent.setBirthday(birthDate);
+            newStudent.setFollowerCount(0);
+            newStudent.setFollowingCount(0);
+            newStudent.setDrivingInvestment(0);
+            newStudent.setProfilePhotoBase64("");
             fireBaseManager.createUser(newStudent, "Student");
         }
 

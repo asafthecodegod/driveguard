@@ -9,9 +9,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.asaf_avisar.activitys.Addpfp;
 import com.example.asaf_avisar.activitys.LoginOrRegistretionActivity;
-import com.example.asaf_avisar.activitys.Post;
+import com.example.asaf_avisar.objects.Lesson;
+import com.example.asaf_avisar.objects.Post;
 import com.example.asaf_avisar.activitys.menu;
+import com.example.asaf_avisar.objects.Comment;
+import com.example.asaf_avisar.objects.StudentUser;
+import com.example.asaf_avisar.objects.TeacherUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -24,7 +29,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import com.example.asaf_avisar.callbacks.FirebaseCallback;
+import com.example.asaf_avisar.callbacks.FirebaseCallbackLessons;
+import com.example.asaf_avisar.callbacks.FirebaseCallbackPosts;
 
 /**
  * The type Fire base manager.
@@ -150,6 +160,27 @@ public class FireBaseManager {
                 });
     }
 
+
+    public void studentData(FirebaseCallback firebaseCallback) {
+        ArrayList<StudentUser> students = new ArrayList<>();
+        getMyRef("Student")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            StudentUser user = data.getValue(StudentUser.class);
+                            user.setId(data.getKey());
+                            students.add(user);
+                        }
+                        firebaseCallback.oncallbackArryStudent(students);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.w(TAG, "Failed to read value.", error.toException());
+                    }
+                });
+    }
+
     /**
      * Read data.
      *
@@ -165,31 +196,6 @@ public class FireBaseManager {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         StudentUser user = snapshot.getValue(StudentUser.class);
                         firebaseCallback.oncallbackStudent(user);
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.w(TAG, "Failed to read value.", error.toException());
-                    }
-                });
-    }
-
-    /**
-     * Student data.
-     *
-     * @param firebaseCallback the firebase callback
-     */
-    public void studentData(FirebaseCallback firebaseCallback) {
-        ArrayList<StudentUser> students = new ArrayList<>();
-        getMyRef("Student")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot data : snapshot.getChildren()) {
-                            StudentUser user = data.getValue(StudentUser.class);
-                            user.setId(data.getKey());
-                            students.add(user);
-                        }
-                        firebaseCallback.oncallbackArryStudent(students);
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -233,6 +239,15 @@ public class FireBaseManager {
                 .child(getUserid())
                 .setValue(studentUser);
     }
+    public void updateTeacher(TeacherUser teacher) {
+        String uid = teacher.getId();
+        if (uid != null) {
+            getDatabase()
+                    .getReference("Teacher")
+                    .child(uid)
+                    .setValue(teacher);
+        }
+    }
 
     /**
      * Save image.
@@ -241,6 +256,12 @@ public class FireBaseManager {
      */
     public void saveImage(String profilePhotoBase64) {
         getMyRef("Student")
+                .child(getUserid())
+                .child("profilePhotoBase64")
+                .setValue(profilePhotoBase64);
+    }
+    public void saveTeacherImage(String profilePhotoBase64) {
+        getMyRef("Teacher")
                 .child(getUserid())
                 .child("profilePhotoBase64")
                 .setValue(profilePhotoBase64);
@@ -380,18 +401,7 @@ public class FireBaseManager {
         getMyRef("Posts").child(post.getKey()).child("comments").setValue(comments);
     }
 
-    /**
-     * Update comment replies.
-     *
-     * @param parentComment the parent comment
-     */
-    public void updateCommentReplies(Comment parentComment) {
-        getMyRef("Posts")
-                .child(parentComment.getPostId())
-                .child("comments")
-                .child(parentComment.getKey())
-                .setValue(parentComment);
-    }
+
 
     /**
      * Update comment likes.
@@ -449,11 +459,196 @@ public class FireBaseManager {
             }
         });
     }
+    public void readStudentForGuardianPost(String userId) {
+        DatabaseReference ref = database.getReference("Student").child(userId);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    if (dataSnapshot.exists()) {
+                        StudentUser student = dataSnapshot.getValue(StudentUser.class);
+                        if (student != null) {
 
+                            int daysRemaining = student.getDaysLeft();
+                            int nightsRemaining = student.getNightDaysLeft();
 
+                            // Create and post
+                            Post guardianPost = new Post(
+                                    userId,
+                                    student.getName(),
+                                    student.getProfilePhotoBase64(),
+                                    daysRemaining,
+                                    nightsRemaining,
+                                    new Date()
+                            );
 
-    // --- Friend Request Flow ---
-    // ... (שאר הקוד ללא שינוי)
+                            // Save the post
+                            savePost(guardianPost);
+
+                            // Show success message
+                            Toast.makeText(context, "Guardian time status posted!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(context, "Error creating guardian time post", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseError", "Database error: " + databaseError.getMessage());
+                Toast.makeText(context, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    /**
+     * Update user's following list
+     * @param userId - the user who is following/unfollowing
+     * @param targetUserId - the user being followed/unfollowed
+     * @param isFollowing - true to follow, false to unfollow
+     */
+    public void updateUserFollowing(String userId, String targetUserId, boolean isFollowing) {
+        // Add null checks
+        if (userId == null || targetUserId == null) {
+            Log.e(TAG, "Cannot update following: userId or targetUserId is null");
+            return;
+        }
+
+        DatabaseReference userRef = getMyRef("Student").child(userId);
+
+        if (isFollowing) {
+            // Add to following list
+            userRef.child("following").child(targetUserId).setValue(true)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Following updated successfully");
+                            } else {
+                                Log.e(TAG, "Failed to update following", task.getException());
+                            }
+                        }
+                    });
+
+            // Update following count
+            userRef.child("followingCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Integer currentCount = snapshot.getValue(Integer.class);
+                    int newCount = (currentCount == null) ? 1 : currentCount + 1;
+                    userRef.child("followingCount").setValue(newCount);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "Failed to update following count", error.toException());
+                }
+            });
+        } else {
+            // Remove from following list
+            userRef.child("following").child(targetUserId).removeValue()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Following removed successfully");
+                            } else {
+                                Log.e(TAG, "Failed to remove following", task.getException());
+                            }
+                        }
+                    });
+
+            // Update following count
+            userRef.child("followingCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Integer currentCount = snapshot.getValue(Integer.class);
+                    int newCount = (currentCount == null || currentCount <= 0) ? 0 : currentCount - 1;
+                    userRef.child("followingCount").setValue(newCount);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "Failed to update following count", error.toException());
+                }
+            });
+        }
+    }
+
+    /**
+     * Update user's followers list
+     * @param userId - the user gaining/losing a follower
+     * @param followerUserId - the user who is following/unfollowing
+     * @param isFollowing - true to add follower, false to remove follower
+     */
+    public void updateUserFollowers(String userId, String followerUserId, boolean isFollowing) {
+        // Add null checks
+        if (userId == null || followerUserId == null) {
+            Log.e(TAG, "Cannot update followers: userId or followerUserId is null");
+            return;
+        }
+
+        DatabaseReference userRef = getMyRef("Student").child(userId);
+
+        if (isFollowing) {
+            // Add to followers list
+            userRef.child("followers").child(followerUserId).setValue(true)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Follower added successfully");
+                            } else {
+                                Log.e(TAG, "Failed to add follower", task.getException());
+                            }
+                        }
+                    });
+
+            // Update follower count
+            userRef.child("followerCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Integer currentCount = snapshot.getValue(Integer.class);
+                    int newCount = (currentCount == null) ? 1 : currentCount + 1;
+                    userRef.child("followerCount").setValue(newCount);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "Failed to update follower count", error.toException());
+                }
+            });
+        } else {
+            // Remove from followers list
+            userRef.child("followers").child(followerUserId).removeValue()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Follower removed successfully");
+                            } else {
+                                Log.e(TAG, "Failed to remove follower", task.getException());
+                            }
+                        }
+                    });
+
+            // Update follower count
+            userRef.child("followerCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Integer currentCount = snapshot.getValue(Integer.class);
+                    int newCount = (currentCount == null || currentCount <= 0) ? 0 : currentCount - 1;
+                    userRef.child("followerCount").setValue(newCount);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "Failed to update follower count", error.toException());
+                }
+            });
+        }
+    }
 
 
 }

@@ -22,13 +22,13 @@
         android:theme="@style/Theme.Asaf_avisar"
         tools:targetApi="31">
         <activity
-            android:name=".activitys.TeacherDetailsActivity"
+            android:name=".TeacherDetailsActivity"
             android:exported="false" />
         <activity
             android:name=".TeacherProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".LessonListActivity"
+            android:name=".activitys.LessonListActivity"
             android:exported="false" /> <!-- Fixed BroadcastReceiver for Network Changes -->
         <receiver
             android:name=".NetworkChangeReceiver"
@@ -43,13 +43,13 @@
             android:enabled="true"
             android:exported="true" /> <!-- Activities -->
         <activity
-            android:name=".InfoActivity"
+            android:name=".activitys.InfoActivity"
             android:exported="false" />
         <activity
-            android:name=".AddLesson"
+            android:name=".activitys.AddLesson"
             android:exported="false" />
         <activity
-            android:name=".Addpfp"
+            android:name=".activitys.Addpfp"
             android:exported="false" />
         <activity
             android:name=".testing_stuff"
@@ -70,7 +70,7 @@
             android:name=".activitys.LoginOrRegistretionActivity"
             android:exported="false" />
         <activity
-            android:name=".FindTeacher"
+            android:name=".activitys.FindTeacher"
             android:exported="false" />
         <activity
             android:name=".activitys.StartActivity"

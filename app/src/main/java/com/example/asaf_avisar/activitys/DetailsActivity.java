@@ -21,11 +21,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.asaf_avisar.FireBaseManager;
-import com.example.asaf_avisar.FirebaseCallback;
+import com.example.asaf_avisar.callbacks.FirebaseCallback;
 import com.example.asaf_avisar.MyReceiver;
 import com.example.asaf_avisar.R;
-import com.example.asaf_avisar.StudentUser;
-import com.example.asaf_avisar.TeacherUser;
+import com.example.asaf_avisar.objects.StudentUser;
+import com.example.asaf_avisar.objects.TeacherUser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -327,7 +327,6 @@ public class DetailsActivity extends AppCompatActivity implements FirebaseCallba
 
             // Update UI with user data
             updateGreeting(userName);
-            showToast("Hi " + userName);
         }
     }
 

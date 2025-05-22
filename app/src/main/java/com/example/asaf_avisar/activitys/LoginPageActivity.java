@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.asaf_avisar.Check;
+import com.example.asaf_avisar.objects.Check;
 import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.R;
 
