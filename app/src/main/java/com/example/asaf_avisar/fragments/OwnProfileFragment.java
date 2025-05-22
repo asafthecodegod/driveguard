@@ -136,7 +136,11 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
      */
     private void updatePostsDisplay(ArrayList<Post> newPosts) {
         posts.clear();
-        posts.addAll(newPosts);
+        for (Post post : newPosts) {
+            if (post.getType() == 1) { // Only photo posts
+                posts.add(post);
+            }
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -223,41 +227,57 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
      */
     private static class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.VH> {
         private final List<Post> items;
+        private static final int GRID_SPAN_COUNT = 3;
+        private static final int IMAGE_PADDING = 2; // dp
 
-        /**
-         * Instantiates a new Posts adapter.
-         *
-         * @param items the items
-         */
         PostsAdapter(List<Post> items) {
             this.items = items;
         }
 
         @NonNull @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            // Create a container view for proper padding
+            View container = new View(parent.getContext());
+            
+            // Calculate image size based on screen width and padding
+            int screenWidth = parent.getResources().getDisplayMetrics().widthPixels;
+            int paddingPx = (int) (IMAGE_PADDING * parent.getResources().getDisplayMetrics().density);
+            int imageSize = (screenWidth - (paddingPx * (GRID_SPAN_COUNT + 1))) / GRID_SPAN_COUNT;
+            
+            // Create ImageView with proper layout params
             ImageView iv = new ImageView(parent.getContext());
-            int w = parent.getResources().getDisplayMetrics().widthPixels / 3;
-            iv.setLayoutParams(new RecyclerView.LayoutParams(w, w));
+            RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(imageSize, imageSize);
+            params.setMargins(paddingPx, paddingPx, paddingPx, paddingPx);
+            iv.setLayoutParams(params);
+            
+            // Configure ImageView
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            iv.setAdjustViewBounds(true);
+            
             return new VH(iv);
         }
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
-            displayPostImage(holder, position);
-        }
-
-        /**
-         * Display post image from base64 string
-         */
-        private void displayPostImage(VH holder, int position) {
-            String base64 = items.get(position).getContent();
-            if (base64 != null) {
-                Bitmap bitmap = ImageUtils.convert64base(base64);
-                if (bitmap != null) {
-                    holder.iv.setImageBitmap(bitmap);
+            // Show loading state
+            holder.iv.setImageResource(R.drawable.loading_post);
+            
+            // Load image in background
+            new Thread(() -> {
+                String base64 = items.get(position).getContent();
+                if (base64 != null) {
+                    Bitmap bitmap = ImageUtils.convert64base(base64);
+                    if (bitmap != null) {
+                        // Post back to main thread for UI update
+                        holder.iv.post(() -> {
+                            holder.iv.setImageBitmap(bitmap);
+                            // Optional: Add fade-in animation
+                            holder.iv.setAlpha(0f);
+                            holder.iv.animate().alpha(1f).setDuration(200).start();
+                        });
+                    }
                 }
-            }
+            }).start();
         }
 
         @Override
@@ -265,20 +285,9 @@ public class OwnProfileFragment extends Fragment implements FirebaseCallback, Fi
             return items.size();
         }
 
-        /**
-         * ViewHolder for post grid items
-         */
         static class VH extends RecyclerView.ViewHolder {
-            /**
-             * The ImageView for displaying post content
-             */
             ImageView iv;
 
-            /**
-             * Instantiates a new ViewHolder
-             *
-             * @param iv the image view
-             */
             VH(ImageView iv) {
                 super(iv);
                 this.iv = iv;

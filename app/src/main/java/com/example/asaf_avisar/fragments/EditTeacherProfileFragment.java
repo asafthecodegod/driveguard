@@ -94,6 +94,7 @@ public class EditTeacherProfileFragment extends Fragment implements FirebaseCall
         locationSpinner = view.findViewById(R.id.location_spinner);
         rankRatingBar = view.findViewById(R.id.rank_rating);
         rankRatingBar.setIsIndicator(true);
+        rankRatingBar.setRating(3.0f);
 
         saveButton = view.findViewById(R.id.save_button);
         setDefaultSeekBarValues();
@@ -103,8 +104,8 @@ public class EditTeacherProfileFragment extends Fragment implements FirebaseCall
         priceSeekBar.setProgress(5);
         priceTextView.setText("₪150");
 
-        experienceSeekBar.setProgress(1);
-        experienceTextView.setText("1 years");
+        experienceSeekBar.setProgress(3);
+        experienceTextView.setText("3 years");
     }
 
     private void setupEventListeners() {
@@ -191,7 +192,9 @@ public class EditTeacherProfileFragment extends Fragment implements FirebaseCall
         int price = (priceSeekBar.getProgress() + 10) * 10;
         teacherUser.setPrice(price);
 
-        teacherUser.setExperience(experienceSeekBar.getProgress());
+        int experience = experienceSeekBar.getProgress();
+        teacherUser.setExperience(experience);
+        teacherUser.setRank(3);
         teacherUser.setAvailable(true);
     }
 
@@ -219,10 +222,11 @@ public class EditTeacherProfileFragment extends Fragment implements FirebaseCall
             priceTextView.setText("₪" + teacher.getPrice());
         }
 
-        experienceSeekBar.setProgress(Math.min(20, teacher.getExperience()));
-        experienceTextView.setText(teacher.getExperience() + " years");
+        int experience = Math.max(3, Math.min(20, teacher.getExperience()));
+        experienceSeekBar.setProgress(experience);
+        experienceTextView.setText(experience + " years");
 
-        rankRatingBar.setRating((float) teacher.getRank());
+        rankRatingBar.setRating(3.0f);
 
         Toast.makeText(getContext(), "Teacher profile loaded successfully", Toast.LENGTH_SHORT).show();
     }

@@ -3,6 +3,7 @@ package com.example.asaf_avisar.fragments;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -138,6 +140,14 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
             return;
         }
 
+        // Initialize following/followers maps if they're null
+        if (currentUser != null && currentUser.getFollowing() == null) {
+            currentUser.setFollowing(new HashMap<>());
+        }
+        if (profileUser.getFollowers() == null) {
+            profileUser.setFollowers(new HashMap<>());
+        }
+
         // Check if currently following
         boolean isCurrentlyFollowing = profileUser.isFollowedBy(currentUserId);
 
@@ -154,51 +164,63 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
      * Handle follow action
      */
     private void handleFollow(String currentUserId) {
-        // Update local data immediately for instant UI feedback
-        profileUser.addFollower(currentUserId);
-        currentUser.addFollowing(profileUser.getId());
+        try {
+            // Update local data immediately for instant UI feedback
+            if (profileUser != null) {
+                profileUser.addFollower(currentUserId);
+            }
+            
+            if (currentUser != null) {
+                currentUser.addFollowing(profileUser.getId());
+            }
 
-        // Update UI immediately
-        updateFollowButton(true);
-        updateFollowerCount(profileUser.getFollowerCount());
+            // Update UI immediately
+            updateFollowButton(true);
+            updateFollowerCount(profileUser != null ? profileUser.getFollowerCount() : 0);
 
-        // Update Firebase
-        fbm.updateUserFollowing(currentUserId, profileUser.getId(), true);
-        fbm.updateUserFollowers(profileUser.getId(), currentUserId, true);
-
-        Toast.makeText(getContext(), "Following " + profileUser.getName(), Toast.LENGTH_SHORT).show();
+            // Update Firebase
+            fbm.updateUserFollowing(currentUserId, profileUser.getId(), true);
+            fbm.updateUserFollowers(profileUser.getId(), currentUserId, true);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error while following user", Toast.LENGTH_SHORT).show();
+            Log.e("ProfileFragment", "Error in handleFollow: " + e.getMessage());
+        }
     }
 
     /**
      * Handle unfollow action
      */
     private void handleUnfollow(String currentUserId) {
-        // Update local data immediately for instant UI feedback
-        profileUser.removeFollower(currentUserId);
-        currentUser.removeFollowing(profileUser.getId());
+        try {
+            // Update local data immediately for instant UI feedback
+            if (profileUser != null) {
+                profileUser.removeFollower(currentUserId);
+            }
+            
+            if (currentUser != null) {
+                currentUser.removeFollowing(profileUser.getId());
+            }
 
-        // Update UI immediately
-        updateFollowButton(false);
-        updateFollowerCount(profileUser.getFollowerCount());
+            // Update UI immediately
+            updateFollowButton(false);
+            updateFollowerCount(profileUser != null ? profileUser.getFollowerCount() : 0);
 
-        // Update Firebase
-        fbm.updateUserFollowing(currentUserId, profileUser.getId(), false);
-        fbm.updateUserFollowers(profileUser.getId(), currentUserId, false);
-
-        Toast.makeText(getContext(), "Unfollowed " + profileUser.getName(), Toast.LENGTH_SHORT).show();
+            // Update Firebase
+            fbm.updateUserFollowing(currentUserId, profileUser.getId(), false);
+            fbm.updateUserFollowers(profileUser.getId(), currentUserId, false);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error while unfollowing user", Toast.LENGTH_SHORT).show();
+            Log.e("ProfileFragment", "Error in handleUnfollow: " + e.getMessage());
+        }
     }
 
     /**
      * Update follow button appearance based on follow status
      */
     private void updateFollowButton(boolean isFollowing) {
-        if (isFollowing) {
-            btnFollow.setText("Unfollow");
-            btnFollow.setBackgroundColor(Color.GRAY);
-            btnFollow.setTextColor(Color.WHITE);
-        } else {
-            btnFollow.setText("Follow");
-            btnFollow.setBackgroundColor(Color.BLUE);
+        if (btnFollow != null) {
+            btnFollow.setText(isFollowing ? "Unfollow" : "Follow");
+            btnFollow.setBackgroundColor(isFollowing ? Color.GRAY : Color.BLUE);
             btnFollow.setTextColor(Color.WHITE);
         }
     }
@@ -207,14 +229,16 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
      * Update follower count display
      */
     private void updateFollowerCount(int count) {
-        textFollowersCount.setText(String.valueOf(count));
+        if (textFollowersCount != null) {
+            textFollowersCount.setText(String.valueOf(count));
+        }
     }
 
     /**
      * Handle nudge button click
      */
     private void handleNudgeButtonClick() {
-        Toast.makeText(getContext(), "Nudge clicked", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Nudge clicked",Toast.LENGTH_SHORT).show();
         // Logic for nudge would go here
     }
 
@@ -317,7 +341,11 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
      */
     private void updatePostsDisplay(ArrayList<Post> newPosts) {
         posts.clear();
-        posts.addAll(newPosts);
+        for (Post post : newPosts) {
+            if (post.getType() == 1) { // Only photo posts
+                posts.add(post);
+            }
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -446,34 +474,57 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
 
     private static class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.VH> {
         private final List<Post> items;
+        private static final int GRID_SPAN_COUNT = 3;
+        private static final int IMAGE_PADDING = 2; // dp
 
-        /**
-         * Instantiates a new Posts adapter.
-         *
-         * @param items the items
-         */
         PostsAdapter(List<Post> items) {
             this.items = items;
         }
 
         @NonNull @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            // Create an ImageView for each grid item
+            // Create a container view for proper padding
+            View container = new View(parent.getContext());
+            
+            // Calculate image size based on screen width and padding
+            int screenWidth = parent.getResources().getDisplayMetrics().widthPixels;
+            int paddingPx = (int) (IMAGE_PADDING * parent.getResources().getDisplayMetrics().density);
+            int imageSize = (screenWidth - (paddingPx * (GRID_SPAN_COUNT + 1))) / GRID_SPAN_COUNT;
+            
+            // Create ImageView with proper layout params
             ImageView iv = new ImageView(parent.getContext());
-            int w = parent.getResources().getDisplayMetrics().widthPixels / 3;
-            iv.setLayoutParams(new RecyclerView.LayoutParams(w, w));
+            RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(imageSize, imageSize);
+            params.setMargins(paddingPx, paddingPx, paddingPx, paddingPx);
+            iv.setLayoutParams(params);
+            
+            // Configure ImageView
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            iv.setAdjustViewBounds(true);
+            
             return new VH(iv);
         }
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
-            // Convert base64 content to bitmap and display
-            String base64 = items.get(position).getContent();
-            if (base64 != null) {
-                Bitmap bitmap = ImageUtils.convert64base(base64);
-                if (bitmap != null) holder.iv.setImageBitmap(bitmap);
-            }
+            // Show loading state
+            holder.iv.setImageResource(R.drawable.loading_post);
+            
+            // Load image in background
+            new Thread(() -> {
+                String base64 = items.get(position).getContent();
+                if (base64 != null) {
+                    Bitmap bitmap = ImageUtils.convert64base(base64);
+                    if (bitmap != null) {
+                        // Post back to main thread for UI update
+                        holder.iv.post(() -> {
+                            holder.iv.setImageBitmap(bitmap);
+                            // Optional: Add fade-in animation
+                            holder.iv.setAlpha(0f);
+                            holder.iv.animate().alpha(1f).setDuration(200).start();
+                        });
+                    }
+                }
+            }).start();
         }
 
         @Override
@@ -481,20 +532,9 @@ public class ProfileFragment extends Fragment implements FirebaseCallback, Fireb
             return items.size();
         }
 
-        /**
-         * The ViewHolder for post items
-         */
         static class VH extends RecyclerView.ViewHolder {
-            /**
-             * The ImageView for post content
-             */
             ImageView iv;
 
-            /**
-             * Instantiates a new ViewHolder
-             *
-             * @param iv the image view
-             */
             VH(ImageView iv) {
                 super(iv);
                 this.iv = iv;

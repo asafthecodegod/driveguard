@@ -138,8 +138,8 @@ public class TeacherProfileFragment extends Fragment implements FirebaseCallback
         }
 
         try {
-            // Load from Student collection (where teachers are actually stored)
-            fireBaseManager.readData(this, "Student", teacherId);
+            // First try to load from Teacher collection
+            fireBaseManager.readTeacherData(this, teacherId);
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error loading teacher data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -237,62 +237,44 @@ public class TeacherProfileFragment extends Fragment implements FirebaseCallback
     //==========================================================================================
 
     @Override
-    public void oncallbackStudent(StudentUser student) {
-        if (student != null) {
-            if (student.isTeacher()) {
-                try {
-                    TeacherUser teacher = (TeacherUser) student;
-                    updateUI(teacher);
-                } catch (ClassCastException e) {
-                    TeacherUser teacher = createTeacherFromStudent(student);
-                    updateUI(teacher);
-                }
-            } else {
-                TeacherUser teacher = createTeacherFromStudent(student);
-                updateUI(teacher);
-            }
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+        if (teacher != null) {
+            updateUI(teacher);
         } else {
-            Toast.makeText(getContext(), "User not found", Toast.LENGTH_SHORT).show();
+            // If no data in Teacher collection, try Student collection as fallback
+            fireBaseManager.readData(this, "Student", teacherId);
         }
-    }
-
-    /**
-     * Create TeacherUser from StudentUser data
-     */
-    private TeacherUser createTeacherFromStudent(StudentUser student) {
-        TeacherUser teacher = new TeacherUser();
-
-        // Copy basic StudentUser fields
-        teacher.setName(teacherName != null ? teacherName : "Medi");
-        teacher.setEmail(teacherEmail != null ? teacherEmail : "contact@gmail.com.com");
-        teacher.setId(student.getId() != null ? student.getId() : teacherId);
-        teacher.setProfilePhotoBase64(student.getProfilePhotoBase64());
-        teacher.setBio(student.getBio() != null ? student.getBio() : "Experienced driving instructor");
-        teacher.setTeacher(true);
-
-        // Set default teacher-specific values
-        teacher.setRank(4);
-        teacher.setExperience(8);
-        teacher.setPrice(150);
-        teacher.setLocation("Tel Aviv");
-        teacher.setAvailable(true);
-        teacher.setTeacherId(student.getId() != null ? student.getId() : teacherId);
-        teacher.setPhone(teacherPhone != null ? teacherPhone : "050-68308736");
-
-        return teacher;
     }
 
     @Override
-    public void onCallbackSingleTeacher(TeacherUser teacherUser) {
-        if (teacherUser != null) {
-            // Store the real teacher data
-            teacherPhone = teacherUser.getPhone();
-            teacherEmail = teacherUser.getEmail();
-            teacherName = teacherUser.getName();
-
-            // Update UI with the complete teacher data
-            updateUI(teacherUser);
+    public void oncallbackStudent(StudentUser student) {
+        if (student != null && student.isTeacher()) {
+            TeacherUser teacher = createTeacherFromStudent(student);
+            updateUI(teacher);
+        } else {
+            Toast.makeText(getContext(), "Teacher profile not found", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private TeacherUser createTeacherFromStudent(StudentUser student) {
+        TeacherUser teacher = new TeacherUser();
+        // Copy basic user info
+        teacher.setId(student.getId());
+        teacher.setName(student.getName());
+        teacher.setEmail(student.getEmail());
+        teacher.setProfilePhotoBase64(student.getProfilePhotoBase64());
+        teacher.setBirthday(student.getBirthday());
+        teacher.setTeacher(true);
+        
+        // Set teacher-specific defaults if not available
+        teacher.setRank(0);
+        teacher.setExperience(0);
+        teacher.setPrice(150); // Default price
+        teacher.setLocation(student.getCity());
+        teacher.setBio("");
+        teacher.setPhone(student.getPhone());
+        
+        return teacher;
     }
 
     @Override

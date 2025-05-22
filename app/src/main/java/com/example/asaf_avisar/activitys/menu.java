@@ -187,8 +187,8 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
             return;
         }
 
-        // Just read the user from Student collection and check isTeacher field
-        fireBaseManager.readData(this, "Student", currentUserId);
+        // First check Teacher collection
+        fireBaseManager.readTeacherData(this, currentUserId);
     }
 
     /**
@@ -470,43 +470,32 @@ public class menu extends AppCompatActivity implements NavigationView.OnNavigati
     public void onCallbackSingleTeacher(TeacherUser teacher) {
         if (teacher != null) {
             isTeacher = true;
+            updateMenuForUserType();
+        } else {
+            // If not found in Teacher collection, check Student collection
+            fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
         }
-        // Always check student collection too
-        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
     }
 
     @Override
     public void oncallbackStudent(StudentUser student) {
-        if (student != null && !isTeacher) {
-            // Only set isTeacher = false if we didn't already find a teacher
+        if (student != null) {
+            // Only update isTeacher if we haven't already found them in the Teacher collection
+            if (!isTeacher) {
+                isTeacher = student.isTeacher();
+            }
             timeHaveLicense = student.getTimeHaveLicense();
-            isTeacher = student.isTeacher();
-
-            // Update the UI based on final user type determination
-            updateMenuForUserType();
         }
-        else{
-            isTeacher = false;
-            updateMenuForUserType();
-        }
+        updateMenuForUserType();
     }
 
     @Override
     public void oncallbackArryStudent(ArrayList<StudentUser> students) {
-        // Not used in this simplified implementation
+        // Not used in this implementation
     }
 
     @Override
     public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {
-        if (teachers != null && !teachers.isEmpty()) {
-            for (TeacherUser teacher : teachers) {
-                if (teacher.getTeacherId().equals(fireBaseManager.getUserid())) {
-                    isTeacher = true;
-                    break;
-                }
-            }
-        }
-        // Check student collection also
-        fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+        // Not used in this implementation
     }
 }

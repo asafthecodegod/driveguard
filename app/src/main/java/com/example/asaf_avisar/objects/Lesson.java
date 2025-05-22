@@ -4,6 +4,7 @@ package com.example.asaf_avisar.objects;
  * The type Lesson.
  */
 public class Lesson {
+    private String lessonId;
     private String lessonType;
     private String date;
     private String time;
@@ -13,7 +14,7 @@ public class Lesson {
      * Instantiates a new Lesson.
      */
     public Lesson() {
-        // Default constructor for Firebase
+        // Required empty constructor for Firebase
     }
 
     /**
@@ -30,6 +31,20 @@ public class Lesson {
         this.time = time;
         this.isPaid = isPaid;
     }
+
+    /**
+     * Gets lesson id.
+     *
+     * @return the lesson id
+     */
+    public String getLessonId() { return lessonId; }
+
+    /**
+     * Sets lesson id.
+     *
+     * @param lessonId the lesson id
+     */
+    public void setLessonId(String lessonId) { this.lessonId = lessonId; }
 
     /**
      * Gets lesson type.

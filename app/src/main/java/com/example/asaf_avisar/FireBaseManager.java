@@ -292,7 +292,11 @@ public class FireBaseManager {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot data : snapshot.getChildren()) {
-                            lessons.add(data.getValue(Lesson.class));
+                            Lesson lesson = data.getValue(Lesson.class);
+                            if (lesson != null) {
+                                lesson.setLessonId(data.getKey());
+                                lessons.add(lesson);
+                            }
                         }
                         firebaseCallback.oncallbackArryLessons(lessons);
                     }
@@ -651,5 +655,37 @@ public class FireBaseManager {
         }
     }
 
+    public void deleteEvent(String lessonId) {
+        getMyRef("Events")
+                .child(getUserid())
+                .child(lessonId)
+                .removeValue()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Lesson deleted successfully");
+                    } else {
+                        Log.e(TAG, "Failed to delete lesson", task.getException());
+                    }
+                });
+    }
+
+    public void readTeacherData(FirebaseCallback firebaseCallback, String teacherId) {
+        getMyRef("Teacher").child(teacherId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        TeacherUser teacher = snapshot.getValue(TeacherUser.class);
+                        if (teacher != null) {
+                            teacher.setId(snapshot.getKey());
+                            teacher.setTeacher(true);
+                        }
+                        firebaseCallback.onCallbackSingleTeacher(teacher);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.w(TAG, "Failed to read teacher value.", error.toException());
+                    }
+                });
+    }
 
 }

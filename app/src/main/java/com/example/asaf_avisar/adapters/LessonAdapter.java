@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.asaf_avisar.FireBaseManager;
 import com.example.asaf_avisar.R;
 import com.example.asaf_avisar.objects.Lesson;
 
@@ -22,6 +23,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
 
     private Context context;
     private List<Lesson> lessonList;
+    private FireBaseManager fireBaseManager;
 
     /**
      * Instantiates a new Lesson adapter.
@@ -32,6 +34,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
     public LessonAdapter(Context context, List<Lesson> lessonList) {
         this.context = context;
         this.lessonList = lessonList;
+        this.fireBaseManager = new FireBaseManager(context);
     }
 
     @NonNull
@@ -62,12 +65,18 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
     }
 
     private void showDeleteConfirmation(int position) {
+        Lesson lesson = lessonList.get(position);
         new AlertDialog.Builder(context)
                 .setTitle("Delete Lesson")
                 .setMessage("Are you sure you want to delete this lesson?")
                 .setPositiveButton("Yes", (dialog, which) -> {
-                    lessonList.remove(position);
-                    notifyItemRemoved(position);
+                    // Delete from Firebase first
+                    if (lesson.getLessonId() != null) {
+                        fireBaseManager.deleteEvent(lesson.getLessonId());
+                        // Only remove from local list after successful deletion
+                        lessonList.remove(position);
+                        notifyItemRemoved(position);
+                    }
                 })
                 .setNegativeButton("No", null)
                 .show();

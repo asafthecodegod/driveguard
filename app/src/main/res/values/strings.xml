@@ -1,5 +1,5 @@
 <resources>
-    <string name="Drive_Guard">asaf_avisar</string>
+    <string name="Drive_Guard">Drive_Guard</string>
     <string-array name="israel_cities">
         <item>Jerusalem</item>
         <item>Tel Aviv</item>

@@ -11,6 +11,7 @@ import com.example.asaf_avisar.activitys.menu;
 import com.example.asaf_avisar.callbacks.FirebaseCallback;
 import com.example.asaf_avisar.objects.Check;
 import com.example.asaf_avisar.objects.TeacherUser;
+import com.example.asaf_avisar.objects.StudentUser;
 
 import java.util.ArrayList;
 
@@ -33,9 +34,9 @@ public class TeacherDetailsActivity extends AppCompatActivity implements Firebas
 
     // State
     private TeacherUser teacherUser;
-    private String    selectedCity       = "Not selected";
-    private int       selectedPrice      = 150;
-    private int       selectedExperience = 3;
+    private String selectedCity = "Not selected";
+    private int selectedPrice = 150;
+    private int selectedExperience = 3;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -43,37 +44,47 @@ public class TeacherDetailsActivity extends AppCompatActivity implements Firebas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_details);
 
-        // 1) Wire up views
-        hello                  = findViewById(R.id.userName);
-        bioEditText            = findViewById(R.id.bioEditText);
-        phoneEditText          = findViewById(R.id.phoneEditText);
-        priceValueTextView     = findViewById(R.id.priceValueTextView);
-        experienceValueTextView= findViewById(R.id.experienceValueTextView);
-        radioGroupDriveType    = findViewById(R.id.radioGroupDriveType);
-        radioManual            = findViewById(R.id.radioManual);
-        radioAutomatic         = findViewById(R.id.radioAutomatic);
+        initializeViews();
+        initializeHelpers();
+        loadTeacherData();
+        setupUIComponents();
+    }
+
+    private void initializeViews() {
+        hello = findViewById(R.id.userName);
+        bioEditText = findViewById(R.id.bioEditText);
+        phoneEditText = findViewById(R.id.phoneEditText);
+        priceValueTextView = findViewById(R.id.priceValueTextView);
+        experienceValueTextView = findViewById(R.id.experienceValueTextView);
+        radioGroupDriveType = findViewById(R.id.radioGroupDriveType);
+        radioManual = findViewById(R.id.radioManual);
+        radioAutomatic = findViewById(R.id.radioAutomatic);
         radioGroupAvailability = findViewById(R.id.radioGroupAvailability);
-        radioAvailableYes      = findViewById(R.id.radioAvailableYes);
-        priceSeekBar           = findViewById(R.id.priceSeekBar);
-        experienceSeekBar      = findViewById(R.id.experienceSeekBar);
-        citySpinner            = findViewById(R.id.citySpinner);
-        submitButton           = findViewById(R.id.submitButton);
+        radioAvailableYes = findViewById(R.id.radioAvailableYes);
+        priceSeekBar = findViewById(R.id.priceSeekBar);
+        experienceSeekBar = findViewById(R.id.experienceSeekBar);
+        citySpinner = findViewById(R.id.citySpinner);
+        submitButton = findViewById(R.id.submitButton);
+    }
 
-        // 2) Helpers & initial model
-        validator       = new Check();
+    private void initializeHelpers() {
+        validator = new Check();
         fireBaseManager = new FireBaseManager(this);
-        teacherUser     = new TeacherUser();
-        teacherUser.setTeacher(true);
+    }
 
-        // 3) Load current teacher data
-        fireBaseManager.readData(this, "Teacher", fireBaseManager.getUserid());
+    private void loadTeacherData() {
+        // First try to load from Teacher collection
+        fireBaseManager.readTeacherData(this, fireBaseManager.getUserid());
+    }
 
-        // 4) Set up controls
+    private void setupUIComponents() {
         setupCitySpinner();
         setupPriceSeekBar();
         setupExperienceSeekBar();
+        setupSubmitButton();
+    }
 
-        // 5) Submit handler
+    private void setupSubmitButton() {
         submitButton.setOnClickListener(v -> {
             if (validateInputs()) {
                 handleSubmit();
@@ -95,7 +106,6 @@ public class TeacherDetailsActivity extends AppCompatActivity implements Firebas
     }
 
     private void setupPriceSeekBar() {
-        // progress  (150/10)-10 = 5
         priceSeekBar.setProgress((selectedPrice/10)-10);
         priceValueTextView.setText("₪" + selectedPrice);
         priceSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -157,8 +167,15 @@ public class TeacherDetailsActivity extends AppCompatActivity implements Firebas
         finish();
     }
 
-    /** Build the model and persist via updateTeacher(...) **/
     private void updateTeacherUser(int driveType, String bio, String phone, boolean available) {
+        if (teacherUser == null) {
+            teacherUser = new TeacherUser();
+            // Copy data from StudentUser if available
+            fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+            return;
+        }
+
+        // Update teacher-specific fields
         teacherUser.setDriverType(driveType == 1);
         teacherUser.setLocation(selectedCity);
         teacherUser.setBio(bio);
@@ -166,39 +183,72 @@ public class TeacherDetailsActivity extends AppCompatActivity implements Firebas
         teacherUser.setAvailable(available);
         teacherUser.setPrice(selectedPrice);
         teacherUser.setExperience(selectedExperience);
+        teacherUser.setTeacher(true);
 
-        // **Critical**: write under /Teacher/uid
+        // Ensure we have the user ID
+        teacherUser.setId(fireBaseManager.getUserid());
+
+        // Save to Teacher collection
         fireBaseManager.updateTeacher(teacherUser);
-        Log.d(TAG, "TeacherUser updated via updateTeacher()");
+        Log.d(TAG, "TeacherUser updated successfully");
     }
-
-    //====================================================================================
-    // FirebaseCallback implementations
-    //====================================================================================
 
     @Override
-    public void onCallbackSingleTeacher(TeacherUser t) {
-        if (t == null) return;
-        teacherUser = t;
-        hello.setText("Welcome, " + t.getName());
-
-        // preload existing values
-        if (t.getPhone()   != null) phoneEditText.setText(t.getPhone());
-        if (t.getBio()     != null) bioEditText.setText(t.getBio());
-        if (t.getLocation()!= null) setSpinnerSelection(citySpinner, t.getLocation());
-
-        radioGroupDriveType.check(t.isDriverType() ? radioAutomatic.getId() : radioManual.getId());
-        radioGroupAvailability.check(t.isAvailable() ? radioAvailableYes.getId() : R.id.radioAvailableNo);
-
-        priceSeekBar.setProgress((t.getPrice()/10)-10);
-        experienceSeekBar.setProgress(t.getExperience());
+    public void onCallbackSingleTeacher(TeacherUser teacher) {
+        if (teacher != null) {
+            teacherUser = teacher;
+            populateUIWithTeacherData(teacher);
+        } else {
+            // If not found in Teacher collection, try Student collection
+            fireBaseManager.readData(this, "Student", fireBaseManager.getUserid());
+        }
     }
 
-    @Override public void oncallbackStudent(com.example.asaf_avisar.objects.StudentUser s) {}
-    @Override public void oncallbackArryStudent(ArrayList<com.example.asaf_avisar.objects.StudentUser> u) {}
-    @Override public void onCallbackTeacher(ArrayList<TeacherUser> u) {}
+    @Override
+    public void oncallbackStudent(StudentUser student) {
+        if (student != null) {
+            // Create new TeacherUser from StudentUser data
+            teacherUser = new TeacherUser();
+            teacherUser.setId(student.getId());
+            teacherUser.setName(student.getName());
+            teacherUser.setEmail(student.getEmail());
+            teacherUser.setProfilePhotoBase64(student.getProfilePhotoBase64());
+            teacherUser.setBirthday(student.getBirthday());
+            teacherUser.setTeacher(true);
+            
+            // Set default teacher values
+            teacherUser.setDriverType(student.isDriverType());
+            teacherUser.setLocation(student.getCity());
+            teacherUser.setPrice(selectedPrice);
+            teacherUser.setExperience(selectedExperience);
+            teacherUser.setAvailable(true);
+            
+            // Update UI
+            hello.setText("Welcome, " + student.getName());
+        }
+    }
+
+    private void populateUIWithTeacherData(TeacherUser teacher) {
+        hello.setText("Welcome, " + teacher.getName());
+
+        if (teacher.getPhone() != null) phoneEditText.setText(teacher.getPhone());
+        if (teacher.getBio() != null) bioEditText.setText(teacher.getBio());
+        if (teacher.getLocation() != null) setSpinnerSelection(citySpinner, teacher.getLocation());
+
+        radioGroupDriveType.check(teacher.isDriverType() ? radioAutomatic.getId() : radioManual.getId());
+        radioGroupAvailability.check(teacher.isAvailable() ? radioAvailableYes.getId() : R.id.radioAvailableNo);
+
+        selectedPrice = teacher.getPrice();
+        selectedExperience = teacher.getExperience();
+        priceSeekBar.setProgress((teacher.getPrice()/10)-10);
+        experienceSeekBar.setProgress(teacher.getExperience());
+    }
+
+    @Override public void oncallbackArryStudent(ArrayList<StudentUser> students) {}
+    @Override public void onCallbackTeacher(ArrayList<TeacherUser> teachers) {}
 
     private void setSpinnerSelection(Spinner spinner, String value) {
+        if (value == null) return;
         for (int i = 0; i < spinner.getCount(); i++) {
             if (spinner.getItemAtPosition(i).toString().equals(value)) {
                 spinner.setSelection(i);
